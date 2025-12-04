@@ -5,11 +5,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, MapPin, Heart, ShoppingCart, Bell, Menu, X,
   User, Moon, Sun, ChevronDown, Clock, TrendingUp, Store,
-  Percent, Trash2
+  Percent, Trash2, Languages
 } from 'lucide-react';
 import { allCategories } from '../data';
-import { useTheme } from '../../common/ThemeContext';
-import { useAuth } from '@/context/AuthContext';
 
 interface HeaderProps {
   activeSystem?: string | null;
@@ -31,18 +29,80 @@ const Header: React.FC<HeaderProps> = ({
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const searchContainerRef = useRef<HTMLFormElement>(null);
-  const { isDarkMode, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  // Mock theme and auth for now
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [user, setUser] = useState(null);
+  const [language, setLanguage] = useState('ar');
+  
+  // Initialize dark mode and language from localStorage
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('ray_dark_mode') === 'true';
+    const savedLanguage = localStorage.getItem('ray_language') || 'ar';
+    
+    setIsDarkMode(savedDarkMode);
+    setLanguage(savedLanguage);
+    
+    // Apply to DOM
+    if (savedDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = savedLanguage;
+  }, []);
+  
+  const toggleTheme = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('ray_dark_mode', String(newDarkMode));
+    
+    // Apply to DOM
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+  
+  const toggleLanguage = () => {
+    const newLang = language === 'ar' ? 'en' : 'ar';
+    setLanguage(newLang);
+    localStorage.setItem('ray_language', newLang);
+    
+    // Smooth transition effect
+    document.body.style.transition = 'all 0.3s ease';
+    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = newLang;
+    
+    // Add visual feedback
+    const button = document.querySelector('[aria-label="Toggle Language"]');
+    if (button) {
+      button.classList.add('scale-110');
+      setTimeout(() => button.classList.remove('scale-110'), 200);
+    }
+  };
 
   // Mock suggestions with categories
-  const suggestions = [
+  const suggestions = language === 'ar' ? [
     { text: 'مطعم سوري', type: 'food' },
     { text: 'ملابس أطفال', type: 'shopping' },
     { text: 'سيارات مستعملة', type: 'cars' },
     { text: 'شقق للإيجار', type: 'realestate' },
     { text: 'جيم', type: 'health' },
     { text: 'صيدلية 24 ساعة', type: 'health' }
+  ] : [
+    { text: 'Syrian Restaurant', type: 'food' },
+    { text: 'Kids Clothes', type: 'shopping' },
+    { text: 'Used Cars', type: 'cars' },
+    { text: 'Apartments for Rent', type: 'realestate' },
+    { text: 'Gym', type: 'health' },
+    { text: '24-Hour Pharmacy', type: 'health' }
   ];
+
+  // Translation helper
+  const t = (ar: string, en: string) => language === 'ar' ? ar : en;
 
   useEffect(() => {
     const saved = localStorage.getItem('ray_recent_searches');
@@ -153,8 +213,8 @@ const Header: React.FC<HeaderProps> = ({
       <div className="bg-gradient-to-r from-ray-blue to-blue-900 dark:from-gray-900 dark:to-gray-800 text-white py-2 px-4 text-center text-xs md:text-sm font-medium relative overflow-hidden transition-colors duration-300">
         <div className="absolute top-0 left-0 w-full h-full bg-white/5 animate-pulse"></div>
         <p className="relative z-10 flex justify-center items-center gap-2 cursor-pointer" onClick={(e) => handleNavClick(e, 'offers')}>
-          <span className="bg-ray-gold text-ray-black px-2 py-0.5 rounded text-[10px] md:text-xs font-bold">جديد</span>
-          <span className="truncate">🎯 عروض اليوم - خصم يصل إلى 50% على المطاعم والمحلات! اضغط هنا</span>
+          <span className="bg-ray-gold text-ray-black px-2 py-0.5 rounded text-[10px] md:text-xs font-bold">{t('جديد', 'NEW')}</span>
+          <span className="truncate">{t('🎯 عروض اليوم - خصم يصل إلى 50% على المطاعم والمحلات! اضغط هنا', '🎯 Today\'s Offers - Up to 50% Discount on Restaurants & Shops! Click Here')}</span>
         </p>
       </div>
 
@@ -177,8 +237,8 @@ const Header: React.FC<HeaderProps> = ({
             {/* Location (Desktop) */}
             <div className="hidden lg:flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-ray-blue dark:hover:text-ray-gold cursor-pointer bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-full transition">
               <MapPin className="w-4 h-4 text-ray-blue dark:text-ray-gold" />
-              <span className="text-sm font-bold">القاهرة، المعادي</span>
-              <span className="text-xs text-gray-400">تغيير</span>
+              <span className="text-sm font-bold">{t('القاهرة، المعادي', 'Cairo, Maadi')}</span>
+              <span className="text-xs text-gray-400">{t('تغيير', 'Change')}</span>
             </div>
 
             {/* Search Bar (Desktop/Tablet) */}
@@ -189,7 +249,7 @@ const Header: React.FC<HeaderProps> = ({
             >
               <input 
                 type="text" 
-                placeholder="بحث..." 
+                placeholder={t('بحث...', 'Search...')} 
                 className="w-full bg-gray-100 dark:bg-gray-800 border-2 border-transparent dark:border-gray-700 text-gray-900 dark:text-white rounded-full py-2.5 px-6 pl-10 text-sm focus:outline-none focus:bg-white dark:focus:bg-gray-900 focus:border-ray-blue dark:focus:border-ray-gold transition-all duration-300 placeholder-gray-400 font-medium"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
@@ -205,9 +265,9 @@ const Header: React.FC<HeaderProps> = ({
                   {searchValue.length === 0 && recentSearches.length > 0 && (
                     <div className="p-2">
                       <div className="flex items-center justify-between px-3 py-2">
-                        <h3 className="text-xs font-bold text-gray-400">عمليات البحث الأخيرة</h3>
+                        <h3 className="text-xs font-bold text-gray-400">{t('عمليات البحث الأخيرة', 'Recent Searches')}</h3>
                         <button onClick={clearHistory} type="button" className="text-xs text-red-500 hover:underline flex items-center gap-1">
-                          <Trash2 className="w-3 h-3" /> مسح الكل
+                          <Trash2 className="w-3 h-3" /> {t('مسح الكل', 'Clear All')}
                         </button>
                       </div>
                       {recentSearches.map((term, idx) => (
@@ -230,7 +290,7 @@ const Header: React.FC<HeaderProps> = ({
 
                   <div className="p-2 border-t border-gray-50 dark:border-gray-800">
                     <h3 className="text-xs font-bold text-gray-400 px-3 py-2">
-                      {searchValue.length > 0 ? 'اقتراحات البحث' : 'الأكثر بحثاً'}
+                      {searchValue.length > 0 ? t('اقتراحات البحث', 'Search Suggestions') : t('الأكثر بحثاً', 'Most Searched')}
                     </h3>
                     {suggestions
                       .filter(s => s.text.toLowerCase().includes(searchValue.toLowerCase()))
@@ -246,7 +306,7 @@ const Header: React.FC<HeaderProps> = ({
                             <HighlightedText text={item.text} highlight={searchValue} />
                         </div>
                         <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 px-2 py-0.5 rounded-full">
-                            {item.type === 'food' ? 'مطاعم' : item.type === 'shopping' ? 'تسوق' : 'عام'}
+                            {language === 'ar' ? (item.type === 'food' ? 'مطاعم' : item.type === 'shopping' ? 'تسوق' : 'عام') : (item.type === 'food' ? 'Restaurants' : item.type === 'shopping' ? 'Shopping' : 'General')}
                         </span>
                       </div>
                     ))}
@@ -257,13 +317,28 @@ const Header: React.FC<HeaderProps> = ({
             
             {/* Actions */}
             <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
+               {/* Language Toggle - Visible on all screens */}
+               <button 
+                 onClick={toggleLanguage}
+                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300 active:scale-95 relative group"
+                 aria-label="Toggle Language"
+               >
+                 <Languages className="w-5 h-5 group-hover:text-ray-blue dark:group-hover:text-ray-gold transition-colors" />
+                 <span className="absolute -top-1 -right-1 bg-ray-gold text-ray-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                   {language === 'ar' ? 'AR' : 'EN'}
+                 </span>
+               </button>
+
                {/* Theme Toggle - Visible on all screens */}
                <button 
                  onClick={toggleTheme}
-                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition active:scale-95"
+                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300 active:scale-95 group"
                  aria-label="Toggle Dark Mode"
                >
-                 {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                 {isDarkMode ? 
+                   <Sun className="w-5 h-5 group-hover:text-yellow-500 transition-colors" /> : 
+                   <Moon className="w-5 h-5 group-hover:text-ray-blue transition-colors" />
+                 }
                </button>
 
                <button onClick={(e) => handleNavClick(e, 'notifications')} className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full relative transition group active:scale-95">
@@ -294,7 +369,7 @@ const Header: React.FC<HeaderProps> = ({
                   <div className="w-9 h-9 bg-blue-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-ray-blue dark:text-ray-gold group-hover:bg-ray-blue group-hover:text-white transition">
                     <User className="w-5 h-5" />
                   </div>
-                  <span className="hidden lg:inline">{user ? 'حسابي' : 'تسجيل الدخول'}</span>
+                  <span className="hidden lg:inline">{user ? t('حسابي', 'My Account') : t('تسجيل الدخول', 'Sign In')}</span>
                </button>
 
                {/* Hamburger Menu (Secondary Links on Mobile) */}
@@ -312,7 +387,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="hidden md:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 py-1 relative">
             <ul className="flex gap-1 overflow-visible h-12 items-center">
               <li>
-                <a href="/" onClick={handleHomeClick} className="text-sm font-black hover:text-ray-gold transition px-4 py-3 text-ray-blue dark:text-white block">الرئيسية</a>
+                <a href="/" onClick={handleHomeClick} className="text-sm font-black hover:text-ray-gold transition px-4 py-3 text-ray-blue dark:text-white block">{t('الرئيسية', 'Home')}</a>
               </li>
 
               {/* NEW: Offers Link */}
@@ -322,7 +397,7 @@ const Header: React.FC<HeaderProps> = ({
                    className="text-sm font-bold text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg transition flex items-center gap-1"
                  >
                    <Percent className="w-4 h-4" />
-                   العروض والخصومات
+                   {t('العروض والخصومات', 'Offers & Discounts')}
                  </button>
               </li>
               
@@ -362,7 +437,7 @@ const Header: React.FC<HeaderProps> = ({
 
             <button onClick={(e) => handleNavClick(e, 'systems')} className="ml-4 text-xs font-bold bg-ray-black text-white px-4 py-2 rounded-lg hover:bg-ray-gold hover:text-ray-black transition flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                <Store className="w-4 h-4" />
-               سجّل نشاطك (تجار)
+               {t('سجّل نشاطك (تجار)', 'Register Your Business')}
             </button>
           </div>
         </div>
@@ -398,21 +473,21 @@ const Header: React.FC<HeaderProps> = ({
                 {/* Important Mobile Links */}
                 <button onClick={(e) => { handleNavClick(e, 'offers'); setIsMenuOpen(false); }} className="flex items-center gap-3 w-full text-right p-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold mb-2">
                    <Percent className="w-5 h-5" />
-                   العروض والخصومات
+                   {t('العروض والخصومات', 'Offers & Discounts')}
                 </button>
 
                 <button onClick={(e) => { handleNavClick(e, 'systems'); setIsMenuOpen(false); }} className="flex items-center gap-3 w-full text-right p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium">
                   <Store className="w-5 h-5 text-gray-400" />
-                  سجّل نشاطك (للتجار)
+                  {t('سجّل نشاطك (للتجار)', 'Register Your Business')}
                 </button>
                 <button onClick={(e) => { if(user) { handleNavClick(e, 'profile'); } else { handleAuthAction(); } setIsMenuOpen(false); }} className="flex items-center gap-3 w-full text-right p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium">
                    <User className="w-5 h-5 text-gray-400" />
-                   {user ? 'إعدادات الحساب' : 'تسجيل الدخول'}
+                   {user ? t('إعدادات الحساب', 'Account Settings') : t('تسجيل الدخول', 'Sign In')}
                 </button>
               </div>
 
               <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
-                <h3 className="text-xs font-bold text-gray-400 mb-4 px-2">جميع الأقسام</h3>
+                <h3 className="text-xs font-bold text-gray-400 mb-4 px-2">{t('جميع الأقسام', 'All Categories')}</h3>
                 <div className="space-y-2">
                   {allCategories.map(cat => (
                     <details key={cat.id} className="group bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden">
@@ -431,7 +506,7 @@ const Header: React.FC<HeaderProps> = ({
                           }}
                           className="block w-full text-right p-3 text-sm font-bold text-ray-blue dark:text-ray-gold bg-blue-50 dark:bg-gray-700 rounded-lg mb-2 active:scale-98 transition-transform"
                         >
-                          عرض الكل في {cat.name}
+                          {t('عرض الكل في', 'View All in')} {cat.name}
                         </button>
                         {cat.sub.map(sub => (
                           <button 
