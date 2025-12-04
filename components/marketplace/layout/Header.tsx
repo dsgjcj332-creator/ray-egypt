@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, MapPin, Heart, ShoppingCart, Bell, Menu, X,
   User, Moon, Sun, ChevronDown, Clock, TrendingUp, Store,
-  Percent, Trash2, Languages
+  Percent, Trash2
 } from 'lucide-react';
 import { allCategories } from '../data';
 
@@ -37,6 +37,7 @@ const Header: React.FC<HeaderProps> = ({
   // Initialize dark mode and language from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem('ray_dark_mode') === 'true';
+    // Always default to Arabic ('ar')
     const savedLanguage = localStorage.getItem('ray_language') || 'ar';
     
     setIsDarkMode(savedDarkMode);
@@ -49,8 +50,10 @@ const Header: React.FC<HeaderProps> = ({
       document.documentElement.classList.remove('dark');
     }
     
-    document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = savedLanguage;
+    // Ensure Arabic is set
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'ar';
+    localStorage.setItem('ray_language', 'ar');
   }, []);
   
   const toggleTheme = () => {
@@ -66,23 +69,24 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
   
-  const toggleLanguage = () => {
-    const newLang = language === 'ar' ? 'en' : 'ar';
-    setLanguage(newLang);
-    localStorage.setItem('ray_language', newLang);
-    
-    // Smooth transition effect
-    document.body.style.transition = 'all 0.3s ease';
-    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = newLang;
-    
-    // Add visual feedback
-    const button = document.querySelector('[aria-label="Toggle Language"]');
-    if (button) {
-      button.classList.add('scale-110');
-      setTimeout(() => button.classList.remove('scale-110'), 200);
-    }
-  };
+  // Language toggle disabled - keeping Arabic only for now
+  // const toggleLanguage = () => {
+  //   const newLang = language === 'ar' ? 'en' : 'ar';
+  //   setLanguage(newLang);
+  //   localStorage.setItem('ray_language', newLang);
+  //   
+  //   // Smooth transition effect
+  //   document.body.style.transition = 'all 0.3s ease';
+  //   document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+  //   document.documentElement.lang = newLang;
+  //   
+  //   // Add visual feedback
+  //   const button = document.querySelector('[aria-label="Toggle Language"]');
+  //   if (button) {
+  //     button.classList.add('scale-110');
+  //     setTimeout(() => button.classList.remove('scale-110'), 200);
+  //   }
+  // };
 
   // Mock suggestions with categories
   const suggestions = language === 'ar' ? [
@@ -317,18 +321,6 @@ const Header: React.FC<HeaderProps> = ({
             
             {/* Actions */}
             <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
-               {/* Language Toggle - Visible on all screens */}
-               <button 
-                 onClick={toggleLanguage}
-                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-300 active:scale-95 relative group"
-                 aria-label="Toggle Language"
-               >
-                 <Languages className="w-5 h-5 group-hover:text-ray-blue dark:group-hover:text-ray-gold transition-colors" />
-                 <span className="absolute -top-1 -right-1 bg-ray-gold text-ray-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-                   {language === 'ar' ? 'AR' : 'EN'}
-                 </span>
-               </button>
-
                {/* Theme Toggle - Visible on all screens */}
                <button 
                  onClick={toggleTheme}
