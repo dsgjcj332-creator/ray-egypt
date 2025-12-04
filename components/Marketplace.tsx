@@ -132,11 +132,11 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
       case 'order-tracking': return <OrderTrackingView onBack={() => handleNavigate('profile')} />;
       
       // New Pages
-      case 'categories': return <CategoriesPage onNavigate={handleNavigate} />;
-      case 'blog': return <BlogPage onNavigate={handleNavigate} />;
-      case 'jobs': return <JobsPage onNavigate={handleNavigate} />;
-      case 'login': return <LoginPage onNavigate={handleNavigate} />;
-      case 'signup': return <SignupPage onNavigate={handleNavigate} />;
+      case 'categories': return <CategoriesPage />;
+      case 'blog': return <BlogPage />;
+      case 'jobs': return <JobsPage />;
+      case 'login': return <LoginPage />;
+      case 'signup': return <SignupPage />;
 
       // Static Pages
       case 'about': return <AboutView />;

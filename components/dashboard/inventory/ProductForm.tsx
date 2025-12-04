@@ -40,7 +40,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSave, initialData 
     try {
         const prompt = `اكتب وصف تسويقي جذاب ومختصر للمنتج التالي: ${formData.name} ${formData.category ? `من فئة ${formData.category}` : ''}. ركز على المميزات والجودة بلهجة مصرية احترافية.`;
         const desc = await getGeminiResponse(prompt, 'merchant');
-        setFormData(prev => ({ ...prev, description: desc }));
+        setFormData((prev: any) => ({ ...prev, description: desc }));
     } catch (e) {
         console.error(e);
     } finally {

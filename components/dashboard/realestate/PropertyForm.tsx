@@ -53,7 +53,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ onClose, onSave, initialDat
     try {
         const prompt = `اكتب وصف إعلاني احترافي ومميز لعقار: ${formData.title}، نوعه ${formData.category}، مساحة ${formData.area}م، ${formData.rooms} غرف. ركز على الموقع والمميزات بلهجة عقارية فخمة.`;
         const desc = await getGeminiResponse(prompt, 'merchant');
-        setFormData(prev => ({ ...prev, description: desc }));
+        setFormData((prev: any) => ({ ...prev, description: desc }));
     } catch (e) {
         console.error(e);
     } finally {

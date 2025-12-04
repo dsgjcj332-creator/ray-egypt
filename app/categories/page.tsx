@@ -6,11 +6,7 @@ import { allCategories } from '@/components/marketplace/data';
 import EmptyState from '@/components/common/EmptyState';
 import { LayoutGrid } from 'lucide-react';
 
-interface CategoriesPageProps {
-  onNavigate: (view: string, params?: any) => void;
-}
-
-const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) => {
+const CategoriesPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-in fade-in duration-500">
       <div className="text-center mb-12">
@@ -37,7 +33,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) => {
                 {cat.sub.map((sub) => (
                     <button 
                         key={sub.id} 
-                        onClick={() => onNavigate('search', { category: cat.id, sub: sub.id })}
+                        onClick={() => {/* Navigate to search */}}
                         className="block w-full text-right px-4 py-2 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-ray-blue dark:hover:text-ray-gold transition"
                     >
                         {sub.name}

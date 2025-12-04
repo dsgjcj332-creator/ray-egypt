@@ -16,7 +16,7 @@ interface POSProductGridProps {
   isPharmacy: boolean;
   themeClasses: any;
   themeColor: string;
-  barcodeInputRef?: React.RefObject<HTMLInputElement | null>;
+  barcodeInputRef?: React.RefObject<HTMLInputElement>;
   isLoading?: boolean;
 }
 

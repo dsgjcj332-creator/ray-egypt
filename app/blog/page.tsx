@@ -34,11 +34,7 @@ const posts = [
   }
 ];
 
-interface BlogPageProps {
-  onNavigate?: (view: string) => void;
-}
-
-const BlogPage: React.FC<BlogPageProps> = ({ onNavigate }) => {
+const BlogPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-in fade-in duration-500">
       <div className="text-center mb-16">

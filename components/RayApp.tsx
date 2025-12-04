@@ -6,7 +6,7 @@ import Marketplace from './Marketplace';
 import Dashboard from './Dashboard';
 import SystemsHub from './marketplace/systems/SystemsHub';
 import MerchantRegisterView from './marketplace/views/MerchantRegisterView';
-import { ViewState } from '../types';
+// import { ViewState } from '../types'; // Removed - types.ts was deleted
 import { BusinessType } from './dashboard/config';
 import { ThemeProvider } from './common/ThemeContext';
 import { ToastProvider } from './common/ToastContext';
@@ -14,7 +14,7 @@ import { AuthProvider } from '../context/AuthContext';
 
 const RayApp: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<ViewState>(ViewState.MARKETPLACE);
+  const [currentView, setCurrentView] = useState<string>('marketplace');
   const [selectedBusinessType, setSelectedBusinessType] = useState<BusinessType>('restaurant');
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -28,13 +28,13 @@ const RayApp: React.FC = () => {
 
   // 1. Go to Systems Hub (Landing Page)
   const goToSystemsHub = () => {
-    setCurrentView(ViewState.SYSTEMS_HUB);
+    setCurrentView('systems_hub');
     window.scrollTo(0, 0);
   };
 
   // 2. Back to Consumer Marketplace
   const goHome = () => {
-    setCurrentView(ViewState.MARKETPLACE);
+    setCurrentView('marketplace');
     setIsRegistering(false);
     window.scrollTo(0, 0);
   };
@@ -52,13 +52,13 @@ const RayApp: React.FC = () => {
   const completeRegistration = (type: string) => {
      setSelectedBusinessType(type as BusinessType);
      setIsRegistering(false);
-     setCurrentView(ViewState.DASHBOARD);
+     setCurrentView('dashboard');
      window.scrollTo(0, 0);
   };
 
   // 5. Logout
   const handleLogout = () => {
-    setCurrentView(ViewState.SYSTEMS_HUB);
+    setCurrentView('systems_hub');
     setIsRegistering(false);
   };
 
@@ -77,12 +77,12 @@ const RayApp: React.FC = () => {
           ) : (
             <>
               {/* CONSUMER MARKETPLACE */}
-              {currentView === ViewState.MARKETPLACE && (
+              {currentView === 'marketplace' && (
                 <Marketplace onGoToSystems={goToSystemsHub} />
               )}
               
               {/* BUSINESS SYSTEMS HUB & REGISTRATION */}
-              {currentView === ViewState.SYSTEMS_HUB && (
+              {currentView === 'systems_hub' && (
                 isRegistering ? (
                   <MerchantRegisterView 
                     systemId={selectedBusinessType}
@@ -98,7 +98,7 @@ const RayApp: React.FC = () => {
               )}
 
               {/* MERCHANT DASHBOARD */}
-              {currentView === ViewState.DASHBOARD && (
+              {currentView === 'dashboard' && (
                 <Dashboard 
                   initialType={selectedBusinessType} 
                   onLogout={handleLogout} 

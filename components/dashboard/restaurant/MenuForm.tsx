@@ -37,7 +37,7 @@ const MenuForm: React.FC<MenuFormProps> = ({ onClose, onSave, initialData }) => 
     try {
         const prompt = `اكتب وصف شهي ومغري لوجبة: ${formData.name} في مطعم. ركز على الطعم والمكونات بلهجة مصرية محببة.`;
         const desc = await getGeminiResponse(prompt, 'merchant');
-        setFormData(prev => ({ ...prev, description: desc }));
+        setFormData((prev: any) => ({ ...prev, description: desc }));
     } catch (e) {
         console.error(e);
     } finally {

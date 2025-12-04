@@ -5,11 +5,7 @@ import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-interface LoginPageProps {
-  onNavigate: (view: string) => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
+const LoginPage = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +16,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
     setIsLoading(true);
     await login(email, 'customer');
     setIsLoading(false);
-    onNavigate('profile');
+    // Navigate to profile or home
   };
 
   return (
@@ -43,10 +39,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
       {/* Form Side */}
       <div className="flex-1 flex flex-col justify-center p-6 sm:p-12 md:p-16 bg-white dark:bg-gray-900">
         <div className="w-full max-w-md mx-auto">
-           <button onClick={() => onNavigate('home')} className="flex items-center gap-2 text-gray-500 hover:text-ray-blue mb-8 transition">
+           <a href="/" className="flex items-center gap-2 text-gray-500 hover:text-ray-blue mb-8 transition">
               <ArrowRight className="w-4 h-4" />
               العودة للرئيسية
-           </button>
+           </a>
 
            <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2">تسجيل الدخول</h2>
            <p className="text-gray-500 dark:text-gray-400 mb-8">أدخل بيانات حسابك للمتابعة</p>
@@ -106,7 +102,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
 
               <p className="text-center text-gray-600 dark:text-gray-400 mt-6">
                  ليس لديك حساب؟ 
-                 <button onClick={() => onNavigate('signup')} className="text-ray-blue dark:text-ray-gold font-bold hover:underline mx-1">أنشئ حساب جديد</button>
+                 <a href="/signup" className="text-ray-blue dark:text-ray-gold font-bold hover:underline mx-1">أنشئ حساب جديد</a>
               </p>
            </form>
         </div>

@@ -54,7 +54,7 @@ const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
       >
         {/* Header */}
-        {(title || onClose) && (
+        {title && (
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
             {title && <h3 className="text-lg font-bold text-gray-800 dark:text-white">{title}</h3>}
             <button 

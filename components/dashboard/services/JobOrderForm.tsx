@@ -32,7 +32,7 @@ const JobOrderForm: React.FC<JobOrderFormProps> = ({ onClose, onSave, initialDat
     try {
         const prompt = `أنا فني صيانة. لدي جهاز: ${formData.device}، والمشكلة هي: ${formData.issue}. اقترح خطوات التشخيص وأسباب العطل المحتملة في نقاط مختصرة.`;
         const diagnosis = await getGeminiResponse(prompt, 'merchant');
-        setFormData(prev => ({ ...prev, diagnosisNotes: diagnosis }));
+        setFormData((prev: any) => ({ ...prev, diagnosisNotes: diagnosis }));
     } catch (e) {
         console.error(e);
     } finally {
