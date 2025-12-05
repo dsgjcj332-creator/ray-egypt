@@ -1,11 +1,10 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Store, Utensils, Home, Car, Stethoscope, Dumbbell, 
   Wrench, Shirt, ShoppingBag, Scissors, Pill, Briefcase, 
   ArrowLeft, CheckCircle, ShieldCheck, HardHat, ArrowRight, Menu, X, LayoutGrid,
   Baby, Gavel, Users, Umbrella, Sun, Zap, TrendingUp, BarChart3, Clock, Lock, Cloud,
-  Phone, Mail, MapPin
+  Phone, Mail, MapPin, Star, Shield, Award, ChevronRight
 } from 'lucide-react';
 
 interface SystemsHubProps {
@@ -15,6 +14,11 @@ interface SystemsHubProps {
 
 const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketplace }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  
+  const handleGoToMerchant = () => {
+    // Simulate navigation to merchant page
+    window.location.href = '/merchant/supermarket-khair-zaman';
+  };
 
   const systems = [
     {
@@ -78,6 +82,12 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
                     العودة للمتجر
                   </button>
                   <div className="h-6 w-px bg-slate-700"></div>
+                  <button 
+                    onClick={handleGoToMerchant}
+                    className="text-sm font-bold text-white hover:text-ray-gold transition"
+                  >
+                    عرض مثال محل
+                  </button>
                   <button className="text-sm font-bold text-white hover:text-ray-gold transition">تسجيل الدخول</button>
                   <button 
                      onClick={() => onSystemSelect('general')}
@@ -489,6 +499,7 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
               <div className="flex gap-8 text-sm font-bold">
                 <a href="#" className="hover:text-white transition-colors">الشروط والأحكام</a>
                 <a href="#" className="hover:text-white transition-colors">سياسة الخصوصية</a>
+                <a href="/jobs" className="hover:text-white transition-colors">وظائف</a>
                 <a href="#" className="hover:text-white transition-colors">سياسة الاستخدام</a>
                 <a href="#" className="hover:text-white transition-colors">معلومات قانونية</a>
               </div>

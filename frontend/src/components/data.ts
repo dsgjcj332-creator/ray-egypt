@@ -86,15 +86,15 @@ export const allCategories: MainCategory[] = [
   },
   {
     id: 'beauty',
-    name: 'الجمال والعناية',
+    name: 'الجيم والصالة',
     icon: Sparkles,
     color: 'bg-pink-50 text-pink-600',
     sub: [
-      { id: 'women', name: 'صالونات نسائية' },
-      { id: 'men', name: 'صالونات رجالية' },
-      { id: 'centers', name: 'مراكز تجميل' },
+      { id: 'gym', name: 'جيم أونلاين' },
+      { id: 'fitness', name: 'صالات رياضية' },
       { id: 'spa', name: 'سبا ومساج' },
-      { id: 'gym', name: 'صالات رياضية' }
+      { id: 'women', name: 'صالونات نسائية' },
+      { id: 'men', name: 'صالونات رجالية' }
     ]
   },
   {
@@ -110,32 +110,6 @@ export const allCategories: MainCategory[] = [
       { id: 'lab', name: 'معامل تحاليل' }
     ]
   },
-  {
-    id: 'education',
-    name: 'التعليم والتدريب',
-    icon: GraduationCap,
-    color: 'bg-indigo-50 text-indigo-600',
-    sub: [
-      { id: 'center', name: 'مراكز تعليمية' },
-      { id: 'online', name: 'كورسات أونلاين' },
-      { id: 'art', name: 'دورات فنية' },
-      { id: 'academy', name: 'أكاديميات رياضية' },
-      { id: 'music', name: 'تعليم موسيقى' }
-    ]
-  },
-  {
-    id: 'entertainment',
-    name: 'الترفيه والسياحة',
-    icon: Ticket,
-    color: 'bg-purple-50 text-purple-600',
-    sub: [
-      { id: 'cinema', name: 'السينما والمسارح' },
-      { id: 'parks', name: 'ملاهي وألعاب' },
-      { id: 'travel', name: 'وكالات سفر' },
-      { id: 'hotel', name: 'حجز فنادق' },
-      { id: 'events', name: 'حجز تذاكر فعاليات' }
-    ]
-  }
 ];
 
 export interface Offer {

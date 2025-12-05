@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Star, TrendingUp } from 'lucide-react';
 
 interface MerchantOrderingProps {
   categories: string[];
@@ -33,31 +33,80 @@ const MerchantOrdering: React.FC<MerchantOrderingProps> = ({ categories, menuIte
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-24">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24">
         {menuItems.filter(i => activeCategory === 'الكل' || i.category === activeCategory).map((item) => (
-          <div 
-            key={item.id} 
-            onClick={() => onProductClick ? onProductClick(item) : addToCart(item)}
-            className="group bg-white dark:bg-gray-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex gap-4 hover:border-ray-blue/30 dark:hover:border-ray-gold/30 hover:shadow-md transition cursor-pointer active:scale-[0.98]"
-          >
-            <div className="w-32 h-32 bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden shrink-0 relative">
-              <img 
-                src={item.img} 
-                className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
-                alt={item.name} 
+          <div key={item.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 group">
+            {/* Product Image */}
+            <div className="relative h-48 overflow-hidden bg-gray-100">
+              <img
+                src={item.img}
+                alt={item.name}
+                className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                 loading="lazy"
               />
               {item.popular && (
-                <span className="absolute top-1.5 right-1.5 bg-ray-gold text-ray-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">مميز</span>
+                <div className="absolute top-4 right-4 bg-ray-gold text-gray-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                  الأكثر مبيعاً
+                </div>
               )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
-            <div className="flex-1 flex flex-col py-1 min-w-0">
-              <h4 className="font-bold text-gray-900 dark:text-white line-clamp-2 text-base group-hover:text-ray-blue dark:group-hover:text-ray-gold transition leading-snug">{item.name}</h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-auto mt-1.5 leading-relaxed">{item.desc}</p>
-              <div className="flex justify-between items-center mt-3">
-                <span className="font-black text-gray-900 dark:text-white text-lg">{item.price} <span className="text-xs font-normal text-gray-500 dark:text-gray-400">ج.م</span></span>
-                <button className="bg-gray-100 dark:bg-gray-700 hover:bg-ray-blue dark:hover:bg-ray-gold hover:text-white dark:hover:text-ray-black text-gray-700 dark:text-gray-300 w-10 h-10 rounded-full flex items-center justify-center transition shadow-sm active:scale-90">
-                  <Plus className="w-6 h-6" />
+
+            {/* Product Info */}
+            <div className="p-4">
+              {/* Category */}
+              <div className="text-xs text-gray-500 mb-1">{item.category}</div>
+              
+              {/* Name */}
+              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-ray-blue transition">
+                {item.name}
+              </h3>
+              
+              {/* Description */}
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                {item.desc}
+              </p>
+
+              {/* Rating */}
+              <div className="flex items-center gap-1 mb-3">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < 4
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">
+                  4.5 (23 تقييم)
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xl font-bold text-ray-blue">
+                  {item.price} جنيه
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => onProductClick ? onProductClick(item) : addToCart(item)}
+                  className="flex-1 bg-ray-gold text-ray-black py-2 rounded-lg font-bold hover:bg-ray-gold/90 transition flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  أضف للسلة
+                </button>
+                <button 
+                  onClick={() => onProductClick && onProductClick(item)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                >
+                  <TrendingUp className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
             </div>

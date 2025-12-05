@@ -7,6 +7,7 @@ import SmartCompareModal from '../modals/SmartCompareModal';
 interface MerchantShowcaseProps {
   galleryImages: string[];
   merchantType: string; // 'realestate' | 'cars'
+  merchantId?: string;
 }
 
 // Mock data for specific inventories
@@ -24,7 +25,7 @@ const realEstateInventory = [
   { id: 4, title: 'مكتب إداري', type: 'إيجار', price: '45,000/شهر', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500', specs: { area: '90م', rooms: 2, bath: 1 }, desc: 'مقر إداري مرخص، تشطيب مكتب، تكييف مركزي، انترنت فايبر.' },
 ];
 
-const MerchantShowcase: React.FC<MerchantShowcaseProps> = ({ galleryImages, merchantType }) => {
+const MerchantShowcase: React.FC<MerchantShowcaseProps> = ({ galleryImages, merchantType, merchantId }) => {
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
   

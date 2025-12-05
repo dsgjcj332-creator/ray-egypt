@@ -45,13 +45,18 @@ const HomePage: React.FC<HomePageProps> = ({ onProductClick, onNavigate }) => {
                 المنصة الرقمية المتكاملة الأولى في مصر. اطلب أكلك، اشتري لبسك، احجز ملعبك، وجدد شقتك.. كله في مكان واحد وبضغطة زر.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                <button className="px-8 py-4 bg-ray-gold text-ray-black font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(253,184,19,0.3)] hover:shadow-[0_0_30px_rgba(253,184,19,0.5)] hover:-translate-y-1 transition duration-300 w-full sm:w-auto active:scale-95">
+                <button 
+                  onClick={() => onNavigate?.('category_listing')}
+                  className="px-8 py-4 bg-ray-gold text-ray-black font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(253,184,19,0.3)] hover:shadow-[0_0_30px_rgba(253,184,19,0.5)] hover:-translate-y-1 transition duration-300 w-full sm:w-auto active:scale-95 flex items-center justify-center gap-2 group"
+                >
+                  <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition duration-300" />
                   ابدأ التسوق الآن
                 </button>
                 <button 
                   onClick={() => onNavigate?.('offers')}
-                  className="px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold text-lg rounded-xl hover:bg-white hover:text-ray-blue transition duration-300 w-full sm:w-auto active:scale-95"
+                  className="px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold text-lg rounded-xl hover:bg-white hover:text-ray-blue transition duration-300 w-full sm:w-auto active:scale-95 flex items-center justify-center gap-2 group"
                 >
+                  <Sparkles className="w-5 h-5 group-hover:rotate-12 transition duration-300" />
                   اكتشف العروض
                 </button>
               </div>

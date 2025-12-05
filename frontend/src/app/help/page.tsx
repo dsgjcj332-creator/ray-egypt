@@ -3,7 +3,7 @@
 import React from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import HelpView from '@/components/views/HelpView';
+import HelpCenterView from '@/components/views/HelpCenterView';
 import { useRouter } from 'next/navigation';
 
 export default function HelpPage() {
@@ -13,7 +13,7 @@ export default function HelpPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans dir-rtl">
       <Header />
       <main>
-        <HelpView onNavigate={(view: string) => router.push(`/${view}`)} />
+        <HelpCenterView onNavigate={(view: string) => router.push(`/${view}`)} />
       </main>
       <Footer onGoToSystems={() => router.push('/systems')} />
     </div>

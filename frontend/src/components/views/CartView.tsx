@@ -1,15 +1,65 @@
 import React, { useState, useMemo } from 'react';
-import { ShoppingBag, Trash2, Plus, Minus, Store } from 'lucide-react';
+import { ShoppingBag, Trash2, Plus, Minus, Store, Eye, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  qty: number;
+  shop: string;
+  image?: string;
+  description?: string;
+  category?: string;
+  size?: string;
+  color?: string;
+}
 
 interface CartViewProps {
   onNavigate?: (view: string) => void;
 }
 
 const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
-  const [cart, setCart] = useState([
-    { id: 1, name: 'تيشيرت قطن', price: 120, qty: 2, shop: 'محمل أزياء' },
-    { id: 2, name: 'جينز أزرق', price: 280, qty: 1, shop: 'محمل أزياء' },
+  const router = useRouter();
+  const [cart, setCart] = useState<CartItem[]>([
+    { 
+      id: 1, 
+      name: 'تيشيرت قطن', 
+      price: 120, 
+      qty: 2, 
+      shop: 'محمل أزياء',
+      image: '/api/placeholder/80/80',
+      description: 'تيشيرت قطن عالي الجودة، مريح ومناسب لكل الفصول',
+      category: 'ملابس',
+      size: 'L',
+      color: 'أبيض'
+    },
+    { 
+      id: 2, 
+      name: 'جينز أزرق', 
+      price: 280, 
+      qty: 1, 
+      shop: 'محمل أزياء',
+      image: '/api/placeholder/80/80',
+      description: 'جينز أزرق كلاسيكي، مقاس منتظم، مناسبة لكل المناسبات',
+      category: 'ملابس',
+      size: '32',
+      color: 'أزرق'
+    },
+    { 
+      id: 3, 
+      name: 'حذاء رياضي', 
+      price: 450, 
+      qty: 1, 
+      shop: 'متجر الأحذية',
+      image: '/api/placeholder/80/80',
+      description: 'حذاء رياضي خفيف ومريح، مثالي للتمارين والجري',
+      category: 'أحذية',
+      size: '42',
+      color: 'أسود'
+    },
   ]);
+  const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
 
   const groupedCart = useMemo(() => {
     const groups: Record<string, any[]> = {};
@@ -22,6 +72,21 @@ const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
   }, [cart]);
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+  const updateQuantity = (id: number, newQty: number) => {
+    if (newQty < 1) return;
+    setCart(prev => prev.map(item => 
+      item.id === id ? { ...item, qty: newQty } : item
+    ));
+  };
+
+  const removeItem = (id: number) => {
+    setCart(prev => prev.filter(item => item.id !== id));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
 
   if (cart.length === 0) {
     return (
@@ -40,44 +105,205 @@ const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-gray-900 mb-8">سلة المشتريات</h2>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-3xl font-bold text-gray-900">سلة المشتريات ({cart.length} منتجات)</h2>
+        {cart.length > 0 && (
+          <button
+            onClick={clearCart}
+            className="text-red-600 hover:text-red-700 font-medium text-sm"
+          >
+            إفراغ السلة
+          </button>
+        )}
+      </div>
       
       {Object.entries(groupedCart).map(([shopName, items]) => (
         <div key={shopName} className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <Store className="w-5 h-5 text-blue-600" />
-            <h3 className="font-bold text-gray-900">{shopName}</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Store className="w-5 h-5 text-blue-600" />
+              <h3 className="font-bold text-gray-900">{shopName}</h3>
+              <span className="text-sm text-gray-500">({items.length} منتجات)</span>
+            </div>
+            <span className="font-bold text-blue-600">
+              {items.reduce((sum, item) => sum + (item.price * item.qty), 0)} ج.م
+            </span>
           </div>
           
           {items.map(item => (
-            <div key={item.id} className="flex items-center gap-4 py-4 border-b">
-              <div className="w-20 h-20 bg-gray-100 rounded-lg"></div>
-              <div className="flex-1">
-                <h4 className="font-bold text-gray-900">{item.name}</h4>
-                <p className="text-gray-500">{item.price} ج.م</p>
+            <div key={item.id} className="flex items-center gap-4 py-4 border-b last:border-b-0">
+              {/* Product Image */}
+              <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <img 
+                  src={item.image || '/api/placeholder/80/80'} 
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
+              
+              {/* Product Info */}
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-gray-900 truncate">{item.name}</h4>
+                <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                  {item.size && <span>المقاس: {item.size}</span>}
+                  {item.color && <span>•</span>}
+                  {item.color && <span>اللون: {item.color}</span>}
+                </div>
+                <p className="text-lg font-bold text-blue-600 mt-1">{item.price} ج.م</p>
+              </div>
+              
+              {/* Quantity Controls */}
               <div className="flex items-center gap-2">
-                <button className="w-8 h-8 rounded-lg bg-gray-100">-</button>
-                <span>{item.qty}</span>
-                <button className="w-8 h-8 rounded-lg bg-gray-100">+</button>
+                <button 
+                  onClick={() => updateQuantity(item.id, item.qty - 1)}
+                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center"
+                  disabled={item.qty <= 1}
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="w-8 text-center font-medium">{item.qty}</span>
+                <button 
+                  onClick={() => updateQuantity(item.id, item.qty + 1)}
+                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
               </div>
-              <button className="text-red-500">
-                <Trash2 className="w-5 h-5" />
-              </button>
+              
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setSelectedItem(item)}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                  title="عرض التفاصيل"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => removeItem(item.id)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                  title="حذف من السلة"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       ))}
       
+      {/* Cart Summary */}
       <div className="bg-white rounded-2xl p-6 shadow-sm">
-        <div className="flex justify-between mb-4">
-          <span>المجموع:</span>
-          <span className="font-bold">{cartTotal} ج.م</span>
+        <div className="space-y-3 mb-6">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">المجموع الفرعي</span>
+            <span>{cartTotal} ج.م</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">رسوم الشحن</span>
+            <span>30 ج.م</span>
+          </div>
+          <div className="flex justify-between font-bold text-lg pt-3 border-t">
+            <span>الإجمالي</span>
+            <span className="text-blue-600">{cartTotal + 30} ج.م</span>
+          </div>
         </div>
-        <button className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">
-          إتمام الشراء
-        </button>
+        
+        <div className="space-y-3">
+          <button 
+            onClick={() => router.push('/checkout')}
+            className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"
+          >
+            إتمام الشراء
+          </button>
+          <button 
+            onClick={() => onNavigate && onNavigate('home')}
+            className="w-full border border-gray-300 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-50 transition"
+          >
+            مواصلة التسوق
+          </button>
+        </div>
       </div>
+
+      {/* Product Details Modal */}
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900">تفاصيل المنتج</h2>
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <div className="flex gap-6 mb-6">
+                <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                  <img 
+                    src={selectedItem.image || '/api/placeholder/128/128'} 
+                    alt={selectedItem.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedItem.name}</h3>
+                  <p className="text-gray-600 mb-4">{selectedItem.description}</p>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    {selectedItem.category && <span>التصنيف: {selectedItem.category}</span>}
+                    {selectedItem.size && <span>المقاس: {selectedItem.size}</span>}
+                    {selectedItem.color && <span>اللون: {selectedItem.color}</span>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">السعر</p>
+                  <p className="text-2xl font-bold text-blue-600">{selectedItem.price} ج.م</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">الكمية في السلة</p>
+                  <p className="text-2xl font-bold text-gray-900">{selectedItem.qty}</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-bold text-blue-900 mb-2">معلومات المتجر</h4>
+                <div className="flex items-center gap-2 text-blue-700">
+                  <Store className="w-4 h-4" />
+                  <span>{selectedItem.shop}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-gray-200">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                >
+                  إغلاق
+                </button>
+                <button
+                  onClick={() => removeItem(selectedItem.id)}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                >
+                  حذف من السلة
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

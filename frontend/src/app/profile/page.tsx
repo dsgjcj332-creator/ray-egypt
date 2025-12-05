@@ -14,7 +14,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans dir-rtl">
       <Header />
       <main className="pt-4">
-        <UserProfileView onNavigate={(view: string) => router.push(`/${view}`)} />
+        <UserProfileView />
       </main>
       <Footer onGoToSystems={() => router.push('/systems')} />
     </div>

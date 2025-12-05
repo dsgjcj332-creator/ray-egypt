@@ -28,35 +28,6 @@ const Footer: React.FC<FooterProps> = ({ onGoToSystems, onNavigate }) => {
 
   return (
     <footer className="bg-white dark:bg-gray-900 pt-16 border-t border-gray-200 dark:border-gray-800 transition-colors mt-auto">
-      
-      {/* Offers & Discounts Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="bg-gradient-to-r from-red-600 to-red-700 dark:from-red-900 dark:to-red-950 rounded-3xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl dark:shadow-none border border-red-500 group">
-           <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
-           <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-yellow-400 rounded-full blur-[100px] opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
-           
-           <div className="relative z-10 max-w-xl text-center md:text-right">
-              <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-yellow-300 mb-4 border border-white/10">
-                <span className="text-lg">🎯</span>
-                عروض حصرية
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black mb-4 text-white leading-tight">عروض وخصومات اليوم</h2>
-              <p className="text-gray-100 text-lg leading-relaxed">
-                اكتشف أفضل العروض والخصومات على جميع المنتجات والخدمات. توفير يصل إلى 70%!
-              </p>
-           </div>
-           <div className="relative z-10">
-              <button 
-                onClick={(e) => handleNavClick(e, 'offers')}
-                className="bg-yellow-400 text-red-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 transition shadow-lg flex items-center gap-2 group/btn w-full md:w-auto justify-center transform hover:-translate-y-1"
-              >
-                <span className="text-xl">💰</span>
-                عرض العروض
-                <ArrowLeft className="w-5 h-5 transition-transform group-hover/btn:-translate-x-1" />
-              </button>
-           </div>
-        </div>
-      </div>
 
       {/* Standard Footer Links */}
       <div className="bg-gray-50 dark:bg-gray-950 pt-16 pb-8 border-t border-gray-200 dark:border-gray-800 transition-colors">
@@ -96,7 +67,7 @@ const Footer: React.FC<FooterProps> = ({ onGoToSystems, onNavigate }) => {
               <h4 className="font-bold text-ray-black dark:text-white mb-4">عن راي</h4>
               <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <li><a href="/about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-ray-blue dark:hover:text-ray-gold transition block">من نحن</a></li>
-                <li><a href="/jobs" className="hover:text-ray-blue dark:hover:text-ray-gold transition block">الوظائف</a></li>
+                <li><a href="/business-jobs" className="hover:text-ray-blue dark:hover:text-ray-gold transition block">وظائف الأنشطة</a></li>
                 <li><a href="/blog" className="hover:text-ray-blue dark:hover:text-ray-gold transition block">المدونة</a></li>
               </ul>
             </div>

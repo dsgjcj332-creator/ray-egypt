@@ -10,14 +10,21 @@ interface Review {
   text: string;
 }
 
-const initialReviews: Review[] = [
+// Mock reviews data - في الواقع ستأتي من API بناءً على merchantId
+const getMockReviews = (merchantId?: string): Review[] => [
   { id: 1, name: 'أحمد محمد', rating: 5, date: 'منذ يومين', text: 'تجربة ممتازة وخدمة راقية جداً. أنصح بالتعامل معهم.' },
   { id: 2, name: 'سارة علي', rating: 4, date: 'منذ أسبوع', text: 'المكان نظيف والأسعار معقولة، لكن الانتظار كان طويلاً قليلاً.' },
   { id: 3, name: 'كريم حسن', rating: 5, date: 'منذ شهر', text: 'الأفضل في المنطقة بلا منازع!' },
+  { id: 4, name: 'مريم أحمد', rating: 5, date: 'منذ أسبوعين', text: 'خدمة ممتازة ومنتجات عالية الجودة. سأعود مرة أخرى بالتأكيد!' },
+  { id: 5, name: 'ياسر علي', rating: 4, date: 'منذ 3 أسابيع', text: 'جيد جداً لكن يحتاج تحسين في سرعة التوصيل.' },
 ];
 
-const MerchantReviews: React.FC = () => {
-  const [reviews, setReviews] = useState(initialReviews);
+interface MerchantReviewsProps {
+  merchantId?: string;
+}
+
+const MerchantReviews: React.FC<MerchantReviewsProps> = ({ merchantId }) => {
+  const [reviews, setReviews] = useState(getMockReviews(merchantId));
   const [newReview, setNewReview] = useState('');
   const [newRating, setNewRating] = useState(0);
   const [hoveredStar, setHoveredStar] = useState(0);

@@ -10,6 +10,11 @@ import MerchantCart from '../merchant/MerchantCart';
 import MerchantBooking from '../merchant/MerchantBooking';
 import MerchantShowcase from '../merchant/MerchantShowcase';
 import MerchantReviews from '../merchant/MerchantReviews';
+import MerchantGalleryManager from '../merchant/MerchantGalleryManager';
+import MerchantOffers from '../merchant/MerchantOffers';
+import MerchantDiscountProducts from '../merchant/MerchantDiscountProducts';
+import RestaurantMenu from '../merchant/RestaurantMenu';
+import TableBooking from '../merchant/TableBooking';
 import ProductDetailView from './ProductDetailView'; // استخدام الملف الجديد بدون Context
 
 interface MerchantProps {
@@ -19,12 +24,13 @@ interface MerchantProps {
 
 const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
   // Determine Mode
-  const isBooking = ['clinic', 'beauty', 'health', 'gym', 'salon'].includes(merchant.category);
+  const isBooking = ['clinic', 'beauty', 'health', 'gym', 'salon', 'services'].includes(merchant.category);
   const isShowcase = ['realestate', 'cars'].includes(merchant.category);
-  const isOrdering = ['food', 'shopping', 'services'].includes(merchant.category) || !merchant.category;
+  const isOrdering = ['shopping'].includes(merchant.category) || !merchant.category;
+  const isRestaurant = ['food', 'restaurant', 'cafe'].includes(merchant.category);
 
   // Set default tab based on mode
-  const [activeTab, setActiveTab] = useState(isBooking ? 'main' : isShowcase ? 'showcase' : 'menu');
+  const [activeTab, setActiveTab] = useState(isBooking ? 'main' : isShowcase ? 'showcase' : isRestaurant ? 'menu' : 'menu');
   
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShareToast, setShowShareToast] = useState(false);
@@ -35,6 +41,16 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
   const [isOrderSuccess, setIsOrderSuccess] = useState(false);
+  
+  // Gallery State
+  const [galleryImages, setGalleryImages] = useState([
+    "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=80",
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80",
+    "https://images.unsplash.com/photo-1559329007-406870008023?w=1200&q=80"
+  ]);
+  
+  // Mock owner check - في الواقع ستأتي من auth context
+  const isOwner = false;
 
   // Mock Data
   const staffList = [
@@ -50,23 +66,29 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
     { id: 4, name: 'جلسة علاجية', price: 350, duration: '45 دقيقة', desc: 'جلسة علاج طبيعي أو تأهيل' },
   ];
 
-  const menuItems = [
-    { id: 1, name: 'تيشيرت قطن أبيض', price: 120, category: 'ملابس', desc: 'تيشيرت قطن 100% مريح وناعم', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', popular: true },
-    { id: 2, name: 'بنطلون جينز أزرق', price: 280, category: 'ملابس', desc: 'جينز أصلي مريح وعملي', img: 'https://images.unsplash.com/photo-1542272617-08f086302542?w=400' },
-    { id: 3, name: 'حذاء رياضي أسود', price: 450, category: 'أحذية', desc: 'حذاء رياضي مريح وعالي الجودة', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', popular: true },
-    { id: 4, name: 'شنطة يد جلدية', price: 350, category: 'إكسسوارات', desc: 'شنطة جلدية أصلية فاخرة', img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400' },
-    { id: 5, name: 'ساعة يد ذهبية', price: 650, category: 'إكسسوارات', desc: 'ساعة يد فاخرة بتصميم عصري', img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400' },
-    { id: 6, name: 'نظارة شمسية', price: 280, category: 'إكسسوارات', desc: 'نظارة شمسية عالية الجودة', img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400' },
+  // Restaurant menu items with all required properties
+  const restaurantMenuItems = [
+    { id: 1, name: 'مشاوي مشكلة', price: 180, image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683be?w=400', category: 'مشويات', description: 'تشكيلة من أفضل المشاوي اللذيذة', rating: 4.8, reviews: 45, prepTime: '25-30 دقيقة', popular: true },
+    { id: 2, name: 'فاهيتا دجاج', price: 120, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'مقبلات', description: 'دجاج مقرمش مع الخضروات الطازجة', rating: 4.6, reviews: 32, prepTime: '15-20 دقيقة', spicy: true },
+    { id: 3, name: 'كباب لحم', price: 220, image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400', category: 'مشويات', description: 'كباب لحم ضأن طازج مع التوابل الأصلية', rating: 4.9, reviews: 67, prepTime: '30-35 دقيقة', popular: true },
+    { id: 4, name: 'سلطة فواكه', price: 45, image: 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400', category: 'سلطات', description: 'تشكيلة فواكه موسمية طازجة', rating: 4.5, reviews: 23, prepTime: '5-10 دقائق', vegetarian: true },
+    { id: 5, name: 'منسف دجاج', price: 250, image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400', category: 'أطباق رئيسية', description: 'منسف دجاج مع الأرز البسمتي والمكسرات', rating: 4.7, reviews: 51, prepTime: '35-40 دقيقة' },
+    { id: 6, name: 'مكرونة بالباشميل', price: 85, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'أطباق رئيسية', description: 'مكرونة بالباشميل الفرنسية الأصلية', rating: 4.6, reviews: 38, prepTime: '20-25 دقيقة', vegetarian: true }
   ];
 
-  const categories = ['الكل', 'ملابس', 'أحذية', 'إكسسوارات', 'عروض'];
-  
-  const galleryImages = [
-    merchant.image,
-    'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80',
-    'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=80',
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+  // Store menu items for regular stores
+  const storeMenuItems = [
+    { id: 1, name: 'تيشيرت قطن أبيض', price: 120, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', category: 'ملابس', desc: 'تيشيرت قطن 100% مريح وناعم', popular: true },
+    { id: 2, name: 'بنطلون جينز أزرق', price: 280, img: 'https://images.unsplash.com/photo-1542272617-08f086302542?w=400', category: 'ملابس', desc: 'جينز أصلي مريح وعملي' },
+    { id: 3, name: 'حذاء رياضي أسود', price: 450, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', category: 'أحذية', desc: 'حذاء رياضي مريح وعالي الجودة' },
+    { id: 4, name: 'شنطة يد جلدية', price: 350, img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400', category: 'إكسسوارات', desc: 'شنطة جلدية أصلية فاخرة' },
+    { id: 5, name: 'ساعة يد ذهبية', price: 650, img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400', category: 'إكسسوارات', desc: 'ساعة يد فاخرة بتصميم عصري' },
+    { id: 6, name: 'نظارة شمسية', price: 280, img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400', category: 'إكسسوارات', desc: 'نظارة شمسية عالية الجودة' }
   ];
+
+  const menuItems = isRestaurant ? restaurantMenuItems : storeMenuItems;
+
+  const categories = isRestaurant ? ['الكل', 'مشويات', 'مقبلات', 'أطباق رئيسية', 'سلطات'] : ['الكل', 'ملابس', 'أحذية', 'إكسسوارات', 'عروض'];
 
   const handleShare = () => {
     setShowShareToast(true);
@@ -112,9 +134,38 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
 
   // Generate Tabs based on type
   const getTabs = () => {
-    if (isBooking) return [{ id: 'main', label: 'الحجز' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'عن المكان' }];
-    if (isShowcase) return [{ id: 'showcase', label: merchant.category === 'realestate' ? 'الوحدات' : 'السيارات' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'عن الشركة' }];
-    return [{ id: 'menu', label: 'المنتجات' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'المعلومات' }];
+    const baseTabs = [{ id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'المعلومات' }];
+    
+    if (isBooking) {
+      return [{ id: 'main', label: 'الحجز' }, ...baseTabs];
+    }
+    if (isShowcase) {
+      const tabs = [{ id: 'showcase', label: merchant.category === 'realestate' ? 'الوحدات' : 'السيارات' }];
+      
+      // Add gallery tab only for real estate
+      if (merchant.category === 'realestate') {
+        tabs.push({ id: 'gallery', label: 'المعرض' });
+      }
+      
+      return [...tabs, ...baseTabs];
+    }
+    
+    const tabs = [{ id: 'menu', label: isRestaurant ? 'المنيو' : 'المنتجات' }];
+    
+    // Add booking tab for restaurants
+    if (isRestaurant) {
+      tabs.push({ id: 'booking', label: 'حجز طاولات' });
+    }
+    
+    // Add gallery tab for all users
+    tabs.push({ id: 'gallery', label: 'معرض الصور' });
+    
+    // Add offers tab only for non-restaurants
+    if (!isRestaurant) {
+      tabs.push({ id: 'offers', label: 'العروض' });
+    }
+    
+    return [...tabs, ...baseTabs];
   };
 
   const tabs = getTabs();
@@ -169,14 +220,42 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
         )}
         
         {activeTab === 'showcase' && isShowcase && (
-           <MerchantShowcase galleryImages={galleryImages} merchantType={merchant.category} />
+           <MerchantShowcase galleryImages={galleryImages} merchantType={merchant.category} merchantId={merchant.id} />
         )}
         
         {activeTab === 'menu' && isOrdering && (
            <MerchantOrdering categories={categories} menuItems={menuItems} addToCart={addToCart} onProductClick={setSelectedProduct} />
         )}
 
-        {activeTab === 'reviews' && <MerchantReviews />}
+        {activeTab === 'menu' && isRestaurant && (
+           <RestaurantMenu 
+             categories={categories} 
+             menuItems={restaurantMenuItems} 
+             addToCart={addToCart} 
+             onProductClick={setSelectedProduct} 
+           />
+        )}
+
+        {activeTab === 'booking' && isRestaurant && (
+           <TableBooking 
+             merchantId={merchant.id} 
+             merchantName={merchant.name} 
+           />
+        )}
+
+        {activeTab === 'gallery' && (
+           <MerchantGalleryManager 
+             images={galleryImages} 
+             onImagesChange={setGalleryImages}
+             isOwner={isOwner}
+           />
+        )}
+
+        {activeTab === 'offers' && (
+           <MerchantDiscountProducts merchantId={merchant.id} />
+        )}
+
+        {activeTab === 'reviews' && <MerchantReviews merchantId={merchant.id} />}
 
         {activeTab === 'about' && (
           <div className="space-y-6 animate-in fade-in">
@@ -285,10 +364,58 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
             <div>
               <h4 className="font-bold text-white mb-4 text-sm">روابط سريعة</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">المنتجات</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">التقييمات</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">المعلومات</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">اتصل بنا</a></li>
+                <li>
+                  <button 
+                    onClick={() => setActiveTab('menu')}
+                    className="text-gray-400 hover:text-ray-gold transition"
+                  >
+                    {isRestaurant ? 'المنيو' : isShowcase ? 'المعرض' : isBooking ? 'المعرض' : 'المنتجات'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setActiveTab('reviews')}
+                    className="text-gray-400 hover:text-ray-gold transition"
+                  >
+                    التقييمات
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setActiveTab('about')}
+                    className="text-gray-400 hover:text-ray-gold transition"
+                  >
+                    المعلومات
+                  </button>
+                </li>
+                {isRestaurant && (
+                  <li>
+                    <button 
+                      onClick={() => setActiveTab('booking')}
+                      className="text-gray-400 hover:text-ray-gold transition"
+                    >
+                      حجز طاولات
+                    </button>
+                  </li>
+                )}
+                {isShowcase && merchant.category === 'realestate' && (
+                  <li>
+                    <button 
+                      onClick={() => setActiveTab('gallery')}
+                      className="text-gray-400 hover:text-ray-gold transition"
+                    >
+                      المعرض
+                    </button>
+                  </li>
+                )}
+                <li>
+                  <button 
+                    onClick={handleCall}
+                    className="text-gray-400 hover:text-ray-gold transition"
+                  >
+                    اتصل بنا
+                  </button>
+                </li>
               </ul>
             </div>
 
