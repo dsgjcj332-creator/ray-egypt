@@ -19,7 +19,10 @@ import ClothingDashboard from './dashboard/clothing/ClothingDashboard';
 import SalonDashboard from './dashboard/salon/SalonDashboard';
 import ContractingDashboard from './dashboard/contracting/ContractingDashboard';
 import CarWashDashboard from './dashboard/carwash/CarWashDashboard'; 
-import GeneralOverview from './dashboard/views/GeneralOverview';
+import AdminDashboard from './dashboard/admin/AdminDashboard';
+import SystemManagementView from './dashboard/admin/SystemManagementView';
+import UserManagementView from './dashboard/admin/UserManagementView';
+import ReportsView from './dashboard/admin/ReportsView';
 
 // Generic Views
 import Overview from './dashboard/views/Overview';
@@ -34,16 +37,41 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
-  const [currentBusinessType, setCurrentBusinessType] = useState<BusinessType>(initialType);
+  // Check for admin mode from URL or localStorage
+  const [isAdmin, setIsAdmin] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userStored = localStorage.getItem('userType');
+      return urlParams.get('admin') === 'true' || userStored === 'admin';
+    }
+    return false;
+  });
+
+  const [currentBusinessType, setCurrentBusinessType] = useState<BusinessType>(isAdmin ? 'admin' : 'general');
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(colorClasses['slate']);
+
+  // Update admin mode when localStorage or URL changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userStored = localStorage.getItem('userType');
+      const shouldBeAdmin = urlParams.get('admin') === 'true' || userStored === 'admin';
+      
+      if (shouldBeAdmin !== isAdmin) {
+        setIsAdmin(shouldBeAdmin);
+        setCurrentBusinessType(shouldBeAdmin ? 'admin' : 'general');
+      }
+    }
+  }, [isAdmin]);
 
   // Ensure if initialType changes, we update
   useEffect(() => {
-    if (initialType) {
+    if (initialType && !isAdmin) {
       setCurrentBusinessType(initialType);
     }
-  }, [initialType]);
+  }, [initialType, isAdmin]);
 
   const renderGenericContent = (type: BusinessType) => {
     const theme = colorClasses[dashboardConfigs[type]?.themeColor || 'blue'];
@@ -144,17 +172,50 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
             onNavigate={setActiveTab}
           />
           <div className="flex-1 w-full max-w-7xl mx-auto">
-             {activeTab === 'settings' ? <SettingsView /> : <GeneralOverview onSwitchType={setCurrentBusinessType} />}
+             {activeTab === 'settings' ? <SettingsView /> : 
+ activeTab === 'system-management' ? <SystemManagementView /> :
+ activeTab === 'user-management' ? <UserManagementView /> :
+ activeTab === 'reports' ? <ReportsView /> :
+ <AdminDashboard onSwitchType={setCurrentBusinessType} />}
           </div>
         </main>
       </div>
     );
   };
 
-  const renderDashboard = () => {
+  const renderAdminDashboard = () => {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex font-sans transition-colors">
+        <Sidebar 
+          config={dashboardConfigs['general']} 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          onLogout={onLogout} 
+          currentBusinessType={'admin'}
+        />
+        <main className="flex-1 overflow-y-auto h-screen flex flex-col">
+          <Header 
+            config={dashboardConfigs['general']} 
+            currentBusinessType={'admin'} 
+            setCurrentBusinessType={setCurrentBusinessType} 
+            theme={colorClasses['slate']}
+            onMenuClick={() => setIsMobileMenuOpen(true)}
+            onNavigate={setActiveTab}
+          />
+          <div className="flex-1 w-full max-w-7xl mx-auto">
+             {activeTab === 'settings' ? <SettingsView /> : 
+             activeTab === 'system-management' ? <SystemManagementView /> :
+             activeTab === 'user-management' ? <UserManagementView /> :
+             activeTab === 'reports' ? <ReportsView /> :
+             <AdminDashboard onSwitchType={setCurrentBusinessType} />}
+          </div>
+        </main>
+      </div>
+    );
+  };
+
+  const renderBusinessDashboard = () => {
     switch (currentBusinessType) {
-      case 'general':
-        return renderGeneralHub();
       case 'restaurant':
         return <RestaurantDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'retail':
@@ -185,6 +246,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
       default:
         return renderGenericDashboard();
     }
+  };
+
+  const renderDashboard = () => {
+    if (currentBusinessType === 'admin') {
+      return renderAdminDashboard();
+    }
+    return renderBusinessDashboard();
   };
 
   return (

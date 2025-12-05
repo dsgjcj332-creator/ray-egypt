@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Settings, LogOut, LayoutGrid } from 'lucide-react';
+import { Settings, LogOut, LayoutGrid, Shield, Database, Users, FileText } from 'lucide-react';
 import { DashboardConfig, BusinessType } from '../config';
 
 interface SidebarProps {
@@ -60,6 +59,39 @@ const Sidebar: React.FC<SidebarProps> = ({ config, activeTab, setActiveTab, onLo
             onClick={() => setActiveTab(item.id)} 
           />
         ))}
+        
+        <div className="my-4 border-t border-blue-800 dark:border-gray-800 opacity-50"></div>
+        
+        {/* Admin Section */}
+        <div className="space-y-2">
+          <div className="px-3 py-2">
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+              <Shield className="w-3 h-3" />
+              لوحة الأدمن
+            </h3>
+          </div>
+          
+          <SidebarItem 
+            icon={Database} 
+            label="إدارة النظام" 
+            active={activeTab === 'system-management'}
+            onClick={() => setActiveTab('system-management')} 
+          />
+          
+          <SidebarItem 
+            icon={Users} 
+            label="إدارة المستخدمين" 
+            active={activeTab === 'user-management'}
+            onClick={() => setActiveTab('user-management')} 
+          />
+          
+          <SidebarItem 
+            icon={FileText} 
+            label="التقارير" 
+            active={activeTab === 'reports'}
+            onClick={() => setActiveTab('reports')} 
+          />
+        </div>
         
         <div className="my-4 border-t border-blue-800 dark:border-gray-800 opacity-50"></div>
         

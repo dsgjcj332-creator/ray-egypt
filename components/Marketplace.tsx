@@ -6,9 +6,9 @@ import GeminiAssistant from './common/GeminiAssistant';
 import Header from './marketplace/layout/Header';
 import Footer from './marketplace/layout/Footer';
 import MobileBottomNav from './marketplace/layout/MobileBottomNav';
-import Hero from './marketplace/sections/Hero';
-import Categories from './marketplace/sections/Categories';
-import Featured from './marketplace/sections/Featured';
+import HomePage from './marketplace/pages/HomePage';
+import SystemsHub from './marketplace/systems/SystemsHub';
+import SystemLanding from './marketplace/systems/SystemLanding';
 import { MarketplaceProvider } from '../context/MarketplaceContext'; 
 
 // Listings
@@ -172,11 +172,7 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
             />
 
             {currentView === 'offers' && !selectedCategory && (
-                <>
-                  <Hero />
-                  <Categories onNavigate={handleNavigate} />
-                  <Featured onProductClick={handleProductSelect} />
-                </>
+                <HomePage onProductClick={handleProductSelect} onNavigate={handleNavigate} />
             )}
 
             {renderCurrentView()}

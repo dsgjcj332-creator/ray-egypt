@@ -13,8 +13,34 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [userType, setUserType] = useState<'customer' | 'merchant'>(initialType);
   const [isLoading, setIsLoading] = useState(false);
+  const [adminClicks, setAdminClicks] = useState(0);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   if (!isOpen) return null;
+
+  const handleAdminLogoClick = () => {
+    setAdminClicks(prev => prev + 1);
+    if (adminClicks >= 4) {
+      setShowAdminLogin(true);
+      setAdminClicks(0);
+    }
+  };
+
+  const handleAdminLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const username = formData.get('admin-username');
+    const password = formData.get('admin-password');
+    
+    if (username === 'ادمن' && password === '1234') {
+      // Set admin mode and redirect
+      localStorage.setItem('userType', 'admin');
+      window.location.href = '/dashboard?admin=true';
+      onClose();
+    } else {
+      alert('بيانات الدخول غير صحيحة');
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +73,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
         <div className="flex flex-col h-full">
           {/* Header Section */}
           <div className="px-8 pt-8 pb-6 text-center bg-gradient-to-b from-blue-50/50 to-white">
-            <div className="w-12 h-12 bg-gradient-to-br from-ray-gold to-yellow-600 rounded-xl flex items-center justify-center shadow-lg text-ray-blue font-black text-2xl mx-auto mb-4">
+            <div 
+              onClick={handleAdminLogoClick}
+              className="w-12 h-12 bg-gradient-to-br from-ray-gold to-yellow-600 rounded-xl flex items-center justify-center shadow-lg text-ray-blue font-black text-2xl mx-auto mb-4 cursor-pointer hover:scale-105 transition-transform"
+            >
               R
             </div>
             <h2 className="text-2xl font-black text-ray-blue mb-1">
@@ -86,8 +115,40 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
             </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-4">
+          {/* Admin Login Form */}
+          {showAdminLogin && (
+            <form onSubmit={handleAdminLogin} className="px-8 pb-8 space-y-4 border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-bold text-center text-gray-800 mb-4">دخول المشرف</h3>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-700 mr-1">اسم المستخدم</label>
+                <input 
+                  type="text" 
+                  name="admin-username"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-4 focus:outline-none focus:border-ray-gold focus:ring-1 focus:ring-ray-gold transition"
+                  placeholder="ادمن"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-700 mr-1">كلمة المرور</label>
+                <input 
+                  type="password" 
+                  name="admin-password"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-4 focus:outline-none focus:border-ray-gold focus:ring-1 focus:ring-ray-gold transition"
+                  placeholder="1234"
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition"
+              >
+                دخول المشرف
+              </button>
+            </form>
+          )}
+
+          {/* Regular Form */}
+          {!showAdminLogin && (
+            <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-4">
             {mode === 'signup' && (
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-700 mr-1">الاسم بالكامل</label>
@@ -169,7 +230,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                 {mode === 'login' ? 'أنشئ حساب جديد' : 'سجل دخولك'}
               </button>
             </div>
-          </form>
+            </form>
+          )}
         </div>
       </div>
     </div>

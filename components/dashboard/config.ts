@@ -14,7 +14,7 @@ import {
   Bike, RotateCcw, ClipboardCheck, Baby, Gavel, Umbrella, Sun, UserCheck, LogOut
 } from 'lucide-react';
 
-export type BusinessType = 'general' | 'restaurant' | 'retail' | 'realestate' | 'cars' | 'clinic' | 'gym' | 'services' | 'laundry' | 'clothing' | 'salon' | 'pharmacy' | 'contracting' | 'carwash' | 'supermarket' | 'electronics' | 'nursery' | 'law' | 'consulting' | 'resort';
+export type BusinessType = 'general' | 'restaurant' | 'retail' | 'realestate' | 'cars' | 'clinic' | 'gym' | 'services' | 'laundry' | 'clothing' | 'salon' | 'pharmacy' | 'contracting' | 'carwash' | 'supermarket' | 'electronics' | 'nursery' | 'law' | 'consulting' | 'resort' | 'admin';
 
 export interface DashboardConfig {
   type: BusinessType;
@@ -699,6 +699,37 @@ export const dashboardConfigs: Record<BusinessType, DashboardConfig> = {
       { id: '#PH-101', col1: 'عميل نقدي', col2: '3 أدوية', col3: '450 ج', status: 'paid', time: 'منذ 10 د' },
       { id: '#PH-102', col1: 'أحمد محمد', col2: '1 دواء', col3: '85 ج', status: 'paid', time: 'منذ 30 د' },
       { id: '#PH-103', col1: 'شركة التأمين', col2: 'روشتة كاملة', col3: '1,200 ج', status: 'credit', time: 'منذ ساعة' },
+    ]
+  },
+
+  admin: {
+    type: 'admin',
+    title: 'لوحة التحكم الإدارية',
+    themeColor: 'purple',
+    navItems: [
+      { id: 'overview', label: 'نظرة عامة', icon: LayoutGrid },
+      { id: 'system-management', label: 'إدارة النظام', icon: Monitor },
+      { id: 'user-management', label: 'إدارة المستخدمين', icon: Users },
+      { id: 'reports', label: 'التقارير', icon: FileText },
+      { id: 'settings', label: 'الإعدادات', icon: Settings },
+    ],
+    stats: [
+      { label: 'المستخدمين النشطين', value: '24', trend: 12, icon: Users },
+      { label: 'أداء النظام', value: '99.9%', trend: 0.1, icon: Monitor },
+      { label: 'الطلبات اليوم', value: '342', trend: 15, icon: ShoppingBag },
+      { label: 'الدخل الشهري', value: '125.5K', trend: 8, icon: DollarSign },
+    ],
+    quickActions: [
+      { label: 'إضافة مستخدم', icon: Plus, action: 'add-user' },
+      { label: 'نسخ احتياطي', icon: ShieldCheck, action: 'backup' },
+      { label: 'تقرير جديد', icon: FileText, action: 'report' },
+      { label: 'صيانة', icon: Settings, action: 'maintenance' },
+    ],
+    tableHeaders: ['المستخدم', 'الدور', 'الحالة', 'آخر تسجيل', 'الإجراءات'],
+    data: [
+      { id: '#ADM-001', col1: 'أحمد محمد', col2: 'مشرف', col3: 'نشط', col4: '2025-12-05', status: 'active' },
+      { id: '#ADM-002', col1: 'سارة أحمد', col2: 'مدير', col3: 'نشط', col4: '2025-12-04', status: 'active' },
+      { id: '#ADM-003', col1: 'محمد علي', col2: 'مستخدم', col3: 'غير نشط', col4: '2025-12-01', status: 'inactive' },
     ]
   }
 };

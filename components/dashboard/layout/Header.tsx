@@ -67,39 +67,6 @@ const Header: React.FC<HeaderProps> = ({
            <span className="text-[10px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-1.5 py-0.5 rounded shadow-sm">Ctrl+K</span>
         </div>
 
-        {/* Business Type Switcher */}
-        <div className="hidden lg:flex items-center gap-3 bg-gray-50 dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
-          <button 
-             onClick={() => setCurrentBusinessType('general')}
-             className={`p-1.5 rounded-md transition ${currentBusinessType === 'general' ? 'bg-white dark:bg-gray-700 shadow-sm text-ray-blue dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
-             title="المركز الرئيسي"
-          >
-             <LayoutGrid className="w-5 h-5" />
-          </button>
-          <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-          <span className="text-xs font-bold text-gray-500 dark:text-gray-400 px-2">النظام:</span>
-          <select 
-            value={currentBusinessType}
-            onChange={(e) => setCurrentBusinessType(e.target.value as BusinessType)}
-            className="bg-white dark:bg-gray-700 border-none text-sm font-bold text-ray-blue dark:text-white focus:ring-0 rounded cursor-pointer py-1 outline-none px-2"
-          >
-             <option value="general">🌐 المركز</option>
-             <option value="retail">🛒 التجزئة</option>
-             <option value="restaurant">🍔 المطاعم</option>
-             <option value="realestate">🏘️ العقارات</option>
-             <option value="cars">🚗 السيارات</option>
-             <option value="carwash">🚿 غسيل السيارات</option>
-             <option value="clinic">🏥 العيادات</option>
-             <option value="gym">🏋️ الجيم</option>
-             <option value="salon">✂️ الصالونات</option>
-             <option value="pharmacy">💊 الصيدليات</option>
-             <option value="services">🔧 الخدمات</option>
-             <option value="laundry">🧺 المغاسل</option>
-             <option value="clothing">👕 الملابس</option>
-             <option value="contracting">🏗️ المقاولات</option>
-          </select>
-        </div>
-
         <div className="flex items-center gap-2 md:gap-4">
           {/* Theme Toggle */}
           <button 

@@ -426,11 +426,6 @@ const Header: React.FC<HeaderProps> = ({
                 </li>
               ))}
             </ul>
-
-            <button onClick={(e) => handleNavClick(e, 'systems')} className="ml-4 text-xs font-bold bg-ray-black text-white px-4 py-2 rounded-lg hover:bg-ray-gold hover:text-ray-black transition flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-               <Store className="w-4 h-4" />
-               {t('سجّل نشاطك (تجار)', 'Register Your Business')}
-            </button>
           </div>
         </div>
 
