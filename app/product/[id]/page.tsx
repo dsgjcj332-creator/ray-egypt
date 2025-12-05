@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import ProductDetailView from '@/components/marketplace/views/consumer/ProductDetailView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import ProductDetailView from '@/components/views/ProductDetailView';
 import { useRouter, useParams } from 'next/navigation';
 
 export default function ProductPage() {
@@ -19,7 +19,7 @@ export default function ProductPage() {
         onNavigate={(view) => router.push(`/${view}`)}
       />
       <main>
-        <ProductDetailView id={id} onBack={() => router.back()} />
+        <ProductDetailView onBack={() => router.back()} />
       </main>
       <Footer onGoToSystems={() => router.push('/systems')} />
     </div>

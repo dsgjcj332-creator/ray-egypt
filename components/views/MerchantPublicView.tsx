@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Phone, MessageSquare, ShoppingBag, ChevronRight, Info, MapPin, Clock
+  Phone, MessageSquare, ShoppingBag, ChevronRight, Info, MapPin, Clock,
+  Facebook, Instagram, Twitter, Linkedin, Mail, MapPin as MapPinIcon, Award, TrendingUp
 } from 'lucide-react';
 import MerchantHero from '../merchant/MerchantHero';
 import MerchantOrdering from '../merchant/MerchantOrdering';
@@ -9,6 +10,7 @@ import MerchantCart from '../merchant/MerchantCart';
 import MerchantBooking from '../merchant/MerchantBooking';
 import MerchantShowcase from '../merchant/MerchantShowcase';
 import MerchantReviews from '../merchant/MerchantReviews';
+import ProductDetailView from './ProductDetailView'; // استخدام الملف الجديد بدون Context
 
 interface MerchantProps {
   merchant: any;
@@ -26,6 +28,7 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
   
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShareToast, setShowShareToast] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   // Ordering State
   const [cart, setCart] = useState<{id: number, name: string, price: number, qty: number, image: string}[]>([]);
@@ -48,15 +51,15 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
   ];
 
   const menuItems = [
-    { id: 1, name: 'وجبة ميكس جريل', price: 220, category: 'وجبات', desc: '3 قطع كفتة، 2 قطعة كباب، ربع فرخة مشوية، أرز بسمتي', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400', popular: true },
-    { id: 2, name: 'ساندوتش برجر كلاسيك', price: 85, category: 'سندوتشات', desc: 'قطعة برجر 200 جرام مع صوص الجبنة والخس', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400' },
-    { id: 3, name: 'بيتزا سوبر سوبريم', price: 150, category: 'وجبات', desc: 'سوسيس، بيف، مشروم، فلفل، زيتون', img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400', popular: true },
-    { id: 4, name: 'باستا ألفريدو', price: 110, category: 'وجبات', desc: 'مكرونة بنا مع صوص الكريمة والمشروم والدجاج', img: 'https://images.unsplash.com/photo-1611270629569-8b357cb88da9?w=400' },
-    { id: 5, name: 'سلطة سيزر', price: 65, category: 'مقبلات', desc: 'خس، دجاج مشوي، توست محمص، صوص سيزر', img: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=400' },
-    { id: 6, name: 'كولا بارد', price: 25, category: 'مشروبات', desc: '330 مل', img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400' },
+    { id: 1, name: 'تيشيرت قطن أبيض', price: 120, category: 'ملابس', desc: 'تيشيرت قطن 100% مريح وناعم', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', popular: true },
+    { id: 2, name: 'بنطلون جينز أزرق', price: 280, category: 'ملابس', desc: 'جينز أصلي مريح وعملي', img: 'https://images.unsplash.com/photo-1542272617-08f086302542?w=400' },
+    { id: 3, name: 'حذاء رياضي أسود', price: 450, category: 'أحذية', desc: 'حذاء رياضي مريح وعالي الجودة', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', popular: true },
+    { id: 4, name: 'شنطة يد جلدية', price: 350, category: 'إكسسوارات', desc: 'شنطة جلدية أصلية فاخرة', img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400' },
+    { id: 5, name: 'ساعة يد ذهبية', price: 650, category: 'إكسسوارات', desc: 'ساعة يد فاخرة بتصميم عصري', img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400' },
+    { id: 6, name: 'نظارة شمسية', price: 280, category: 'إكسسوارات', desc: 'نظارة شمسية عالية الجودة', img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400' },
   ];
 
-  const categories = ['الكل', 'وجبات', 'سندوتشات', 'مقبلات', 'مشروبات'];
+  const categories = ['الكل', 'ملابس', 'أحذية', 'إكسسوارات', 'عروض'];
   
   const galleryImages = [
     merchant.image,
@@ -111,10 +114,24 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
   const getTabs = () => {
     if (isBooking) return [{ id: 'main', label: 'الحجز' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'عن المكان' }];
     if (isShowcase) return [{ id: 'showcase', label: merchant.category === 'realestate' ? 'الوحدات' : 'السيارات' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'عن الشركة' }];
-    return [{ id: 'menu', label: 'المنيو' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'المعلومات' }];
+    return [{ id: 'menu', label: 'المنتجات' }, { id: 'reviews', label: 'التقييمات' }, { id: 'about', label: 'المعلومات' }];
   };
 
   const tabs = getTabs();
+
+  // إذا تم اختيار منتج، اعرض صفحة التفاصيل
+  if (selectedProduct) {
+    return (
+      <ProductDetailView
+        product={selectedProduct}
+        onBack={() => setSelectedProduct(null)}
+        onAddToCart={(item) => {
+          addToCart(item);
+          setSelectedProduct(null);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 animate-in fade-in duration-300">
@@ -156,7 +173,7 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
         )}
         
         {activeTab === 'menu' && isOrdering && (
-           <MerchantOrdering categories={categories} menuItems={menuItems} addToCart={addToCart} />
+           <MerchantOrdering categories={categories} menuItems={menuItems} addToCart={addToCart} onProductClick={setSelectedProduct} />
         )}
 
         {activeTab === 'reviews' && <MerchantReviews />}
@@ -224,15 +241,115 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
       )}
 
       <MerchantCart 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
         cart={cart}
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
         updateCartQty={updateCartQty}
         isOrderProcessing={isOrderProcessing}
         isOrderSuccess={isOrderSuccess}
         onCheckout={handleCheckout}
         onCloseSuccess={() => { setIsOrderSuccess(false); setIsCartOpen(false); }}
       />
+
+      {/* Professional Footer */}
+      <footer className="bg-gradient-to-b from-gray-900 to-black dark:from-gray-950 dark:to-black text-gray-300 mt-16 border-t border-gray-800">
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          {/* Top Section */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            {/* Brand */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-ray-gold to-yellow-500 rounded-lg flex items-center justify-center font-bold text-gray-900">
+                  {merchant.name?.charAt(0) || 'R'}
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-sm">{merchant.name}</h3>
+                  <p className="text-xs text-gray-500">{merchant.type}</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-400 mb-4">{merchant.location || 'القاهرة'}</p>
+              <div className="flex gap-3">
+                <a href="#" className="p-2 bg-gray-800 hover:bg-ray-gold hover:text-gray-900 rounded-lg transition">
+                  <Facebook className="w-4 h-4" />
+                </a>
+                <a href="#" className="p-2 bg-gray-800 hover:bg-ray-gold hover:text-gray-900 rounded-lg transition">
+                  <Instagram className="w-4 h-4" />
+                </a>
+                <a href="#" className="p-2 bg-gray-800 hover:bg-ray-gold hover:text-gray-900 rounded-lg transition">
+                  <Twitter className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-bold text-white mb-4 text-sm">روابط سريعة</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">المنتجات</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">التقييمات</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">المعلومات</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-ray-gold transition">اتصل بنا</a></li>
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h4 className="font-bold text-white mb-4 text-sm">تواصل معنا</h4>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-ray-gold" />
+                  <a href="tel:19999" className="text-gray-400 hover:text-ray-gold transition">19999</a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-ray-gold" />
+                  <a href="https://wa.me/201000000000" className="text-gray-400 hover:text-ray-gold transition">واتس آب</a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-ray-gold" />
+                  <a href="mailto:info@example.com" className="text-gray-400 hover:text-ray-gold transition">البريد</a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Stats */}
+            <div>
+              <h4 className="font-bold text-white mb-4 text-sm">الإحصائيات</h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-yellow-500" />
+                  <span className="text-gray-400 text-sm">{merchant.rating} ⭐ تقييم</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-green-500" />
+                  <span className="text-gray-400 text-sm">{merchant.reviews} تقييم</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPinIcon className="w-4 h-4 text-blue-500" />
+                  <span className="text-gray-400 text-sm">2.5 كم بعيد</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-800 my-8"></div>
+
+          {/* Bottom Section */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-gray-500">© 2025 {merchant.name}. جميع الحقوق محفوظة.</p>
+            <div className="flex gap-6 text-sm">
+              <a href="#" className="text-gray-500 hover:text-ray-gold transition">سياسة الخصوصية</a>
+              <a href="#" className="text-gray-500 hover:text-ray-gold transition">شروط الاستخدام</a>
+              <a href="#" className="text-gray-500 hover:text-ray-gold transition">الشروط والأحكام</a>
+            </div>
+          </div>
+
+          {/* Powered By */}
+          <div className="text-center mt-8 pt-8 border-t border-gray-800">
+            <p className="text-xs text-gray-600">مدعوم بواسطة <span className="text-ray-gold font-bold">RAY Platform</span></p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

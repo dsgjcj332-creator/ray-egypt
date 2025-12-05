@@ -6,9 +6,10 @@ interface MerchantOrderingProps {
   categories: string[];
   menuItems: any[];
   addToCart: (item: any) => void;
+  onProductClick?: (product: any) => void;
 }
 
-const MerchantOrdering: React.FC<MerchantOrderingProps> = ({ categories, menuItems, addToCart }) => {
+const MerchantOrdering: React.FC<MerchantOrderingProps> = ({ categories, menuItems, addToCart, onProductClick }) => {
   const [activeCategory, setActiveCategory] = useState('الكل');
 
   return (
@@ -36,7 +37,7 @@ const MerchantOrdering: React.FC<MerchantOrderingProps> = ({ categories, menuIte
         {menuItems.filter(i => activeCategory === 'الكل' || i.category === activeCategory).map((item) => (
           <div 
             key={item.id} 
-            onClick={() => addToCart(item)}
+            onClick={() => onProductClick ? onProductClick(item) : addToCart(item)}
             className="group bg-white dark:bg-gray-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex gap-4 hover:border-ray-blue/30 dark:hover:border-ray-gold/30 hover:shadow-md transition cursor-pointer active:scale-[0.98]"
           >
             <div className="w-32 h-32 bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden shrink-0 relative">

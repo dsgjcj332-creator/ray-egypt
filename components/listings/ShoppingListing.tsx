@@ -58,18 +58,6 @@ const ShoppingListing: React.FC<Props> = ({ onMerchantSelect, onProductClick }) 
         ))}
       </div>
 
-      {/* Featured Products Grid (Mix of stores and products) */}
-      <div className="mb-12">
-          <h3 className="text-xl font-bold mb-4 text-gray-800">منتجات مقترحة</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockStoreProducts.map(prod => (
-                  <div key={prod.id} className="h-full">
-                      <ProductCard product={prod} onClick={onProductClick} />
-                  </div>
-              ))}
-          </div>
-      </div>
-
       <h3 className="text-xl font-bold mb-4 text-gray-800">المتاجر</h3>
       {/* Shops Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
