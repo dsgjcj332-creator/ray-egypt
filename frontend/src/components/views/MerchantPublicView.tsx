@@ -4,13 +4,13 @@ import {
   Phone, MessageSquare, ShoppingBag, ChevronRight, Info, MapPin, Clock,
   Facebook, Instagram, Twitter, Linkedin, Mail, MapPin as MapPinIcon, Award, TrendingUp
 } from 'lucide-react';
-import MerchantHero from '../../frontend/src/components/merchant/MerchantHero';
-import MerchantOrdering from '../../frontend/src/components/merchant/MerchantOrdering';
-import MerchantCart from '../../frontend/src/components/merchant/MerchantCart';
-import MerchantBooking from '../../frontend/src/components/merchant/MerchantBooking';
-import MerchantShowcase from '../../frontend/src/components/merchant/MerchantShowcase';
-import MerchantReviews from '../../frontend/src/components/merchant/MerchantReviews';
-import ProductDetailView from '../../frontend/src/components/views/ProductDetailView'; // استخدام الملف الجديد بدون Context
+import MerchantHero from '../merchant/MerchantHero';
+import MerchantOrdering from '../merchant/MerchantOrdering';
+import MerchantCart from '../merchant/MerchantCart';
+import MerchantBooking from '../merchant/MerchantBooking';
+import MerchantShowcase from '../merchant/MerchantShowcase';
+import MerchantReviews from '../merchant/MerchantReviews';
+import ProductDetailView from './ProductDetailView'; // استخدام الملف الجديد بدون Context
 
 interface MerchantProps {
   merchant: any;

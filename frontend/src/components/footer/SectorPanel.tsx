@@ -57,11 +57,10 @@ const SectorPanel: React.FC<SectorPanelProps> = ({
           {systems.map((system) => (
             <SystemLink 
               key={system.id}
-              id={system.id}
-              label={system.label}
+              href={`#${system.id}`}
+              title={system.label}
+              description={system.label}
               icon={system.icon}
-              colorClass={colors[color] || colors.blue}
-              onClick={onSystemSelect}
             />
           ))}
        </div>

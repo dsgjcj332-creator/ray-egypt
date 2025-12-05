@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Search } from 'lucide-react';
-import { DashboardConfig } from '../../frontend/src/components/dashboard/config';
+import { DashboardConfig } from './config';
 
 interface QuickActionsProps {
   actions: DashboardConfig['quickActions'];
@@ -12,7 +12,7 @@ interface QuickActionsProps {
 const QuickActions: React.FC<QuickActionsProps> = ({ actions, theme, themeColor }) => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-       {actions.map((action, idx) => (
+       {actions.map((action: any, idx: any) => (
          <button key={idx} className={`group flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-${themeColor}-200 transition gap-3 h-28`}>
             <div className={`w-10 h-10 rounded-full ${theme.lightBtn} flex items-center justify-center group-hover:scale-110 transition shadow-sm`}>
               <action.icon className="w-5 h-5" />

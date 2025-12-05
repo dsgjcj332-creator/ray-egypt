@@ -4,7 +4,7 @@ import {
   Home, MapPin, DollarSign, Ruler, Bed, Bath, Camera, 
   Save, X, CheckSquare, UploadCloud, Sparkles, Loader2
 } from 'lucide-react';
-import { getGeminiResponse } from '../../../services/geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 import FileUploader from '../../common/FileUploader';
 
 interface PropertyFormProps {
@@ -52,7 +52,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ onClose, onSave, initialDat
     setIsGenerating(true);
     try {
         const prompt = `اكتب وصف إعلاني احترافي ومميز لعقار: ${formData.title}، نوعه ${formData.category}، مساحة ${formData.area}م، ${formData.rooms} غرف. ركز على الموقع والمميزات بلهجة عقارية فخمة.`;
-        const desc = await getGeminiResponse(prompt, 'merchant');
+        const desc = await getGeminiResponse(prompt);
         setFormData((prev: any) => ({ ...prev, description: desc }));
     } catch (e) {
         console.error(e);

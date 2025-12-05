@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import AboutView from '@/components/marketplace/views/static/AboutView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import AboutView from '@/components/views/AboutView';
 import { useRouter } from 'next/navigation';
 
 export default function AboutPage() {

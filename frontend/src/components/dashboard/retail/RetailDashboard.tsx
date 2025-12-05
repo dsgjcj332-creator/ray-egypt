@@ -85,7 +85,7 @@ const RetailDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'reta
   const renderContent = () => {
     switch (activeTab) {
       case 'pos':
-        return <RetailPOS type={type} />;
+        return <RetailPOS />;
       case 'products':
       case 'inventory':
         return <ProductManager />;
@@ -112,9 +112,9 @@ const RetailDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'reta
         return <ProfileView />;
       case 'overview':
       default:
-        return isPharmacy ? 
-          <PharmacyOverview setActiveTab={setActiveTab} /> : 
-          <RetailOverview setActiveTab={setActiveTab} />;
+        return isPharmacy ?
+          <PharmacyOverview /> :
+          <RetailOverview />;
     }
   };
 
@@ -164,3 +164,4 @@ const SidebarItem = ({ icon: Icon, label, id, active, setTab, highlight, isPharm
 );
 
 export default RetailDashboard;
+ 

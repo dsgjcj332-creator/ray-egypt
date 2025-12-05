@@ -2,35 +2,35 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import GeminiAssistant from '../frontend/src/components/common/GeminiAssistant';
-import Header from './marketplace/layout/Header';
-import Footer from './marketplace/layout/Footer';
-import MobileBottomNav from './marketplace/layout/MobileBottomNav';
-import HomePage from './marketplace/pages/HomePage';
-import SystemsHub from './marketplace/systems/SystemsHub';
-import SystemLanding from './marketplace/systems/SystemLanding';
+import GeminiAssistant from './common/GeminiAssistant';
+import Header from './layout/Header';
+import Footer from './layout/Footer';
+import MobileBottomNav from './layout/MobileBottomNav';
+import HomePage from './pages/HomePage';
+import SystemsHub from './systems/SystemsHub';
+import SystemLanding from './systems/SystemLanding';
 import { MarketplaceProvider } from '../context/MarketplaceContext'; 
 
 // Listings
-import RestaurantListing from './marketplace/listings/RestaurantListing';
-import RealEstateListing from './marketplace/listings/RealEstateListing';
-import CarListing from './marketplace/listings/CarListing';
-import ShoppingListing from './marketplace/listings/ShoppingListing';
-import ServiceListing from './marketplace/listings/ServiceListing';
-import HealthBeautyListing from './marketplace/listings/HealthBeautyListing';
-import EventListing from './marketplace/listings/EventListing';
+import RestaurantListing from './listings/RestaurantListing';
+import RealEstateListing from './listings/RealEstateListing';
+import CarListing from './listings/CarListing';
+import ShoppingListing from './listings/ShoppingListing';
+import ServiceListing from './listings/ServiceListing';
+import HealthBeautyListing from './listings/HealthBeautyListing';
+import EventListing from './listings/EventListing';
 
 // Views
-import MerchantPublicView from './marketplace/views/MerchantPublicView';
-import UserProfileView from './marketplace/views/consumer/UserProfileView';
-import CartView from './marketplace/views/consumer/CartView';
-import CheckoutView from './marketplace/views/consumer/CheckoutView';
-import FavoritesView from './marketplace/views/consumer/FavoritesView';
-import NotificationsView from './marketplace/views/consumer/NotificationsView';
-import SearchResultsView from './marketplace/views/SearchResultsView';
-import OrderTrackingView from './marketplace/views/OrderTrackingView';
-import OffersView from './marketplace/views/consumer/OffersView'; 
-import AuthModal from '../frontend/src/components/common/AuthModal';
+import MerchantPublicView from './views/MerchantPublicView';
+import UserProfileView from './views/ProfileView';
+import CartView from './views/CartView';
+import CheckoutView from './views/consumer/CheckoutView';
+import FavoritesView from './views/FavoritesView';
+import NotificationsView from './views/consumer/NotificationsView';
+import SearchResultsView from './views/SearchResultsView';
+import OrderTrackingView from './views/OrderTrackingView';
+import OffersView from './views/consumer/OffersView'; 
+import AuthModal from './common/AuthModal';
 
 // Pages (Now as Components)
 import CategoriesPage from '../app/categories/page';
@@ -40,10 +40,10 @@ import LoginPage from '../app/login/page';
 import SignupPage from '../app/signup/page';
 
 // Static Views
-import AboutView from './marketplace/views/static/AboutView';
-import ContactView from './marketplace/views/static/ContactView';
-import HelpCenterView from './marketplace/views/static/HelpCenterView';
-import LegalView from './marketplace/views/static/LegalView';
+import AboutView from './views/AboutView';
+import ContactView from './views/ContactView';
+import HelpCenterView from './views/HelpCenterView';
+import LegalView from './views/LegalView';
 
 interface MarketplaceProps {
   onGoToSystems: () => void;

@@ -15,7 +15,7 @@ import {
   Copy, Share2, Link, ExternalLink, Printer, Save, Send
 } from 'lucide-react';
 import { BusinessType, dashboardConfigs } from '../config';
-import StatCard from '../../../frontend/src/components/common/cards/StatCard';
+import StatCard from '../../common/cards/StatCard';
 import SmartInsightsWidget from '../widgets/SmartInsightsWidget';
 import QuickActions from '../widgets/QuickActions';
 import BusinessHealthWidget from '../widgets/BusinessHealthWidget';

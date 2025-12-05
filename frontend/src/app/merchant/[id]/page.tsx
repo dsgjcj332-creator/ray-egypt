@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import MerchantPublicView from '@/components/marketplace/views/MerchantPublicView';
+import MerchantPublicView from '@/components/views/MerchantPublicView';
 import { useRouter, useSearchParams, useParams } from 'next/navigation';
-import GeminiAssistant from '@/frontend/src/components/common/GeminiAssistant';
+import GeminiAssistant from '@/components/common/GeminiAssistant';
 
 export default function MerchantPage() {
   const router = useRouter();

@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Sparkles, Loader2, Mic, MicOff } from 'lucide-react';
-import { getGeminiResponse } from '../../services/geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 
 interface Message {
   id: string;
@@ -87,7 +87,7 @@ const GeminiAssistant: React.FC<Props> = ({ context }) => {
     setIsLoading(true);
 
     try {
-      const responseText = await getGeminiResponse(input, context);
+      const responseText = await getGeminiResponse(input);
       const botMsg: Message = { id: (Date.now() + 1).toString(), text: responseText, sender: 'bot' };
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {

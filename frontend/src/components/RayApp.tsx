@@ -4,12 +4,12 @@
 import React, { useState, useEffect } from 'react';
 import Marketplace from './Marketplace';
 import Dashboard from './Dashboard';
-import SystemsHub from './marketplace/systems/SystemsHub';
-import MerchantRegisterView from './marketplace/views/MerchantRegisterView';
+import SystemsHub from './systems/SystemsHub';
+import MerchantRegisterView from './views/MerchantRegisterView';
 // import { ViewState } from '../types'; // Removed - types.ts was deleted
-import { BusinessType } from '../frontend/src/components/dashboard/config';
-import { ThemeProvider } from '../frontend/src/components/common/ThemeContext';
-import { ToastProvider } from '../frontend/src/components/common/ToastContext';
+import { BusinessType, dashboardConfigs } from './dashboard/config';
+import { ThemeProvider } from './common/ThemeContext';
+import { ToastProvider } from './common/ToastContext';
 import { AuthProvider } from '../context/AuthContext';
 
 const RayApp: React.FC = () => {

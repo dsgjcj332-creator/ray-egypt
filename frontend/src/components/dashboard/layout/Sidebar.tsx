@@ -32,7 +32,8 @@ const Sidebar: React.FC<SidebarProps> = ({ config, activeTab, setActiveTab, onLo
        nursery: 'للحضانات',
        law: 'للمحاماة',
        consulting: 'للاستشارات',
-       resort: 'للمنتجعات'
+       resort: 'للمنتجعات',
+       admin: 'للإدارة'
      };
      return labels[type] || 'عام';
   };

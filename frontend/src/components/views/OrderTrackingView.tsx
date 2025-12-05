@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { ChevronRight, MapPin, Phone, MessageSquare, CheckCircle, Clock, ChefHat, Bike, Home, Package, Star } from 'lucide-react';
-import FeedbackModal from '../../common/FeedbackModal';
+import FeedbackModal from '../common/FeedbackModal';
 
 interface OrderTrackingViewProps {
   onBack: () => void;

@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/frontend/src/components/layout/Header';
-import Footer from '@/frontend/src/components/layout/Footer';
-import ProductDetailView from '@/frontend/src/components/views/ProductDetailView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import ProductDetailView from '@/components/views/ProductDetailView';
 import { useRouter, useParams } from 'next/navigation';
 
 export default function ProductPage() {
@@ -16,7 +16,7 @@ export default function ProductPage() {
     <div className="min-h-screen bg-white dark:bg-gray-950 font-sans dir-rtl">
       <Header 
         goHome={() => router.push('/')}
-        onNavigate={(view) => router.push(`/${view}`)}
+        onNavigate={(view: string) => router.push(`/${view}`)}
       />
       <main>
         <ProductDetailView onBack={() => router.back()} />

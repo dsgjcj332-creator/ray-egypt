@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { 
   Users, CreditCard, Clock, ShoppingBag, Plus, QrCode, Activity, Dumbbell, Settings2
 } from 'lucide-react';
-import ActionButton from '../../../frontend/src/components/common/buttons/ActionButton';
-import StatCard from '../../../frontend/src/components/common/cards/StatCard';
+import ActionButton from '../../common/buttons/ActionButton';
+import StatCard from '../../common/cards/StatCard';
 import DashboardCustomizer from '../DashboardCustomizer';
 
 interface GymOverviewProps {

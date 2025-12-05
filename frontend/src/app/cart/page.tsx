@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import CartView from '@/components/marketplace/views/consumer/CartView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import CartView from '@/components/views/CartView';
 import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
@@ -14,7 +14,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans dir-rtl">
       <Header />
       <main className="pt-4 pb-20">
-        <CartView onNavigate={(view) => {
+        <CartView onNavigate={(view: string) => {
             if(view === 'checkout') router.push('/checkout'); // Assuming you create checkout page later or handle it here
             else router.push(`/${view}`);
         }} />

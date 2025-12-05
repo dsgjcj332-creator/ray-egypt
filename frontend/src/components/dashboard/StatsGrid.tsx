@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { DashboardConfig } from '../../frontend/src/components/dashboard/config';
+import { DashboardConfig } from './config';
 
 interface StatsGridProps {
   stats: DashboardConfig['stats'];

@@ -4,9 +4,9 @@ import {
   Car, Key, UserCheck, DollarSign, Plus, Calculator, 
   FileText, Wrench, Printer, Settings2
 } from 'lucide-react';
-import ActionButton from '../../../frontend/src/components/common/buttons/ActionButton';
-import StatCard from '../../../frontend/src/components/common/cards/StatCard';
-import StatusBadge from '../../../frontend/src/components/common/StatusBadge';
+import ActionButton from '../../common/buttons/ActionButton';
+import StatCard from '../../common/cards/StatCard';
+import StatusBadge from '../../common/StatusBadge';
 import DashboardCustomizer from '../DashboardCustomizer';
 
 interface CarsOverviewProps {

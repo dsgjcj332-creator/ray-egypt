@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import LegalView from '@/components/marketplace/views/static/LegalView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import LegalView from '@/components/views/LegalView';
 import { useRouter } from 'next/navigation';
 
 export default function PrivacyPage() {

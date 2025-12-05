@@ -110,7 +110,7 @@ const ServicesDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'se
         return <ProfileView />;
       case 'overview':
       default:
-        return isCarWash ? <CarWashOverview setActiveTab={setActiveTab} /> : <ServicesOverview setActiveTab={setActiveTab} />;
+        return isCarWash ? <CarWashOverview setActiveTab={setActiveTab} /> : <ServicesOverview />;
     }
   };
 

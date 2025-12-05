@@ -4,7 +4,7 @@ import {
   Box, DollarSign, Barcode, Tag, Save, X, Layers, AlertCircle, Sparkles, Loader2, Cuboid
 } from 'lucide-react';
 import FileUploader from '../../common/FileUploader';
-import { getGeminiResponse } from '../../../services/geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 
 interface ProductFormProps {
   onClose: () => void;
@@ -39,7 +39,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSave, initialData 
     setIsGenerating(true);
     try {
         const prompt = `اكتب وصف تسويقي جذاب ومختصر للمنتج التالي: ${formData.name} ${formData.category ? `من فئة ${formData.category}` : ''}. ركز على المميزات والجودة بلهجة مصرية احترافية.`;
-        const desc = await getGeminiResponse(prompt, 'merchant');
+        const desc = await getGeminiResponse(prompt);
         setFormData((prev: any) => ({ ...prev, description: desc }));
     } catch (e) {
         console.error(e);

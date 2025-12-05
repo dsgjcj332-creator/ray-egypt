@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import SearchResultsView from '@/components/marketplace/views/SearchResultsView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import SearchResultsView from '@/components/views/SearchResultsView';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SearchPage() {

@@ -1,12 +1,12 @@
 
 import type { Metadata } from "next";
 import { Cairo, Dancing_Script } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from '../frontend/src/components/common/ThemeContext';
-import { ToastProvider } from '../frontend/src/components/common/ToastContext';
-import { AuthProvider } from '../context/AuthContext';
-import { LanguageProvider } from '../context/LanguageContext';
-import GeminiAssistant from '../frontend/src/components/common/GeminiAssistant';
+import "../../globals.css";
+import { ThemeProvider } from '@/components/common/ThemeContext';
+import { ToastProvider } from '@/components/common/ToastContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { LanguageProvider } from '@/context/LanguageContext';
+import GeminiAssistant from '@/components/common/GeminiAssistant';
 
 const cairo = Cairo({ subsets: ["arabic", "latin"], variable: '--font-cairo' });
 const dancing = Dancing_Script({ subsets: ["latin"], variable: '--font-dancing' });

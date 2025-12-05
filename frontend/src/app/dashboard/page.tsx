@@ -2,9 +2,9 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import Dashboard from '@/frontend/src/components/Dashboard';
+import Dashboard from '@/components/Dashboard';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { BusinessType } from '@/frontend/src/components/dashboard/config';
+import { BusinessType } from '@/components/dashboard/config';
 
 export default function DashboardPage() {
   const router = useRouter();

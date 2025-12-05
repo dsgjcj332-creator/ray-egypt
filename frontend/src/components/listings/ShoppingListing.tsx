@@ -70,11 +70,11 @@ const ShoppingListing: React.FC<Props> = ({ onMerchantSelect, onProductClick }) 
              <button 
                 onClick={(e) => {
                     e.stopPropagation();
-                    toggleFavorite(item);
+                    toggleFavorite(item.id.toString());
                 }}
-                className={`absolute top-3 left-3 z-20 p-2 rounded-full bg-white/80 backdrop-blur shadow-sm transition ${isFavorite(item.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                className={`absolute top-3 left-3 z-20 p-2 rounded-full bg-white/80 backdrop-blur shadow-sm transition ${isFavorite(item.id.toString()) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
              >
-                <Heart className={`w-4 h-4 ${isFavorite(item.id) ? 'fill-current' : ''}`} />
+                <Heart className={`w-4 h-4 ${isFavorite(item.id.toString()) ? 'fill-current' : ''}`} />
              </button>
 
             <div className="h-48 relative overflow-hidden" onClick={() => onMerchantSelect({ ...item, category: 'shopping' })}>

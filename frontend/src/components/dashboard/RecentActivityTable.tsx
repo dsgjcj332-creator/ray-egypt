@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { DashboardConfig, BusinessType } from '../../frontend/src/components/dashboard/config';
-import StatusBadge from '../../frontend/src/components/common/StatusBadge';
+import { DashboardConfig, BusinessType } from './config';
+import StatusBadge from '../common/StatusBadge';
 
 interface RecentActivityTableProps {
   config: DashboardConfig;
@@ -24,14 +23,14 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ config, curre
         <table className="w-full text-right">
           <thead className="bg-gray-50 text-gray-500 text-sm">
             <tr>
-              {config.tableHeaders.map((header, idx) => (
+              {config.tableHeaders.map((header: any, idx: any) => (
                 <th key={idx} className="p-4 font-medium">{header}</th>
               ))}
               <th className="p-4 font-medium">إجراء</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {config.data.map((row, idx) => (
+            {config.data.map((row: any, idx: any) => (
               <tr key={idx} className="hover:bg-gray-50 transition">
                 <td className="p-4 font-medium text-gray-900">{row.id}</td>
                 <td className="p-4 text-gray-700">{row.col1}</td>

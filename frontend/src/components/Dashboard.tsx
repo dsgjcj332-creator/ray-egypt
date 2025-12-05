@@ -29,7 +29,7 @@ import Overview from './dashboard/views/Overview';
 import SettingsView from './dashboard/views/SettingsView';
 import UniversalDataView from './dashboard/views/UniversalDataView';
 import ServicePOS from './dashboard/pos/ServicePOS';
-import RetailPOS from '../frontend/src/components/dashboard/retail/RetailPOS';
+import RetailPOS from './dashboard/retail/RetailPOS';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -80,7 +80,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
       case 'settings':
         return <SettingsView />;
       case 'pos':
-        return <RetailPOS type={type} />;
+        return <RetailPOS />;
       case 'reports':
       case 'analytics':
         return <UniversalDataView type="reports" theme={theme} />;

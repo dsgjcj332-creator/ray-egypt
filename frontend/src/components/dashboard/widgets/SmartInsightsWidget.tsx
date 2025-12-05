@@ -18,7 +18,7 @@ const SmartInsightsWidget: React.FC<SmartInsightsWidgetProps> = ({ dataContext }
       قم بتقديم نصيحة إدارية أو تسويقية واحدة ذكية ومختصرة جداً (سطرين كحد أقصى) باللغة العربية وباللهجة المصرية المحترفة. 
       ركز على فرص النمو أو تحسين الكفاءة. لا تذكر الأرقام بالتفصيل، بل اذكر الاستنتاج.`;
       
-      const response = await getGeminiResponse(prompt, 'merchant');
+      const response = await getGeminiResponse(prompt);
       setInsight(response);
     } catch (error) {
       console.error("Failed to generate insight", error);

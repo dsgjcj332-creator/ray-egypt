@@ -1,10 +1,9 @@
-
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import HelpCenterView from '@/components/marketplace/views/static/HelpCenterView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import HelpView from '@/components/views/HelpView';
 import { useRouter } from 'next/navigation';
 
 export default function HelpPage() {
@@ -14,7 +13,7 @@ export default function HelpPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans dir-rtl">
       <Header />
       <main>
-        <HelpCenterView onNavigate={(view) => router.push(`/${view}`)} />
+        <HelpView onNavigate={(view: string) => router.push(`/${view}`)} />
       </main>
       <Footer onGoToSystems={() => router.push('/systems')} />
     </div>

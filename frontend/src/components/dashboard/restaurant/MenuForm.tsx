@@ -4,7 +4,7 @@ import {
   ChefHat, DollarSign, Flame, Image as ImageIcon, Save, X, Tag, Utensils, Sparkles, Loader2
 } from 'lucide-react';
 import FileUploader from '../../common/FileUploader';
-import { getGeminiResponse } from '../../../services/geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 
 interface MenuFormProps {
   onClose: () => void;
@@ -36,7 +36,7 @@ const MenuForm: React.FC<MenuFormProps> = ({ onClose, onSave, initialData }) => 
     setIsGenerating(true);
     try {
         const prompt = `اكتب وصف شهي ومغري لوجبة: ${formData.name} في مطعم. ركز على الطعم والمكونات بلهجة مصرية محببة.`;
-        const desc = await getGeminiResponse(prompt, 'merchant');
+        const desc = await getGeminiResponse(prompt);
         setFormData((prev: any) => ({ ...prev, description: desc }));
     } catch (e) {
         console.error(e);

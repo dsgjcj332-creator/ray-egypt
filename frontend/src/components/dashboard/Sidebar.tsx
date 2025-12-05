@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Settings, LogOut, LayoutGrid } from 'lucide-react';
-import { DashboardConfig, BusinessType } from '../../frontend/src/components/dashboard/config';
+import { DashboardConfig, BusinessType } from './config';
 
 interface SidebarProps {
   config: DashboardConfig;
@@ -33,7 +33,8 @@ const Sidebar: React.FC<SidebarProps> = ({ config, activeTab, setActiveTab, onLo
        nursery: 'للحضانات',
        law: 'للمحاماة',
        consulting: 'للاستشارات',
-       resort: 'للمنتجعات'
+       resort: 'للمنتجعات',
+       admin: 'للإدارة'
      };
      return labels[type] || 'عام';
   };

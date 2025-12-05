@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import CheckoutView from '@/components/marketplace/views/consumer/CheckoutView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import CheckoutView from '@/components/views/CheckoutView';
 import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
@@ -16,7 +16,7 @@ export default function CheckoutPage() {
       <main className="pt-4 pb-20">
         <CheckoutView 
           onBack={() => router.back()} 
-          onComplete={(orderId) => router.push(`/order-tracking?id=${orderId}`)} 
+          onComplete={(orderId: string) => router.push(`/order-tracking?id=${orderId}`)} 
         />
       </main>
       <Footer onGoToSystems={() => router.push('/systems')} />

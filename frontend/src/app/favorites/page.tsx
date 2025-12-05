@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import FavoritesView from '@/components/marketplace/views/consumer/FavoritesView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import FavoritesView from '@/components/views/FavoritesView';
 import { useRouter } from 'next/navigation';
 
 export default function FavoritesPage() {

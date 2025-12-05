@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import SystemsHub from '@/components/marketplace/systems/SystemsHub';
+import SystemsHub from '@/components/systems/SystemsHub';
 import { useRouter } from 'next/navigation';
 
 export default function SystemsPage() {

@@ -2,8 +2,8 @@
 "use client";
 
 import React from 'react';
-import { allCategories } from '@/components/marketplace/data';
-import EmptyState from '@/frontend/src/components/common/EmptyState';
+import { allCategories } from '@/components/data';
+import EmptyState from '@/components/common/EmptyState';
 import { LayoutGrid } from 'lucide-react';
 
 const CategoriesPage = () => {

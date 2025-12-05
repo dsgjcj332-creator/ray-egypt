@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import OrderTrackingView from '@/components/marketplace/views/OrderTrackingView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import OrderTrackingView from '@/components/views/OrderTrackingView';
 import { useRouter } from 'next/navigation';
 
 export default function OrderTrackingPage() {

@@ -4,8 +4,8 @@ import {
   Truck, MapPin, Droplets, Battery, Calendar, Users, 
   Settings2, AlertTriangle, CheckCircle, Navigation, Fuel, Gauge, Plus, Layers
 } from 'lucide-react';
-import ActionButton from '../../../frontend/src/components/common/buttons/ActionButton';
-import StatCard from '../../../frontend/src/components/common/cards/StatCard';
+import ActionButton from '../../common/buttons/ActionButton';
+import StatCard from '../../common/cards/StatCard';
 import DashboardCustomizer from '../DashboardCustomizer';
 
 interface CarWashOverviewProps {

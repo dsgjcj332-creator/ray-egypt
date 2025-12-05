@@ -2,9 +2,9 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import NotificationsView from '@/components/marketplace/views/consumer/NotificationsView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import NotificationsView from '@/components/views/NotificationsView';
 import { useRouter } from 'next/navigation';
 
 export default function NotificationsPage() {

@@ -1,10 +1,9 @@
-
 "use client";
 
 import React from 'react';
-import Header from '@/components/marketplace/layout/Header';
-import Footer from '@/components/marketplace/layout/Footer';
-import ContactView from '@/components/marketplace/views/static/ContactView';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import ContactView from '@/components/views/ContactView';
 import { useRouter } from 'next/navigation';
 
 export default function ContactPage() {

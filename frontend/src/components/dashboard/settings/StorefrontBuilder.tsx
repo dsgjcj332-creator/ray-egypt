@@ -6,7 +6,7 @@ import {
   Image as ImageIcon, MessageCircle, Database
 } from 'lucide-react';
 import FileUploader from '../../common/FileUploader';
-import MerchantHero from '../../marketplace/merchant/MerchantHero';
+import MerchantHero from '../../merchant/MerchantHero';
 
 interface LinkButton {
   id: string;

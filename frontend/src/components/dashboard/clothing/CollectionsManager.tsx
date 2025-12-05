@@ -49,7 +49,7 @@ const CollectionsManager: React.FC = () => {
   const handleDelete = async (id: number | string) => {
     if (confirm('هل أنت متأكد من حذف هذا الكولكشن؟')) {
       try {
-        await deleteCollection(id);
+        await deleteCollection(id.toString());
         setCollections(prev => prev.filter(c => c.id !== id));
         showToast('تم الحذف بنجاح', 'success');
       } catch (error) {

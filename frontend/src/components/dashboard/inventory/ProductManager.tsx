@@ -6,7 +6,7 @@ import {
   TrendingDown, ShoppingCart, History, ArrowUp, ArrowDown, Loader2
 } from 'lucide-react';
 import ProductForm from './ProductForm';
-import { fetchProducts, updateProduct, Product } from '../../../services/productService';
+import { fetchProducts, saveProduct, updateProduct, deleteProduct, Product } from '../../../services/productService';
 
 interface StockLog {
   id: string;
@@ -42,7 +42,7 @@ const ProductManager: React.FC = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await fetchProducts('retail');
+        const data = await fetchProducts();
         setProducts(data);
       } catch (err) {
         console.error(err);
@@ -95,7 +95,7 @@ const ProductManager: React.FC = () => {
       }
       
       // Persist via service
-      await updateProduct(updatedProduct, 'retail');
+      await updateProduct(updatedProduct);
       
       // Update local state
       if (editingProduct) {
@@ -129,7 +129,7 @@ const ProductManager: React.FC = () => {
       try {
         // Create array of promises to update all modified products
         const updates = products.filter(p => stockAdjustments[p.id] !== undefined && stockAdjustments[p.id] !== p.stock)
-          .map(p => updateProduct({ ...p, stock: stockAdjustments[p.id] }, 'retail'));
+          .map(p => updateProduct({ ...p, stock: stockAdjustments[p.id] }));
         
         await Promise.all(updates);
 

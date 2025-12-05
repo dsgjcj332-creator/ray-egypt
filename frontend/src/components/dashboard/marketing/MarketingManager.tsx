@@ -6,7 +6,7 @@ import {
   ThumbsUp, MessageCircle, Wand2, RefreshCw, Hash, Globe, Eye
 } from 'lucide-react';
 import StatCard from '../../common/cards/StatCard';
-import { getGeminiResponse } from '../../../services/geminiService';
+import { getGeminiResponse } from '@/services/geminiService';
 import { useToast } from '../../common/ToastContext';
 
 const initialCampaigns = [
@@ -93,8 +93,8 @@ const MarketingManager: React.FC = () => {
     setIsGenerating(true);
     try {
         const prompt = `اكتب نص إعلاني جذاب لمنصة ${adParams.platform}، الهدف منه ${adParams.goal}، بأسلوب ${adParams.tone}. العرض هو: ${adParams.offer}. أضف هاشتاجات ورموز تعبيرية مناسبة. اجعل النص بالعامية المصرية المحببة.`;
-        const result = await getGeminiResponse(prompt, 'merchant');
-        setGeneratedAd(result);
+        const desc = await getGeminiResponse(prompt);
+        setGeneratedAd(desc);
     } catch (e) {
         console.error(e);
     } finally {
