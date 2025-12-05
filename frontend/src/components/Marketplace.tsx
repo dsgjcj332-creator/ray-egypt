@@ -88,8 +88,66 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
   };
 
   const handleNavigate = (view: string, params?: any) => {
+    console.log('Marketplace handleNavigate:', view, params); // Debug log
+    
     if (view === 'systems') {
         onGoToSystems();
+        return;
+    }
+    
+    // Handle navigation to actual pages
+    if (view === 'favorites') {
+        window.location.href = '/favorites';
+        return;
+    }
+    
+    if (view === 'notifications') {
+        window.location.href = '/notifications';
+        return;
+    }
+    
+    if (view === 'profile') {
+        window.location.href = '/profile';
+        return;
+    }
+    
+    if (view === 'cart') {
+        window.location.href = '/cart';
+        return;
+    }
+    
+    if (view === 'jobs') {
+        window.location.href = '/jobs';
+        return;
+    }
+    
+    if (view === 'business-jobs') {
+        window.location.href = '/business-jobs';
+        return;
+    }
+    
+    if (view === 'about') {
+        window.location.href = '/about';
+        return;
+    }
+    
+    if (view === 'help') {
+        window.location.href = '/help';
+        return;
+    }
+    
+    if (view === 'terms') {
+        window.location.href = '/terms';
+        return;
+    }
+    
+    if (view === 'privacy') {
+        window.location.href = '/privacy';
+        return;
+    }
+    
+    if (view === 'blog') {
+        window.location.href = '/blog';
         return;
     }
     

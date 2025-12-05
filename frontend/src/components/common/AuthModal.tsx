@@ -33,9 +33,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
     const password = formData.get('admin-password');
     
     if (username === 'ادمن' && password === '1234') {
-      // Set admin mode and redirect
+      // Set admin mode and redirect to new admin dashboard
       localStorage.setItem('userType', 'admin');
-      window.location.href = '/dashboard?admin=true';
+      window.location.href = '/admin';
       onClose();
     } else {
       alert('بيانات الدخول غير صحيحة');

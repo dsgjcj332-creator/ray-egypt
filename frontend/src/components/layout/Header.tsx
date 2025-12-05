@@ -1,13 +1,15 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { 
   Search, MapPin, Heart, ShoppingCart, Bell, Menu, X,
   User, Moon, Sun, ChevronDown, Clock, TrendingUp, Store,
   Percent, Trash2
 } from 'lucide-react';
 import { allCategories } from '../data';
+import CartIcon from '@/components/common/CartIcon';
+import { fastCart, cartEvents } from '@/utils/performance';
 
 interface HeaderProps {
   activeSystem?: string | null;
@@ -28,11 +30,34 @@ const Header: React.FC<HeaderProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [location, setLocation] = useState('القاهرة، المعادي');
+  const [cartTotal, setCartTotal] = useState(0);
+  const [isHydrated, setIsHydrated] = useState(false);
   const searchContainerRef = useRef<HTMLFormElement>(null);
   // Mock theme and auth for now
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [user, setUser] = useState(null);
   const [language, setLanguage] = useState('ar');
+
+  // Mark as hydrated after mount
+  useLayoutEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // Update cart total
+  const updateCartTotal = useCallback(() => {
+    const total = fastCart.total();
+    setCartTotal(total);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    updateCartTotal();
+    const unsubscribe = cartEvents.subscribe(updateCartTotal);
+    return () => {
+      unsubscribe();
+    };
+  }, [updateCartTotal, isHydrated]);
   
   // Initialize dark mode and language from localStorage
   useEffect(() => {
@@ -183,7 +208,12 @@ const Header: React.FC<HeaderProps> = ({
 
   const handleNavClick = (e: React.MouseEvent, view: string) => {
     e.preventDefault();
-    if (onNavigate) onNavigate(view);
+    console.log('Header handleNavClick:', view); // Debug log
+    if (onNavigate) {
+      onNavigate(view);
+    } else {
+      console.warn('onNavigate is not defined in Header');
+    }
     setIsMenuOpen(false);
   };
 
@@ -343,13 +373,12 @@ const Header: React.FC<HeaderProps> = ({
                  <Heart className="w-6 h-6 group-hover:text-red-500 transition-colors" />
                </button>
                
-               <button onClick={(e) => handleNavClick(e, 'cart')} className="hidden md:flex p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full relative transition items-center gap-2 group active:scale-95">
-                 <div className="relative">
-                    <ShoppingCart className="w-6 h-6 group-hover:text-ray-blue dark:group-hover:text-ray-gold" />
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-ray-gold text-ray-blue text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
-                 </div>
-                 <span className="hidden lg:block text-sm font-bold group-hover:text-ray-blue dark:group-hover:text-white">450 ج</span>
-               </button>
+               <div className="hidden md:flex items-center gap-2">
+                 <CartIcon showCount={true} size="md" className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full relative transition group active:scale-95" />
+                 <span className="hidden lg:block text-sm font-bold text-gray-700 dark:text-gray-200 hover:text-ray-blue dark:hover:text-ray-gold transition">
+                  {isHydrated ? `${cartTotal} ج` : '...'}
+                </span>
+               </div>
                
                <div className="h-8 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden md:block"></div>
                

@@ -1,19 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ShoppingBag, Trash2, Plus, Minus, Store, Eye, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  qty: number;
-  shop: string;
-  image?: string;
-  description?: string;
-  category?: string;
-  size?: string;
-  color?: string;
-}
+import { fastCart, cartEvents } from '@/utils/performance';
 
 interface CartViewProps {
   onNavigate?: (view: string) => void;
@@ -21,45 +9,43 @@ interface CartViewProps {
 
 const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
   const router = useRouter();
-  const [cart, setCart] = useState<CartItem[]>([
-    { 
-      id: 1, 
-      name: 'تيشيرت قطن', 
-      price: 120, 
-      qty: 2, 
-      shop: 'محمل أزياء',
-      image: '/api/placeholder/80/80',
-      description: 'تيشيرت قطن عالي الجودة، مريح ومناسب لكل الفصول',
-      category: 'ملابس',
-      size: 'L',
-      color: 'أبيض'
-    },
-    { 
-      id: 2, 
-      name: 'جينز أزرق', 
-      price: 280, 
-      qty: 1, 
-      shop: 'محمل أزياء',
-      image: '/api/placeholder/80/80',
-      description: 'جينز أزرق كلاسيكي، مقاس منتظم، مناسبة لكل المناسبات',
-      category: 'ملابس',
-      size: '32',
-      color: 'أزرق'
-    },
-    { 
-      id: 3, 
-      name: 'حذاء رياضي', 
-      price: 450, 
-      qty: 1, 
-      shop: 'متجر الأحذية',
-      image: '/api/placeholder/80/80',
-      description: 'حذاء رياضي خفيف ومريح، مثالي للتمارين والجري',
-      category: 'أحذية',
-      size: '42',
-      color: 'أسود'
-    },
-  ]);
-  const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
+  const [cart, setCart] = useState<any[]>([]);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+
+  const loadCart = useCallback(() => {
+    const cartData = fastCart.get();
+    setCart(cartData);
+  }, []);
+
+  useEffect(() => {
+    loadCart();
+    
+    // Subscribe to cart events
+    const unsubscribe = cartEvents.subscribe(loadCart);
+    
+    return () => {
+      unsubscribe();
+    };
+  }, [loadCart]);
+
+  const removeFromCart = useCallback((id: number) => {
+    const newCart = fastCart.remove(id);
+    setCart(newCart);
+    cartEvents.emit();
+  }, []);
+
+  const updateQuantity = useCallback((id: number, qty: number) => {
+    if (qty < 1) return;
+    const newCart = fastCart.update(id, qty);
+    setCart(newCart);
+    cartEvents.emit();
+  }, []);
+
+  const clearCart = useCallback(() => {
+    const newCart = fastCart.clear();
+    setCart(newCart);
+    cartEvents.emit();
+  }, []);
 
   const groupedCart = useMemo(() => {
     const groups: Record<string, any[]> = {};
@@ -73,19 +59,8 @@ const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
-  const updateQuantity = (id: number, newQty: number) => {
-    if (newQty < 1) return;
-    setCart(prev => prev.map(item => 
-      item.id === id ? { ...item, qty: newQty } : item
-    ));
-  };
-
   const removeItem = (id: number) => {
-    setCart(prev => prev.filter(item => item.id !== id));
-  };
-
-  const clearCart = () => {
-    setCart([]);
+    removeFromCart(id);
   };
 
   if (cart.length === 0) {
@@ -96,7 +71,7 @@ const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">سلة المشتريات فارغة</h2>
         <p className="text-gray-500 mb-8">لم تقم بإضافة أي منتجات للسلة بعد.</p>
-        <button onClick={() => onNavigate && onNavigate('home')} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold">
+        <button onClick={() => router.push('/')} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold">
           تصفح المنتجات
         </button>
       </div>
@@ -218,7 +193,7 @@ const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
             إتمام الشراء
           </button>
           <button 
-            onClick={() => onNavigate && onNavigate('home')}
+            onClick={() => router.push('/')}
             className="w-full border border-gray-300 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-50 transition"
           >
             مواصلة التسوق

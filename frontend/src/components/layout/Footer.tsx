@@ -43,8 +43,10 @@ const Footer: React.FC<FooterProps> = ({ onGoToSystems, onNavigate }) => {
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm">
                 المنصة الرقمية الأولى للتسوق والخدمات وإدارة الأعمال في مصر.
               </p>
-              <button 
-                onClick={(e) => handleNavClick(e, 'systems')}
+<button 
+                onClick={() => {
+                  window.location.href = '/systems';
+                }}
                 className="flex items-center gap-3 p-3 rounded-xl border transition-all group text-right bg-ray-blue text-white dark:bg-ray-gold dark:text-ray-black hover:bg-blue-800 dark:hover:bg-yellow-400 border-ray-blue dark:border-ray-gold w-full md:w-auto justify-center md:justify-start"
               >
                 <div className="bg-white dark:bg-ray-black w-8 h-8 rounded-full flex items-center justify-center shadow-sm group-hover:scale-110 transition">
@@ -67,7 +69,7 @@ const Footer: React.FC<FooterProps> = ({ onGoToSystems, onNavigate }) => {
               <h4 className="font-bold text-ray-black dark:text-white mb-4">عن راي</h4>
               <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <li><a href="/about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-ray-blue dark:hover:text-ray-gold transition block">من نحن</a></li>
-                <li><a href="/business-jobs" className="hover:text-ray-blue dark:hover:text-ray-gold transition block">وظائف الأنشطة</a></li>
+                <li><a href="/business-jobs" onClick={(e) => handleNavClick(e, 'business-jobs')} className="hover:text-ray-blue dark:hover:text-ray-gold transition block">وظائف الأنشطة</a></li>
                 <li><a href="/blog" className="hover:text-ray-blue dark:hover:text-ray-gold transition block">المدونة</a></li>
               </ul>
             </div>

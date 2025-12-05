@@ -15,7 +15,7 @@ export default function CartPage() {
       <Header />
       <main className="pt-4 pb-20">
         <CartView onNavigate={(view: string) => {
-            if(view === 'checkout') router.push('/checkout'); // Assuming you create checkout page later or handle it here
+            if(view === 'checkout') router.push('/checkout');
             else router.push(`/${view}`);
         }} />
       </main>
