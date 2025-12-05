@@ -7,6 +7,7 @@ import { ToastProvider } from '@/components/common/ToastContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
+import { MerchantProvider } from '@/context/MerchantContext';
 import GeminiAssistant from '@/components/common/GeminiAssistant';
 
 const cairo = Cairo({ subsets: ["arabic", "latin"], variable: '--font-cairo' });
@@ -28,18 +29,20 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
       </head>
       <body className={`${cairo.variable} ${dancing.variable} font-sans bg-gray-50 text-ray-black dark:bg-gray-950 dark:text-gray-100`}>
-        <AuthProvider>
-          <LanguageProvider>
-            <ThemeProvider>
-              <ToastProvider>
-                <CartProvider>
-                  {children}
-                  <GeminiAssistant context="customer" />
-                </CartProvider>
-              </ToastProvider>
-            </ThemeProvider>
-          </LanguageProvider>
-        </AuthProvider>
+        <MerchantProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <ThemeProvider>
+                <ToastProvider>
+                  <CartProvider>
+                    {children}
+                    <GeminiAssistant context="customer" />
+                  </CartProvider>
+                </ToastProvider>
+              </ThemeProvider>
+            </LanguageProvider>
+          </AuthProvider>
+        </MerchantProvider>
       </body>
     </html>
   );

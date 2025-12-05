@@ -33,7 +33,7 @@ export default function SystemsPage() {
 
     // قطاع الصحة واللياقة - معمولة بالفعل
     { id: 'clinic', title: 'نظام المجمعات الطبية', icon: Stethoscope, desc: 'حجوزات وملفات مرضى', color: 'bg-teal-100 text-teal-600', href: '/dashboard/clinic', category: 'health', status: 'ready' },
-    { id: 'pharmacy', title: 'نظام الصيدليات', icon: Pill, desc: 'أدوية ونواقص', color: 'bg-emerald-100 text-emerald-600', href: '/dashboard/pharmacy', category: 'health', status: 'pending' },
+    { id: 'pharmacy', title: 'نظام الصيدليات', icon: Pill, desc: 'أدوية ونواقص', color: 'bg-emerald-100 text-emerald-600', href: '/dashboard/pharmacy', category: 'health', status: 'ready' },
     { id: 'gym', title: 'نظام الأندية الرياضية', icon: Dumbbell, desc: 'اشتراكات ودخول', color: 'bg-yellow-100 text-yellow-600', href: '/dashboard/gym', category: 'health', status: 'ready' },
     { id: 'salon', title: 'نظام صوالين التجميل', icon: Scissors, desc: 'مواعيد وخدمات', color: 'bg-purple-100 text-purple-600', href: '/dashboard/salon', category: 'health', status: 'pending' },
 

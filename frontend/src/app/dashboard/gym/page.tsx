@@ -1,21 +1,17 @@
-'use client';
+"use client";
 
 import React from 'react';
-import GymDashboard from '@/components/dashboard/gym/GymDashboard';
+import BookingsDashboard from '@/components/dashboard/bookings/BookingsDashboard';
+import { useRouter } from 'next/navigation';
 
 export default function GymPage() {
-  const handleLogout = () => {
-    console.log('Logout');
-  };
-  
-  const handleSwitchType = (type: any) => {
-    console.log('Switch to:', type);
-  };
+  const router = useRouter();
 
   return (
-    <GymDashboard 
-      onLogout={handleLogout}
-      onSwitchType={handleSwitchType}
+    <BookingsDashboard 
+      onLogout={() => router.push('/')} 
+      onSwitchType={(type) => router.push(`/dashboard/${type}`)}
+      type="gym"
     />
   );
 }

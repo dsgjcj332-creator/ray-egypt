@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { 
   Pill, FileText, AlertCircle, DollarSign, Plus, 
-  ShoppingBag, Truck, Search, Tag, Settings2
+  ShoppingBag, Truck, Search, Tag, Settings2, Clock, CheckCircle, MapPin, Phone
 } from 'lucide-react';
 import ActionButton from '../../common/buttons/ActionButton';
 import StatCard from '../../common/cards/StatCard';
@@ -16,19 +16,19 @@ const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => 
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
 
   const defaultStats = [
-    { id: 'stat_sales', title: "مبيعات اليوم", value: "8,500 ج", sub: "120 عملية", icon: DollarSign, color: "teal" as const },
-    { id: 'stat_rx', title: "روشتات مصروفة", value: "45", sub: "روشتة", icon: FileText, color: "blue" as const },
-    { id: 'stat_expiry', title: "تنتهي قريباً", value: "12", sub: "صنف", icon: AlertCircle, color: "red" as const },
-    { id: 'stat_stock', title: "النواقص", value: "8", sub: "أدوية هامة", icon: Pill, color: "orange" as const },
+    { id: 'stat_pending', title: "طلبات معلقة", value: "12", sub: "تحتاج توصيل", icon: Clock, color: "orange" as const },
+    { id: 'stat_completed', title: "طلبات مكتملة", value: "48", sub: "اليوم", icon: CheckCircle, color: "green" as const },
+    { id: 'stat_earnings', title: "أرباحك اليوم", value: "1,200 ج", sub: "من التوصيلات", icon: DollarSign, color: "teal" as const },
+    { id: 'stat_rating', title: "تقييمك", value: "4.8", sub: "من 5 نجوم", icon: Pill, color: "blue" as const },
   ];
 
   const defaultActions = [
-    { id: 'act_sale', label: "بيع جديد", icon: ShoppingBag, color: "bg-teal-600 text-white", onClick: () => setActiveTab('pos') },
-    { id: 'act_rx', label: "صرف روشتة", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('pos') },
-    { id: 'act_order', label: "طلب نواقص", icon: Truck, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('suppliers') },
-    { id: 'act_alt', label: "البدائل", icon: Search, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('products') },
-    { id: 'act_add', label: "إضافة دواء", icon: Plus, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('products') },
-    { id: 'act_offer', label: "عرض جديد", icon: Tag, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('marketing') },
+    { id: 'act_pending', label: "الطلبات المعلقة", icon: Clock, color: "bg-orange-600 text-white", onClick: () => setActiveTab('prescriptions') },
+    { id: 'act_messages', label: "الرسائل", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('messages') },
+    { id: 'act_location', label: "الخريطة", icon: MapPin, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('overview') },
+    { id: 'act_earnings', label: "أرباحك", icon: DollarSign, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('payments') },
+    { id: 'act_contact', label: "تواصل الدعم", icon: Phone, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('messages') },
+    { id: 'act_profile', label: "ملفك الشخصي", icon: Plus, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('settings') },
   ];
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
@@ -88,61 +88,61 @@ const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => 
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-         {/* Expiry Alerts */}
+         {/* Pending Orders */}
          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-500" />
-                    تنبيهات الصلاحية
+                    <Clock className="w-5 h-5 text-orange-500" />
+                    الطلبات المعلقة
                 </h3>
-                <span className="text-xs bg-red-50 text-red-800 px-2 py-1 rounded font-bold">3 أصناف حرجة</span>
+                <span className="text-xs bg-orange-50 text-orange-800 px-2 py-1 rounded font-bold">12 طلب</span>
             </div>
             <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100">
+                <div className="flex items-center justify-between p-3 bg-orange-50 rounded-xl border border-orange-100">
                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-red-500 shadow-sm">
-                         <Pill className="w-5 h-5" />
+                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-orange-500 shadow-sm">
+                         <MapPin className="w-5 h-5" />
                       </div>
                       <div>
-                         <h4 className="font-bold text-sm text-gray-800">Panadol Extra</h4>
-                         <p className="text-xs text-red-600">ينتهي في: 15/12/2025</p>
+                         <h4 className="font-bold text-sm text-gray-800">طلب #1024</h4>
+                         <p className="text-xs text-orange-600">العنوان: شارع النيل، القاهرة</p>
                       </div>
                    </div>
                    <button 
-                     onClick={() => setActiveTab('suppliers')}
-                     className="text-xs font-bold text-red-700 border border-red-200 px-3 py-1 rounded bg-white hover:bg-red-50 transition"
+                     onClick={() => setActiveTab('messages')}
+                     className="text-xs font-bold text-orange-700 border border-orange-200 px-3 py-1 rounded bg-white hover:bg-orange-50 transition"
                    >
-                     مرتجع
+                     تفاصيل
                    </button>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-xl border border-yellow-100">
+                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl border border-blue-100">
                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-yellow-600 shadow-sm">
-                         <Pill className="w-5 h-5" />
+                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 shadow-sm">
+                         <Phone className="w-5 h-5" />
                       </div>
                       <div>
-                         <h4 className="font-bold text-sm text-gray-800">Augmentin 1g</h4>
-                         <p className="text-xs text-yellow-700">ينتهي في: 01/01/2026</p>
+                         <h4 className="font-bold text-sm text-gray-800">طلب #1023</h4>
+                         <p className="text-xs text-blue-700">العميل: أحمد محمد - 01012345678</p>
                       </div>
                    </div>
                    <button 
-                     onClick={() => setActiveTab('marketing')}
-                     className="text-xs font-bold text-yellow-700 border border-yellow-200 px-3 py-1 rounded bg-white hover:bg-yellow-50 transition"
+                     onClick={() => setActiveTab('messages')}
+                     className="text-xs font-bold text-blue-700 border border-blue-200 px-3 py-1 rounded bg-white hover:bg-blue-50 transition"
                    >
-                     خصم
+                     اتصل
                    </button>
                 </div>
             </div>
          </div>
 
-         {/* Sales Chart Placeholder / Top Items */}
+         {/* Earnings Summary */}
          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-lg text-gray-800 mb-4">الأكثر مبيعاً</h3>
+            <h3 className="font-bold text-lg text-gray-800 mb-4">ملخص أرباحك</h3>
             <div className="space-y-4">
-               <ItemRow name="Congestal" count="150 علبة" />
-               <ItemRow name="Panadol Cold+Flu" count="120 علبة" />
-               <ItemRow name="Vitamin C" count="95 علبة" />
-               <ItemRow name="Masks" count="80 علبة" />
+               <ItemRow name="اليوم" count="1,200 ج" />
+               <ItemRow name="هذا الأسبوع" count="7,500 ج" />
+               <ItemRow name="هذا الشهر" count="28,000 ج" />
+               <ItemRow name="الإجمالي" count="145,000 ج" />
             </div>
          </div>
       </div>

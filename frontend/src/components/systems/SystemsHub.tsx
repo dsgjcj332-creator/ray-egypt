@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Store, Utensils, Home, Car, Stethoscope, Dumbbell, 
   Wrench, Shirt, ShoppingBag, Scissors, Pill, Briefcase, 
   ArrowLeft, CheckCircle, ShieldCheck, HardHat, ArrowRight, Menu, X, LayoutGrid,
   Baby, Gavel, Users, Umbrella, Sun, Zap, TrendingUp, BarChart3, Clock, Lock, Cloud,
-  Phone, Mail, MapPin, Star, Shield, Award, ChevronRight
+  Phone, Mail, MapPin, Star, Shield, Award, ChevronRight, Calendar
 } from 'lucide-react';
 
 interface SystemsHubProps {
@@ -13,6 +14,7 @@ interface SystemsHubProps {
 }
 
 const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketplace }) => {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   
   const handleGoToMerchant = () => {
@@ -21,6 +23,15 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
   };
 
   const systems = [
+    {
+      category: "قطاع الحجوزات والخدمات",
+      items: [
+        { id: 'bookings', title: 'نظام إدارة الحجوزات', icon: Calendar, desc: 'لجميع الأنشطة التي تحتاج حجز', color: 'bg-indigo-100 text-indigo-600' },
+        { id: 'clinic', title: 'نظام المجمعات الطبية', icon: Stethoscope, desc: 'حجوزات وملفات مرضى', color: 'bg-teal-100 text-teal-600' },
+        { id: 'gym', title: 'نظام الأندية الرياضية', icon: Dumbbell, desc: 'اشتراكات ودخول', color: 'bg-yellow-100 text-yellow-600' },
+        { id: 'salon', title: 'نظام صوالين التجميل', icon: Scissors, desc: 'مواعيد وخدمات', color: 'bg-purple-100 text-purple-600' },
+      ]
+    },
     {
       category: "قطاع التجارة والمطاعم",
       items: [
@@ -31,12 +42,9 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
       ]
     },
     {
-      category: "قطاع الصحة واللياقة",
+      category: "قطاع الصحة والصيدليات",
       items: [
-        { id: 'clinic', title: 'نظام المجمعات الطبية', icon: Stethoscope, desc: 'حجوزات وملفات مرضى', color: 'bg-teal-100 text-teal-600' },
         { id: 'pharmacy', title: 'نظام الصيدليات', icon: Pill, desc: 'أدوية ونواقص', color: 'bg-emerald-100 text-emerald-600' },
-        { id: 'gym', title: 'نظام الأندية الرياضية', icon: Dumbbell, desc: 'اشتراكات ودخول', color: 'bg-yellow-100 text-yellow-600' },
-        { id: 'salon', title: 'نظام صوالين التجميل', icon: Scissors, desc: 'مواعيد وخدمات', color: 'bg-purple-100 text-purple-600' },
       ]
     },
     {
@@ -88,9 +96,14 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
                   >
                     عرض مثال محل
                   </button>
-                  <button className="text-sm font-bold text-white hover:text-ray-gold transition">تسجيل الدخول</button>
                   <button 
-                     onClick={() => onSystemSelect('general')}
+                    onClick={() => router.push('/merchant/login')}
+                    className="text-sm font-bold text-white hover:text-ray-gold transition"
+                  >
+                    تسجيل الدخول
+                  </button>
+                  <button 
+                     onClick={() => router.push('/merchant/register')}
                      className="bg-ray-gold text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-yellow-400 transition flex items-center gap-2 shadow-lg hover:shadow-yellow-500/20"
                   >
                      سجّل نشاطك الآن <ArrowLeft className="w-4 h-4" />
@@ -109,12 +122,17 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
             <div className="md:hidden bg-slate-800 border-t border-slate-700 p-4 absolute w-full left-0 shadow-2xl animate-in slide-in-from-top-5">
                <div className="flex flex-col gap-4">
                   <button onClick={onBackToMarketplace} className="text-right text-slate-300 hover:text-white py-2 border-b border-slate-700">العودة للمتجر (Marketplace)</button>
-                  <button className="text-right font-bold text-white py-2">تسجيل الدخول</button>
                   <button 
-                     onClick={() => onSystemSelect('general')}
+                    onClick={() => router.push('/merchant/login')}
+                    className="text-right font-bold text-white py-2"
+                  >
+                    تسجيل الدخول
+                  </button>
+                  <button 
+                     onClick={() => router.push('/merchant/register')}
                      className="bg-ray-gold text-slate-900 py-3 rounded-lg font-bold text-center shadow-md"
                   >
-                     ابدأ الآن مجاناً
+                     سجّل نشاطك الآن
                   </button>
                </div>
             </div>

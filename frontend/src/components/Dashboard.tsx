@@ -9,6 +9,8 @@ import { BusinessType, colorClasses, dashboardConfigs } from './dashboard/config
 // Import Specific Dashboards
 import RestaurantDashboard from './dashboard/restaurant/RestaurantDashboard';
 import RetailDashboard from './dashboard/retail/RetailDashboard';
+import PharmacyDashboard from './dashboard/pharmacy/PharmacyDashboard';
+import BookingsDashboard from './dashboard/bookings/BookingsDashboard';
 import RealEstateDashboard from './dashboard/realestate/RealEstateDashboard';
 import CarsDashboard from './dashboard/cars/CarsDashboard';
 import ClinicDashboard from './dashboard/clinic/ClinicDashboard';
@@ -19,7 +21,6 @@ import ClothingDashboard from './dashboard/clothing/ClothingDashboard';
 import SalonDashboard from './dashboard/salon/SalonDashboard';
 import ContractingDashboard from './dashboard/contracting/ContractingDashboard';
 import CarWashDashboard from './dashboard/carwash/CarWashDashboard'; 
-import AdminDashboard from './dashboard/admin/AdminDashboard';
 import SystemManagementView from './dashboard/admin/SystemManagementView';
 import UserManagementView from './dashboard/admin/UserManagementView';
 import ReportsView from './dashboard/admin/ReportsView';
@@ -176,7 +177,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
  activeTab === 'system-management' ? <SystemManagementView /> :
  activeTab === 'user-management' ? <UserManagementView /> :
  activeTab === 'reports' ? <ReportsView /> :
- <AdminDashboard onSwitchType={setCurrentBusinessType} />}
+ <SettingsView />}
           </div>
         </main>
       </div>
@@ -207,7 +208,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
              activeTab === 'system-management' ? <SystemManagementView /> :
              activeTab === 'user-management' ? <UserManagementView /> :
              activeTab === 'reports' ? <ReportsView /> :
-             <AdminDashboard onSwitchType={setCurrentBusinessType} />}
+             <SettingsView />}
           </div>
         </main>
       </div>
@@ -221,24 +222,24 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
       case 'retail':
       case 'supermarket':
       case 'electronics':
-      case 'pharmacy':
         return <RetailDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} type={currentBusinessType} />;
+      case 'pharmacy':
+        return <PharmacyDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
+      case 'clinic':
+      case 'gym':
+      case 'salon':
+      case 'nursery':
+        return <BookingsDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} type={currentBusinessType} />;
       case 'realestate':
         return <RealEstateDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'cars':
         return <CarsDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
-      case 'clinic':
-        return <ClinicDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
-      case 'gym':
-        return <GymDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'services':
         return <ServicesDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'laundry':
         return <LaundryDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'clothing':
         return <ClothingDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
-      case 'salon':
-        return <SalonDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'contracting':
         return <ContractingDashboard onLogout={onLogout} onSwitchType={setCurrentBusinessType} />;
       case 'carwash':

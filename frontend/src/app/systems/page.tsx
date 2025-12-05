@@ -9,9 +9,8 @@ export default function SystemsPage() {
   const router = useRouter();
 
   const handleSystemSelect = (systemId: string) => {
-    // For now, direct to dashboard with query param to simulate selection
-    // Ideally, this would go to a registration flow then dashboard
-    router.push(`/dashboard?type=${systemId}`);
+    // Navigate to the system's informational page
+    router.push(`/systems/${systemId}`);
   };
 
   return (
