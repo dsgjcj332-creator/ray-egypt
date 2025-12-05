@@ -5,7 +5,7 @@ import {
   Wrench, Shirt, ShoppingBag, Scissors, Pill, Briefcase, 
   ArrowLeft, CheckCircle, ShieldCheck, HardHat, ArrowRight, Menu, X, LayoutGrid,
   Baby, Gavel, Users, Umbrella, Sun, Zap, TrendingUp, BarChart3, Clock, Lock, Cloud,
-  Phone, Mail, MapPin, Star, Shield, Award, ChevronRight, Calendar
+  Phone, Mail, MapPin, Star, Shield, Award, ChevronRight, Calendar, Package
 } from 'lucide-react';
 
 interface SystemsHubProps {
@@ -64,6 +64,12 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
         { id: 'realestate', title: 'نظام إدارة العقارات', icon: Home, desc: 'بيع وإيجار', color: 'bg-green-100 text-green-700' },
         { id: 'resort', title: 'نظام الشاليهات والمنتجعات', icon: Sun, desc: 'حجوزات وتسكين', color: 'bg-amber-100 text-amber-600' },
       ]
+    },
+    {
+      category: "قطاع التوريد والخدمات اللوجستية",
+      items: [
+        { id: 'supplier', title: 'نظام إدارة الموردين', icon: Package, desc: 'منتجات وطلبات وتواصل', color: 'bg-orange-100 text-orange-600' },
+      ]
     }
   ];
 
@@ -103,6 +109,12 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
                     تسجيل الدخول
                   </button>
                   <button 
+                    onClick={() => router.push('/suppliers')}
+                    className="text-sm font-bold text-white hover:text-ray-gold transition"
+                  >
+                    الموردين
+                  </button>
+                  <button 
                      onClick={() => router.push('/merchant/register')}
                      className="bg-ray-gold text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-yellow-400 transition flex items-center gap-2 shadow-lg hover:shadow-yellow-500/20"
                   >
@@ -127,6 +139,12 @@ const SystemsHub: React.FC<SystemsHubProps> = ({ onSystemSelect, onBackToMarketp
                     className="text-right font-bold text-white py-2"
                   >
                     تسجيل الدخول
+                  </button>
+                  <button 
+                    onClick={() => router.push('/suppliers')}
+                    className="text-right font-bold text-white py-2"
+                  >
+                    الموردين
                   </button>
                   <button 
                      onClick={() => router.push('/merchant/register')}

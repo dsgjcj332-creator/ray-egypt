@@ -5,7 +5,8 @@ import {
   Store, Utensils, Home, Car, Stethoscope, Dumbbell,
   Wrench, Shirt, ShoppingBag, Scissors, Pill, Briefcase,
   Baby, Gavel, Users, Sun, ArrowLeft, Search, Filter,
-  LayoutGrid, ChevronRight, CheckCircle, AlertCircle
+  LayoutGrid, ChevronRight, CheckCircle, AlertCircle,
+  Calendar, Package
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -48,6 +49,10 @@ export default function SystemsPage() {
     { id: 'contracting', title: 'نظام المقاولات', icon: Wrench, desc: 'مشاريع وعقود', color: 'bg-slate-100 text-slate-600', href: '/dashboard/contracting', category: 'business', status: 'ready' },
     { id: 'cars', title: 'نظام إدارة السيارات', icon: Car, desc: 'أسطول وصيانة', color: 'bg-blue-100 text-blue-800', href: '/dashboard/cars', category: 'business', status: 'ready' },
     { id: 'services', title: 'نظام الخدمات العامة', icon: Users, desc: 'إدارة الخدمات', color: 'bg-amber-100 text-amber-600', href: '/dashboard/services', category: 'business', status: 'ready' },
+
+    // أنظمة إضافية - لوحة التحكم
+    { id: 'bookings', title: 'لوحة الحجوزات المركزية', icon: Calendar, desc: 'إدارة جميع الحجوزات', color: 'bg-indigo-100 text-indigo-600', href: '/dashboard/bookings', category: 'admin', status: 'ready' },
+    { id: 'supplier', title: 'لوحة تحكم الموردين', icon: Package, desc: 'إدارة الموردين والطلبات', color: 'bg-orange-100 text-orange-600', href: '/supplier/dashboard', category: 'admin', status: 'ready' },
   ];
 
   const categories = [
@@ -56,6 +61,7 @@ export default function SystemsPage() {
     { id: 'health', label: 'الصحة واللياقة', count: 4 },
     { id: 'services', label: 'الخدمات والتشغيل', count: 4 },
     { id: 'business', label: 'الأعمال والأصول', count: 4 },
+    { id: 'admin', label: 'لوحة التحكم', count: 2 },
   ];
 
   const filteredSystems = systems.filter(sys => {
@@ -184,11 +190,11 @@ export default function SystemsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-black mb-2">16+</div>
+              <div className="text-3xl font-black mb-2">18+</div>
               <p className="text-blue-100">نظام متخصص</p>
             </div>
             <div>
-              <div className="text-3xl font-black mb-2">4</div>
+              <div className="text-3xl font-black mb-2">5</div>
               <p className="text-blue-100">قطاعات رئيسية</p>
             </div>
             <div>
