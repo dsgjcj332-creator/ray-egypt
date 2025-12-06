@@ -355,7 +355,7 @@ export const dashboardConfigs: Record<BusinessType, DashboardConfig> = {
     themeColor: 'blue',
     navItems: [
       { id: 'overview', label: 'نظرة عامة', icon: LayoutDashboard },
-      { id: 'pos', label: 'نقطة البيع المتكاملة', icon: ShoppingCart },
+      { id: 'pos', label: 'نقطة البيع الموحدة', icon: ShoppingCart },
       { id: 'products-management', label: 'إدارة المنتجات المتقدمة', icon: Package },
       { id: 'inventory', label: 'المخزون والجرد', icon: ClipboardList },
       { id: 'suppliers', label: 'الموردين', icon: Truck },
