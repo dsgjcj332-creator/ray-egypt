@@ -7,9 +7,11 @@ import Header from './layout/Header';
 import Footer from './layout/Footer';
 import MobileBottomNav from './layout/MobileBottomNav';
 import HomePage from './pages/HomePage';
-import SystemsHub from './systems/SystemsHub';
+import SystemsHubWorldwide from './systems/SystemsHubWorldwide';
+import SystemActivitySelector from './systems/SystemActivitySelector';
 import SystemLanding from './systems/SystemLanding';
-import { MarketplaceProvider } from '../context/MarketplaceContext'; 
+import { MarketplaceProvider } from '../context/MarketplaceContext';
+import { ThemeProvider } from '../context/ThemeContext'; 
 
 // Listings
 import RestaurantListing from './listings/RestaurantListing';
@@ -57,6 +59,8 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
   const [currentView, setCurrentView] = useState<string>('offers'); 
   const [viewParams, setViewParams] = useState<any>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [showWorldwideSystems, setShowWorldwideSystems] = useState(false);
+  const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -84,6 +88,8 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
     setSelectedMerchant(null);
     setCurrentView('offers'); // Reset to Offers page
     setViewParams(null);
+    setShowWorldwideSystems(false);
+    setSelectedSystem(null);
     window.scrollTo(0, 0);
   };
 
@@ -91,6 +97,11 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
     console.log('Marketplace handleNavigate:', view, params); // Debug log
     
     if (view === 'systems') {
+        setShowWorldwideSystems(true);
+        return;
+    }
+    
+    if (view === 'systems-local') {
         onGoToSystems();
         return;
     }
@@ -209,9 +220,33 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
     }
   };
 
+  const handleSystemSelect = (systemId: string) => {
+    setSelectedSystem(systemId);
+  };
+
+  const handleBackToMarketplace = () => {
+    setShowWorldwideSystems(false);
+    setSelectedSystem(null);
+  };
+
   const MainContent = () => (
     <>
-        {selectedMerchant ? (
+        {showWorldwideSystems ? (
+            <div className="min-h-screen font-sans dir-rtl">
+                {selectedSystem ? (
+                    <SystemActivitySelector 
+                        systemId={selectedSystem} 
+                        onBack={() => setSelectedSystem(null)} 
+                    />
+                ) : (
+                    <SystemsHubWorldwide 
+                        onSystemSelect={handleSystemSelect} 
+                        onBackToMarketplace={handleBackToMarketplace} 
+                    />
+                )}
+                <GeminiAssistant context="merchant" />
+            </div>
+        ) : selectedMerchant ? (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-sans text-ray-black dark:text-white dir-rtl">
             <MerchantPublicView 
             merchant={selectedMerchant} 
@@ -236,7 +271,7 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
             {renderCurrentView()}
 
             <Footer 
-                onGoToSystems={onGoToSystems} 
+                onGoToSystems={() => setShowWorldwideSystems(true)} 
                 onNavigate={handleNavigate}
             />
             
@@ -253,9 +288,11 @@ const Marketplace: React.FC<MarketplaceProps> = ({ onGoToSystems, onProductClick
   );
 
   return (
-    <MarketplaceProvider>
-        <MainContent />
-    </MarketplaceProvider>
+    <ThemeProvider>
+      <MarketplaceProvider>
+          <MainContent />
+      </MarketplaceProvider>
+    </ThemeProvider>
   );
 };
 

@@ -6,7 +6,7 @@ import {
   Wrench, Shirt, ShoppingBag, Scissors, Pill, Briefcase,
   Baby, Gavel, Users, Sun, ArrowLeft, Search, Filter,
   LayoutGrid, ChevronRight, CheckCircle, AlertCircle,
-  Calendar, Package
+  Calendar, Package, Shirt as ShirtIcon
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -42,7 +42,7 @@ export default function SystemsPage() {
     { id: 'nursery', title: 'نظام إدارة الحضانات', icon: Baby, desc: 'متابعة الأطفال والرسوم', color: 'bg-rose-100 text-rose-600', href: '/dashboard/nursery', category: 'services', status: 'pending' },
     { id: 'carwash', title: 'نظام مغاسل السيارات', icon: Car, desc: 'حجوزات وخدمات', color: 'bg-cyan-100 text-cyan-600', href: '/dashboard/carwash', category: 'services', status: 'ready' },
     { id: 'cleaning', title: 'نظام خدمات التنظيف', icon: Wrench, desc: 'أوامر شغل وفنيين', color: 'bg-indigo-100 text-indigo-600', href: '/dashboard/cleaning', category: 'services', status: 'pending' },
-    { id: 'laundry', title: 'نظام إدارة المغاسل', icon: Briefcase, desc: 'استلام وتسليم', color: 'bg-sky-100 text-sky-600', href: '/dashboard/laundry', category: 'services', status: 'ready' },
+    { id: 'laundry', title: 'نظام إدارة المغاسل', icon: ShirtIcon, desc: 'استلام وتسليم', color: 'bg-sky-100 text-sky-600', href: '/dashboard/laundry', category: 'services', status: 'ready' },
 
     // قطاع الأعمال والأصول - معمولة بالفعل
     { id: 'realestate', title: 'نظام إدارة العقارات', icon: Home, desc: 'بيع وإيجار', color: 'bg-green-100 text-green-700', href: '/dashboard/realestate', category: 'business', status: 'ready' },

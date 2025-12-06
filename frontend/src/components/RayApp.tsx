@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import Marketplace from './Marketplace';
 import Dashboard from './Dashboard';
-import SystemsHub from './systems/SystemsHub';
+import SystemsHubWorldwide from './systems/SystemsHubWorldwide';
 import MerchantRegisterView from './views/MerchantRegisterView';
 // import { ViewState } from '../types'; // Removed - types.ts was deleted
 import { BusinessType, dashboardConfigs } from './dashboard/config';
@@ -90,7 +90,7 @@ const RayApp: React.FC = () => {
                     onBack={() => setIsRegistering(false)}
                   />
                 ) : (
-                  <SystemsHub 
+                  <SystemsHubWorldwide 
                     onSystemSelect={startRegistration} 
                     onBackToMarketplace={goHome}
                   />
