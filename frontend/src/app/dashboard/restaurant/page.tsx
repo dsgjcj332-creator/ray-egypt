@@ -1,9 +1,13 @@
 'use client';
 
-import React from 'react';
-import RestaurantDashboard from '@/components/dashboard/restaurant/RestaurantDashboard';
+import React, { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import RestaurantDashboard from '@/components/dashboard/systems/restaurants/RestaurantDashboard';
 
-export default function RestaurantPage() {
+function RestaurantPageContent() {
+  const searchParams = useSearchParams();
+  const isDemo = searchParams.get('demo') === 'true';
+
   const handleLogout = () => {
     console.log('Logout');
   };
@@ -16,6 +20,15 @@ export default function RestaurantPage() {
     <RestaurantDashboard 
       onLogout={handleLogout}
       onSwitchType={handleSwitchType}
+      isDemo={isDemo}
     />
+  );
+}
+
+export default function RestaurantPage() {
+  return (
+    <Suspense fallback={<div>جاري التحميل...</div>}>
+      <RestaurantPageContent />
+    </Suspense>
   );
 }

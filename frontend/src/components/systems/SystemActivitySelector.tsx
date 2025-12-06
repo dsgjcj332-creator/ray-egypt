@@ -138,14 +138,6 @@ const SystemActivitySelector: React.FC<SystemActivitySelectorProps> = ({ systemI
           price: '899'
         },
         {
-          id: 'pharmacy',
-          name: 'الصيدليات',
-          description: 'أدوية ومستلزمات طبية',
-          icon: Pill,
-          features: ['أدوية', 'وصفات', 'نواقص', 'تأمين'],
-          price: '799'
-        },
-        {
           id: 'books',
           name: 'المكتبات',
           description: 'كتب ومواد قرطاسية',
@@ -181,28 +173,12 @@ const SystemActivitySelector: React.FC<SystemActivitySelectorProps> = ({ systemI
           price: '599'
         },
         {
-          id: 'bakery',
-          name: 'المخابز',
-          description: 'خبز وحلويات مخبوزة',
-          icon: Package,
-          features: ['منتجات', 'طازج', 'طلبات', 'توصيل'],
-          price: '550'
-        },
-        {
           id: 'fastfood',
           name: 'الوجبات السريعة',
           description: 'ساندوتشات ووجبات سريعة',
           icon: Clock,
           features: ['سرعة', 'ديليفري', 'فروع', 'تطبيق'],
           price: '699'
-        },
-        {
-          id: 'catering',
-          name: 'خدمات التموين',
-          description: 'تقديم للمناسبات والفعاليات',
-          icon: Users,
-          features: ['مناسبات', 'قوائم', 'توصيل', 'تجهيز'],
-          price: '899'
         }
       ]
     },
@@ -281,11 +257,18 @@ const SystemActivitySelector: React.FC<SystemActivitySelectorProps> = ({ systemI
 
   const handleTryDemo = (activityId: string) => {
     // Navigate to demo dashboard
-    router.push(`/dashboard/${activityId}?demo=true`);
+    const demoPath = `/dashboard/${activityId}?demo=true`;
+    console.log('Navigating to demo:', demoPath);
+    console.log('Activity ID:', activityId);
+    window.location.href = demoPath;
   };
 
   if (showPricing && selectedActivity) {
     const activity = currentSystem.activities.find((a: any) => a.id === selectedActivity);
+    
+    if (!activity) {
+      return <div>نشاط غير موجود</div>;
+    }
     
     return (
       <div className={`min-h-screen bg-gradient-to-br ${theme === 'dark' ? 'from-slate-900 via-blue-900 to-slate-900' : 'from-slate-50 to-blue-50'} font-sans ${language === 'ar' ? 'dir-rtl' : 'dir-ltr'}`}>

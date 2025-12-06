@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import RetailDashboard from '@/components/dashboard/retail/RetailDashboard';
+import RetailDashboard from '@/components/dashboard/systems/retail/RetailDashboard';
 
 export default function RetailPage() {
   const handleLogout = () => {

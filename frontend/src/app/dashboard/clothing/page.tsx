@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ClothingDashboard from '@/components/dashboard/clothing/ClothingDashboard';
+import ClothingDashboard from '@/components/dashboard/systems/clothing/ClothingDashboard';
 
 export default function ClothingPage() {
   const handleLogout = () => {
