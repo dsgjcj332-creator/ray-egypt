@@ -1,4 +1,3 @@
-
 import { 
   ShoppingBag, Users, DollarSign, Star, 
   Package, Menu, LayoutDashboard, Store,
@@ -11,7 +10,9 @@ import {
   Shirt, Droplets, Waves, Scissors, Ticket, Layers,
   Sparkles, Grid, LayoutGrid, BarChart3, HardHat, Warehouse, FileSpreadsheet,
   Settings, Bell, AlertCircle, Gauge, Monitor, Cpu, ShoppingBasket, Scale,
-  Bike, RotateCcw, ClipboardCheck, Baby, Gavel, Umbrella, Sun, UserCheck, LogOut
+  Bike, RotateCcw, ClipboardCheck, Baby, Gavel, Umbrella, Sun, UserCheck, LogOut,
+  ShoppingCart, TrendingUp, Eye, EyeOff, Printer, Download, Upload, Search, Filter,
+  Edit, Trash2, Copy, MoreVertical, ArrowUp, ArrowDown, Box
 } from 'lucide-react';
 
 export type BusinessType = 'general' | 'restaurant' | 'retail' | 'realestate' | 'cars' | 'clinic' | 'gym' | 'services' | 'laundry' | 'clothing' | 'salon' | 'pharmacy' | 'contracting' | 'carwash' | 'supermarket' | 'electronics' | 'nursery' | 'law' | 'consulting' | 'resort' | 'admin';
@@ -35,13 +36,14 @@ export const dashboardConfigs: Record<BusinessType, DashboardConfig> = {
     themeColor: 'emerald',
     navItems: [
       { id: 'overview', label: 'نظرة عامة', icon: LayoutDashboard },
-      { id: 'pos', label: 'كاشير سريع', icon: ShoppingBasket },
+      { id: 'pos', label: 'نقطة البيع المتكاملة', icon: ShoppingCart },
+      { id: 'products-management', label: 'إدارة المنتجات المتقدمة', icon: Package },
       { id: 'inventory', label: 'المخزون والجرد', icon: Layers },
       { id: 'expiry', label: 'الصلاحية', icon: AlertCircle },
       { id: 'suppliers', label: 'الموردين', icon: Truck },
       { id: 'delivery', label: 'طلبات التوصيل', icon: Bike },
       { id: 'offers', label: 'العروض الأسبوعية', icon: Tag },
-      { id: 'reports', label: 'التقارير', icon: BarChart3 },
+      { id: 'analytics-integrated', label: 'التقارير المتكاملة', icon: BarChart3 },
     ],
     stats: [
       { label: 'مبيعات اليوم', value: '24,500 ج', trend: 12, icon: DollarSign },
@@ -353,12 +355,12 @@ export const dashboardConfigs: Record<BusinessType, DashboardConfig> = {
     themeColor: 'blue',
     navItems: [
       { id: 'overview', label: 'نظرة عامة', icon: LayoutDashboard },
-      { id: 'pos', label: 'نقطة البيع (POS)', icon: ShoppingBag },
-      { id: 'products', label: 'المنتجات والأسعار', icon: Tag },
+      { id: 'pos', label: 'نقطة البيع المتكاملة', icon: ShoppingCart },
+      { id: 'products-management', label: 'إدارة المنتجات المتقدمة', icon: Package },
       { id: 'inventory', label: 'المخزون والجرد', icon: ClipboardList },
       { id: 'suppliers', label: 'الموردين', icon: Truck },
       { id: 'customers', label: 'العملاء والديون', icon: Users },
-      { id: 'reports', label: 'التقارير المالية', icon: BarChart3 },
+      { id: 'analytics-integrated', label: 'التقارير المتكاملة', icon: BarChart3 },
       { id: 'offers', label: 'العروض والخصومات', icon: Star },
     ],
     stats: [
