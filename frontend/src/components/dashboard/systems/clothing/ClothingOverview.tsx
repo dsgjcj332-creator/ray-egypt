@@ -8,7 +8,7 @@ import {
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
-import DashboardCustomizer from '../DashboardCustomizer';
+import DashboardCustomizer from '../../DashboardCustomizer';
 
 interface ClothingOverviewProps {
   setActiveTab: (tab: string) => void;
