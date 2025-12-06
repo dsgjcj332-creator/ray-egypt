@@ -17,10 +17,12 @@ const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab })
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
   
   const defaultStats = [
-    { id: 'stat_sales', title: "مبيعات اليوم", value: "4,850 ج", sub: "120 طلب", icon: DollarSign, color: "orange" as const },
-    { id: 'stat_kitchen', title: "طلبات المطبخ", value: "8", sub: "جاري التحضير", icon: ChefHat, color: "yellow" as const },
-    { id: 'stat_tables', title: "الطاولات المشغولة", value: "6/15", sub: "40% إشغال", icon: Utensils, color: "blue" as const },
-    { id: 'stat_delivery', title: "التوصيل", value: "4", sub: "جاري التوصيل", icon: Truck, color: "green" as const },
+    { id: 'stat_sales', title: "مبيعات اليوم", value: "4,850 ج", sub: "120 طلب", icon: DollarSign, color: "orange" as const, trend: "+12%" },
+    { id: 'stat_kitchen', title: "طلبات المطبخ", value: "8", sub: "جاري التحضير", icon: ChefHat, color: "yellow" as const, trend: "-5%" },
+    { id: 'stat_tables', title: "الطاولات المشغولة", value: "6/15", sub: "40% إشغال", icon: Utensils, color: "blue" as const, trend: "+8%" },
+    { id: 'stat_delivery', title: "التوصيل", value: "4", sub: "جاري التوصيل", icon: Truck, color: "green" as const, trend: "+3%" },
+    { id: 'stat_rating', title: "تقييم اليوم", value: "4.8/5", sub: "من 45 تقييم", icon: CheckCircle, color: "blue" as const, trend: "+0.2" },
+    { id: 'stat_revenue', title: "الإيرادات المتوقعة", value: "8,500 ج", sub: "حتى نهاية اليوم", icon: DollarSign, color: "green" as const, trend: "+15%" },
   ];
 
   const defaultActions = [

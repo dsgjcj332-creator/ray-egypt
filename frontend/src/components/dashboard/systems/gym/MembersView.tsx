@@ -12,14 +12,18 @@ interface Member {
   status: 'active' | 'expired' | 'frozen';
   lastVisit: string;
   avatar: string;
+  visits: number;
+  joinDate: string;
+  totalSpent: number;
+  rating: number;
 }
 
 const initialMembers: Member[] = [
-  { id: '1001', name: 'عمرو دياب', phone: '01001234567', plan: 'سنوي VIP', startDate: '2025-01-01', endDate: '2026-01-01', status: 'active', lastVisit: 'اليوم 10 ص', avatar: 'AD' },
-  { id: '1002', name: 'تامر حسني', phone: '01234567890', plan: 'شهري', startDate: '2025-11-01', endDate: '2025-11-30', status: 'active', lastVisit: 'أمس 6 م', avatar: 'TH' },
-  { id: '1003', name: 'محمد رمضان', phone: '01122334455', plan: '3 شهور', startDate: '2025-08-01', endDate: '2025-11-01', status: 'expired', lastVisit: 'منذ 3 أيام', avatar: 'MR' },
-  { id: '1004', name: 'شيرين عبد الوهاب', phone: '01555667788', plan: 'سنوي', startDate: '2025-03-01', endDate: '2026-03-01', status: 'frozen', lastVisit: 'منذ أسبوع', avatar: 'SA' },
-  { id: '1005', name: 'أحمد حلمي', phone: '01099887766', plan: 'حصص خاصة (PT)', startDate: '2025-11-15', endDate: '2025-12-15', status: 'active', lastVisit: 'اليوم 2 م', avatar: 'AH' },
+  { id: '1001', name: 'عمرو دياب', phone: '01001234567', plan: 'سنوي VIP', startDate: '2025-01-01', endDate: '2026-01-01', status: 'active', lastVisit: 'اليوم 10 ص', avatar: 'AD', visits: 45, joinDate: '2024-01-15', totalSpent: 12000, rating: 4.8 },
+  { id: '1002', name: 'تامر حسني', phone: '01234567890', plan: 'شهري', startDate: '2025-11-01', endDate: '2025-11-30', status: 'active', lastVisit: 'أمس 6 م', avatar: 'TH', visits: 28, joinDate: '2024-06-20', totalSpent: 3600, rating: 4.5 },
+  { id: '1003', name: 'محمد رمضان', phone: '01122334455', plan: '3 شهور', startDate: '2025-08-01', endDate: '2025-11-01', status: 'expired', lastVisit: 'منذ 3 أيام', avatar: 'MR', visits: 15, joinDate: '2024-08-10', totalSpent: 2400, rating: 4.2 },
+  { id: '1004', name: 'شيرين عبد الوهاب', phone: '01555667788', plan: 'سنوي', startDate: '2025-03-01', endDate: '2026-03-01', status: 'frozen', lastVisit: 'منذ أسبوع', avatar: 'SA', visits: 52, joinDate: '2024-03-05', totalSpent: 9600, rating: 4.9 },
+  { id: '1005', name: 'أحمد حلمي', phone: '01099887766', plan: 'حصص خاصة (PT)', startDate: '2025-11-15', endDate: '2025-12-15', status: 'active', lastVisit: 'اليوم 2 م', avatar: 'AH', visits: 32, joinDate: '2024-09-01', totalSpent: 8000, rating: 4.7 },
 ];
 
 const MembersView: React.FC = () => {

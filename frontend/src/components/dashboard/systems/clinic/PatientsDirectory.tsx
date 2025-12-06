@@ -15,13 +15,18 @@ interface Patient {
   lastVisit: string;
   bloodType: string;
   conditions: string[];
+  email?: string;
+  joinDate: string;
+  visits: number;
+  totalSpent: number;
+  allergies?: string[];
 }
 
 const initialPatients: Patient[] = [
-  { id: 'P-1001', name: 'منى زكي', age: 34, phone: '012xxxxxxx', gender: 'female', lastVisit: '2025-11-20', bloodType: 'A+', conditions: ['حساسية', 'ضغط'] },
-  { id: 'P-1002', name: 'كريم عبد العزيز', age: 45, phone: '010xxxxxxx', gender: 'male', lastVisit: '2025-11-18', bloodType: 'O+', conditions: [] },
-  { id: 'P-1003', name: 'أحمد حلمي', age: 42, phone: '011xxxxxxx', gender: 'male', lastVisit: '2025-10-05', bloodType: 'B-', conditions: ['سكر'] },
-  { id: 'P-1004', name: 'ياسمين صبري', age: 29, phone: '015xxxxxxx', gender: 'female', lastVisit: '2025-11-22', bloodType: 'AB+', conditions: [] },
+  { id: 'P-1001', name: 'منى زكي', age: 34, phone: '012xxxxxxx', gender: 'female', lastVisit: '2025-11-20', bloodType: 'A+', conditions: ['حساسية', 'ضغط'], email: 'mona@email.com', joinDate: '2024-03-15', visits: 12, totalSpent: 4500, allergies: ['البنسلين'] },
+  { id: 'P-1002', name: 'كريم عبد العزيز', age: 45, phone: '010xxxxxxx', gender: 'male', lastVisit: '2025-11-18', bloodType: 'O+', conditions: [], email: 'karim@email.com', joinDate: '2024-05-20', visits: 8, totalSpent: 3200 },
+  { id: 'P-1003', name: 'أحمد حلمي', age: 42, phone: '011xxxxxxx', gender: 'male', lastVisit: '2025-10-05', bloodType: 'B-', conditions: ['سكر'], email: 'ahmed@email.com', joinDate: '2024-01-10', visits: 15, totalSpent: 5800, allergies: ['الأسبرين'] },
+  { id: 'P-1004', name: 'ياسمين صبري', age: 29, phone: '015xxxxxxx', gender: 'female', lastVisit: '2025-11-22', bloodType: 'AB+', conditions: [], email: 'yasmin@email.com', joinDate: '2024-07-05', visits: 6, totalSpent: 2100 },
 ];
 
 const PatientsDirectory: React.FC = () => {

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Clock, CheckCircle, AlertCircle, ChefHat, Flame, Check, List, LayoutGrid, Truck, Utensils } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, ChefHat, Flame, Check, List, LayoutGrid, Truck, Utensils, Zap, Timer } from 'lucide-react';
 import StatusBadge from '../../../common/StatusBadge';
 
 interface OrderItem {
@@ -18,6 +18,8 @@ interface KitchenOrder {
   time: string;
   status: 'new' | 'preparing' | 'ready';
   items: OrderItem[];
+  priority: 'normal' | 'urgent' | 'vip';
+  estimatedTime: number; // بالدقائق
 }
 
 const initialOrders: KitchenOrder[] = [
@@ -27,6 +29,8 @@ const initialOrders: KitchenOrder[] = [
     table: 'T-05',
     time: '12:05',
     status: 'preparing',
+    priority: 'normal',
+    estimatedTime: 8,
     items: [
       { id: 1, name: 'برجر كلاسيك', qty: 2, notes: 'بدون بصل' },
       { id: 2, name: 'بطاطس مقلية', qty: 1 },
@@ -39,6 +43,8 @@ const initialOrders: KitchenOrder[] = [
     customer: 'أحمد محمد',
     time: '12:12',
     status: 'new',
+    priority: 'urgent',
+    estimatedTime: 15,
     items: [
       { id: 4, name: 'بيتزا مارجريتا', qty: 1 },
       { id: 5, name: 'سلطة سيزر', qty: 1 }
@@ -50,6 +56,8 @@ const initialOrders: KitchenOrder[] = [
     customer: 'كابتن علي',
     time: '12:15',
     status: 'new',
+    priority: 'vip',
+    estimatedTime: 5,
     items: [
       { id: 6, name: 'قهوة لاتيه', qty: 1, notes: 'سكر زيادة' },
       { id: 7, name: 'تشيز كيك', qty: 1 }
@@ -61,6 +69,8 @@ const initialOrders: KitchenOrder[] = [
     table: 'T-02',
     time: '12:18',
     status: 'new',
+    priority: 'normal',
+    estimatedTime: 12,
     items: [
       { id: 8, name: 'ميكس جريل', qty: 3 },
       { id: 9, name: 'شوربة كريمة', qty: 3 }

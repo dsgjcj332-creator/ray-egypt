@@ -1,27 +1,29 @@
 
 import React, { useState } from 'react';
-import { Users, Clock, Coffee, CheckCircle, AlertCircle, DollarSign, MoreVertical, Utensils } from 'lucide-react';
+import { Users, Clock, Coffee, CheckCircle, AlertCircle, DollarSign, MoreVertical, Utensils, Zap, TrendingUp } from 'lucide-react';
 
 interface Table {
   id: string;
   name: string;
   zone: 'indoor' | 'terrace' | 'vip';
   capacity: number;
-  status: 'available' | 'occupied' | 'reserved' | 'billed';
+  status: 'available' | 'occupied' | 'reserved' | 'billed' | 'cleaning';
   guests?: number;
   time?: string;
   amount?: number;
+  waitTime?: number; // بالدقائق
+  priority?: 'normal' | 'urgent' | 'vip';
 }
 
 const initialTables: Table[] = [
-  { id: 'T1', name: 'T-01', zone: 'indoor', capacity: 2, status: 'occupied', guests: 2, time: '12:30', amount: 450 },
-  { id: 'T2', name: 'T-02', zone: 'indoor', capacity: 4, status: 'available' },
-  { id: 'T3', name: 'T-03', zone: 'indoor', capacity: 4, status: 'reserved', time: '02:00 PM' },
-  { id: 'T4', name: 'T-04', zone: 'indoor', capacity: 6, status: 'billed', guests: 5, time: '01:15', amount: 1200 },
-  { id: 'T5', name: 'T-05', zone: 'terrace', capacity: 2, status: 'available' },
-  { id: 'T6', name: 'T-06', zone: 'terrace', capacity: 4, status: 'occupied', guests: 3, time: '01:00', amount: 320 },
-  { id: 'V1', name: 'VIP-1', zone: 'vip', capacity: 8, status: 'reserved', time: '08:00 PM' },
-  { id: 'V2', name: 'VIP-2', zone: 'vip', capacity: 10, status: 'available' },
+  { id: 'T1', name: 'T-01', zone: 'indoor', capacity: 2, status: 'occupied', guests: 2, time: '12:30', amount: 450, waitTime: 25, priority: 'normal' },
+  { id: 'T2', name: 'T-02', zone: 'indoor', capacity: 4, status: 'available', priority: 'normal' },
+  { id: 'T3', name: 'T-03', zone: 'indoor', capacity: 4, status: 'reserved', time: '02:00 PM', priority: 'normal' },
+  { id: 'T4', name: 'T-04', zone: 'indoor', capacity: 6, status: 'billed', guests: 5, time: '01:15', amount: 1200, priority: 'urgent' },
+  { id: 'T5', name: 'T-05', zone: 'terrace', capacity: 2, status: 'cleaning', priority: 'normal' },
+  { id: 'T6', name: 'T-06', zone: 'terrace', capacity: 4, status: 'occupied', guests: 3, time: '01:00', amount: 320, waitTime: 35, priority: 'normal' },
+  { id: 'V1', name: 'VIP-1', zone: 'vip', capacity: 8, status: 'reserved', time: '08:00 PM', priority: 'vip' },
+  { id: 'V2', name: 'VIP-2', zone: 'vip', capacity: 10, status: 'available', priority: 'vip' },
 ];
 
 const TableMap: React.FC = () => {
@@ -32,10 +34,11 @@ const TableMap: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-white border-gray-200 text-gray-600 hover:border-green-400';
+      case 'available': return 'bg-green-50 border-green-200 text-green-700 hover:border-green-400';
       case 'occupied': return 'bg-red-50 border-red-200 text-red-700 hover:border-red-400';
       case 'reserved': return 'bg-orange-50 border-orange-200 text-orange-700 hover:border-orange-400';
       case 'billed': return 'bg-blue-50 border-blue-200 text-blue-700 hover:border-blue-400';
+      case 'cleaning': return 'bg-yellow-50 border-yellow-200 text-yellow-700 hover:border-yellow-400';
       default: return 'bg-white border-gray-200';
     }
   };
@@ -46,6 +49,7 @@ const TableMap: React.FC = () => {
       case 'occupied': return 'مشغول';
       case 'reserved': return 'محجوز';
       case 'billed': return 'فاتورة';
+      case 'cleaning': return 'تنظيف';
       default: return status;
     }
   };

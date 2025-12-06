@@ -10,7 +10,7 @@ import {
   Calendar, Clock, TrendingUp, TrendingDown, AlertCircle, User,
   Tag, ShoppingBag, Loader2, CheckCircle, ChevronUp, FileText
 } from 'lucide-react';
-import { BusinessType } from '../config';
+import { BusinessType } from '../../config';
 
 interface Item {
   id: number;
@@ -40,6 +40,9 @@ const UnifiedPOS: React.FC<IntegratedPOSProps> = ({ type }) => {
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [notes, setNotes] = useState('');
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
 
   // Local state for theme and language
   const language = 'ar';
@@ -88,7 +91,12 @@ const UnifiedPOS: React.FC<IntegratedPOSProps> = ({ type }) => {
   };
 
   const getTotal = () => {
-    return cart.reduce((sum, cartItem) => sum + (cartItem.item.price * cartItem.qty), 0);
+    const subtotal = cart.reduce((sum, cartItem) => sum + (cartItem.item.price * cartItem.qty), 0);
+    const discountAmount = subtotal * (discountPercent / 100);
+    const afterDiscount = subtotal - discountAmount;
+    const tax = afterDiscount * 0.14;
+    const total = afterDiscount + tax;
+    return { subtotal, discountAmount, afterDiscount, tax, total };
   };
 
   const processPayment = async () => {
@@ -424,15 +432,21 @@ const UnifiedPOS: React.FC<IntegratedPOSProps> = ({ type }) => {
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span>المجموع الفرعي</span>
-                    <span>{getTotal().toFixed(2)} ج</span>
+                    <span>{getTotal().subtotal.toFixed(2)} ج</span>
                   </div>
+                  {discountPercent > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>الخصم ({discountPercent}%)</span>
+                      <span>-{getTotal().discountAmount.toFixed(2)} ج</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span>الضريبة (14%)</span>
-                    <span>{(getTotal() * 0.14).toFixed(2)} ج</span>
+                    <span>{getTotal().tax.toFixed(2)} ج</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold">
                     <span>الإجمالي</span>
-                    <span>{(getTotal() * 1.14).toFixed(2)} ج</span>
+                    <span>{getTotal().total.toFixed(2)} ج</span>
                   </div>
                 </div>
 

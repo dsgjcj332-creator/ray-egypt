@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Plus, Minus, ChefHat, CreditCard, Banknote, Utensils, X, ShoppingBag, ChevronUp } from 'lucide-react';
+import { Search, Plus, Minus, ChefHat, CreditCard, Banknote, Utensils, X, ShoppingBag, ChevronUp, Percent, Clock, AlertCircle } from 'lucide-react';
 
 const products = [
   { id: 1, name: 'برجر كلاسيك', price: 80, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200', category: 'برجر' },
@@ -18,6 +18,9 @@ const RestaurantPOS: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [selectedTable, setSelectedTable] = useState('T-01');
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [notes, setNotes] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'both'>('cash');
 
   const addToCart = (product: any) => {
     setCart(prev => {
@@ -34,8 +37,11 @@ const RestaurantPOS: React.FC = () => {
     }).filter(p => p.qty > 0));
   };
 
-  const total = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
-  const tax = total * 0.14;
+  const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
+  const discountAmount = subtotal * (discountPercent / 100);
+  const afterDiscount = subtotal - discountAmount;
+  const tax = afterDiscount * 0.14;
+  const total = afterDiscount + tax;
   const itemsCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
   const CartPanel = () => (

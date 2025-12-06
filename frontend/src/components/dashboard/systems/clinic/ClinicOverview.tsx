@@ -7,7 +7,7 @@ import {
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import StatusBadge from '../../../common/StatusBadge';
-import DashboardCustomizer from '../DashboardCustomizer';
+import DashboardCustomizer from '../../DashboardCustomizer';
 
 interface ClinicOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -17,10 +17,12 @@ const ClinicOverview: React.FC<ClinicOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
 
   const defaultStats = [
-    { id: 'stat_patients', title: "حالات اليوم", value: "24", sub: "مريض", icon: Users, color: "teal" as const },
+    { id: 'stat_patients', title: "حالات اليوم", value: "24", sub: "مريض", icon: Users, color: "blue" as const },
     { id: 'stat_waiting', title: "في الانتظار", value: "3", sub: "الآن", icon: Clock, color: "yellow" as const },
     { id: 'stat_revenue', title: "إيراد العيادة", value: "12,500", sub: "اليوم", icon: DollarSign, color: "green" as const },
     { id: 'stat_ops', title: "عمليات", value: "2", sub: "مجدولة", icon: Activity, color: "red" as const },
+    { id: 'stat_doctors', title: "الأطباء النشطين", value: "8", sub: "متاح الآن", icon: Users, color: "green" as const },
+    { id: 'stat_monthly', title: "الإيرادات الشهرية", value: "285,000", sub: "جنيه", icon: DollarSign, color: "blue" as const },
   ];
 
   const defaultActions = [

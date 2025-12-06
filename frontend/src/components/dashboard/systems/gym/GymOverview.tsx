@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
-import DashboardCustomizer from '../DashboardCustomizer';
+import DashboardCustomizer from '../../DashboardCustomizer';
 
 interface GymOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -19,6 +19,8 @@ const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
     { id: 'stat_new', title: "اشتراكات جديدة", value: "8", sub: "اليوم", icon: CreditCard, color: "green" as const },
     { id: 'stat_expiring', title: "تنتهي قريباً", value: "12", sub: "عضوية", icon: Clock, color: "red" as const },
     { id: 'stat_sales', title: "مبيعات المتجر", value: "3,200", sub: "جنيه", icon: ShoppingBag, color: "blue" as const },
+    { id: 'stat_revenue', title: "الإيرادات الشهرية", value: "85,000", sub: "جنيه", icon: CreditCard, color: "green" as const },
+    { id: 'stat_members', title: "إجمالي الأعضاء", value: "1,250", sub: "عضو نشط", icon: Users, color: "blue" as const },
   ];
 
   const defaultActions = [

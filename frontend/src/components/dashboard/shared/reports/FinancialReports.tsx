@@ -5,7 +5,7 @@ import {
   PieChart, Pie, Cell 
 } from 'recharts';
 import { Download, Calendar, TrendingUp, TrendingDown, DollarSign, CreditCard, Wallet, CheckCircle, Loader2, FileText } from 'lucide-react';
-import ExpensesManager from '../finance/ExpensesManager';
+import ExpensesManager from '../../systems/finance/ExpensesManager';
 
 const salesData = [
   { name: '1', sales: 4000, expense: 2400 },

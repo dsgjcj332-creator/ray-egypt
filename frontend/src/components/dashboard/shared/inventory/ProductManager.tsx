@@ -6,7 +6,7 @@ import {
   TrendingDown, ShoppingCart, History, ArrowUp, ArrowDown, Loader2
 } from 'lucide-react';
 import ProductForm from './ProductForm';
-import { fetchProducts, saveProduct, updateProduct, deleteProduct, Product } from '../../../services/productService';
+import { fetchProducts, saveProduct, updateProduct, deleteProduct, Product } from '../../../../services/productService';
 
 interface StockLog {
   id: string;
