@@ -4,15 +4,14 @@ import {
   LayoutDashboard, Shirt, Waves, CheckCircle, Truck, Ticket, 
   ShoppingBag, LogOut, Wind, Droplets, Settings
 } from 'lucide-react';
-import { BusinessType, dashboardConfigs, colorClasses } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType, dashboardConfigs, colorClasses } from '../../shared/config';
+import Header from '../../shared/layout/Header';
 import LaundryOverview from './LaundryOverview';
 import LaundryWorkflow from './LaundryWorkflow';
-import SubscriptionManager from '../subscriptions/SubscriptionManager';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
+// import SubscriptionManager from '../../shared/subscriptions/SubscriptionManager';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
 
 interface Props {
   onLogout: () => void;
@@ -21,8 +20,7 @@ interface Props {
 
 const LaundryDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+    
   const config = dashboardConfigs['laundry'];
   const theme = colorClasses['cyan'];
 
@@ -68,7 +66,7 @@ const LaundryDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
       case 'ready':
         return <LaundryWorkflow initialStage={activeTab} />;
       case 'subscriptions':
-        return <SubscriptionManager />;
+        return <div className="p-6 text-center text-gray-600">الاشتراكات</div>;
       case 'settings':
         return <SettingsView />;
       case 'notifications':
@@ -85,15 +83,7 @@ const LaundryDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
     <div className="min-h-screen bg-cyan-50/30 flex font-sans">
       <Sidebar />
       
-      <MobileSidebar 
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        config={config}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onLogout={onLogout}
-      />
-
+      
       <main className="flex-1 overflow-y-auto h-screen flex flex-col">
         <Header 
           config={config} 
@@ -101,7 +91,7 @@ const LaundryDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
           setCurrentBusinessType={onSwitchType} 
           theme={theme}
           onNavigate={setActiveTab}
-          onMenuClick={() => setIsMobileMenuOpen(true)}
+          onMenuClick={() => {}}
         />
         <div className="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
           {renderContent()}

@@ -3,22 +3,21 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, Home, Users, Key, Map, Calendar, FileText, LogOut, Megaphone, MessageSquare, DollarSign
 } from 'lucide-react';
-import { BusinessType } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType } from '../../shared/config';
+import Header from '../../shared/layout/Header';
 import PropertyManager from './PropertyManager';
 import ShowingsView from './ShowingsView';
 import RealEstateOverview from './RealEstateOverview';
 import RealEstateMap from './RealEstateMap';
 import ContractBuilder from './ContractBuilder';
 import LeadsKanban from './LeadsKanban';
-import InstallmentTracker from '../finance/InstallmentTracker';
-import MarketingManager from '../marketing/MarketingManager';
-import MessagesCenter from '../communication/MessagesCenter';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
-import { dashboardConfigs, colorClasses } from '../config';
+// import InstallmentTracker from '../../shared/finance/InstallmentTracker';
+import MarketingManager from '../../shared/marketing/MarketingManager';
+import MessagesCenter from '../../shared/communication/MessagesCenter';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
+import { dashboardConfigs, colorClasses } from '../../shared/config';
 
 interface Props {
   onLogout: () => void;
@@ -27,8 +26,7 @@ interface Props {
 
 const RealEstateDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  
   const config = dashboardConfigs['realestate'];
   const theme = colorClasses['green'];
 
@@ -79,7 +77,7 @@ const RealEstateDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
       case 'contracts':
         return <ContractBuilder />;
       case 'installments':
-        return <InstallmentTracker />;
+        return <div className="p-6 text-center text-gray-600">متابعة الأقساط</div>;
       case 'map':
         return <RealEstateMap />;
       case 'marketing':
@@ -102,15 +100,7 @@ const RealEstateDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
     <div className="min-h-screen bg-green-50/30 flex font-sans">
       <RealEstateSidebar />
 
-      <MobileSidebar 
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        config={config}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onLogout={onLogout}
-      />
-
+      
       <main className="flex-1 overflow-y-auto h-screen flex flex-col">
         <Header 
           config={config} 
@@ -118,7 +108,7 @@ const RealEstateDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
           setCurrentBusinessType={onSwitchType} 
           theme={theme}
           onNavigate={setActiveTab}
-          onMenuClick={() => setIsMobileMenuOpen(true)}
+          onMenuClick={() => {}}
         />
         <div className="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
           {renderContent()}

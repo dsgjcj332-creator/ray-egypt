@@ -4,16 +4,15 @@ import {
   LayoutDashboard, Calendar, Truck, Layers, Users, DollarSign, 
   LogOut, Settings, Droplets
 } from 'lucide-react';
-import { BusinessType, dashboardConfigs, colorClasses } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType, dashboardConfigs, colorClasses } from '../../shared/config';
+import Header from '../../shared/layout/Header';
 import CarWashOverview from './CarWashOverview';
-import CalendarView from '../views/CalendarView';
-import UniversalDataView from '../views/UniversalDataView';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
-import ExpensesManager from '../finance/ExpensesManager';
+import CalendarView from '../../shared/views/CalendarView';
+import UniversalDataView from '../../shared/views/UniversalDataView';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
+// import ExpensesManager from '../../shared/finance/ExpensesManager';
 
 interface Props {
   onLogout: () => void;
@@ -22,8 +21,7 @@ interface Props {
 
 const CarWashDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  
   const config = dashboardConfigs['carwash'];
   const theme = colorClasses['cyan'];
 
@@ -70,8 +68,8 @@ const CarWashDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
         return <UniversalDataView type="products" theme={theme} />;
       case 'customers':
         return <UniversalDataView type="customers" theme={theme} />;
-      case 'finance':
-        return <ExpensesManager />;
+      case 'expenses':
+        return <div className="p-6 text-center text-gray-600">المصروفات</div>;
       case 'settings':
         return <SettingsView />;
       case 'notifications':
@@ -88,15 +86,7 @@ const CarWashDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
     <div className="min-h-screen bg-cyan-50/30 flex font-sans">
       <Sidebar />
       
-      <MobileSidebar 
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        config={config}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onLogout={onLogout}
-      />
-
+      
       <main className="flex-1 overflow-y-auto h-screen flex flex-col">
         <Header 
           config={config} 
@@ -104,7 +94,7 @@ const CarWashDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
           setCurrentBusinessType={onSwitchType} 
           theme={theme}
           onNavigate={setActiveTab}
-          onMenuClick={() => setIsMobileMenuOpen(true)}
+          onMenuClick={() => {}}
         />
         <div className="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
           {renderContent()}

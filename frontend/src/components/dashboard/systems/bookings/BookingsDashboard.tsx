@@ -5,17 +5,16 @@ import {
   MessageSquare, DollarSign, Settings, AlertCircle, Phone, MapPin,
   Stethoscope, User, Bell, TrendingUp
 } from 'lucide-react';
-import { BusinessType } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType } from '../../shared/config';
+import Header from '../../shared/layout/Header';
 import BookingsOverview from './BookingsOverview';
-import CustomerManager from '../crm/CustomerManager';
-import FinancialReports from '../reports/FinancialReports';
-import MessagesCenter from '../communication/MessagesCenter';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
-import { dashboardConfigs, colorClasses } from '../config';
+import CustomerManager from '../../shared/crm/CustomerManager';
+import FinancialReports from '../../shared/reports/FinancialReports';
+import MessagesCenter from '../../shared/communication/MessagesCenter';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
+import { dashboardConfigs, colorClasses } from '../../shared/config';
 
 interface Props {
   onLogout: () => void;
@@ -25,8 +24,7 @@ interface Props {
 
 const BookingsDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'clinic' }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  
   const config = dashboardConfigs[type] || dashboardConfigs['clinic'];
   const theme = colorClasses[config.themeColor];
 
@@ -101,15 +99,7 @@ const BookingsDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'cl
     <div className="min-h-screen flex font-sans bg-blue-50/30">
       <BookingsSidebar />
       
-      <MobileSidebar 
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        config={config}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onLogout={onLogout}
-      />
-
+      
       <main className="flex-1 overflow-y-auto h-screen flex flex-col">
         <Header 
           config={config} 
@@ -117,7 +107,7 @@ const BookingsDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'cl
           setCurrentBusinessType={onSwitchType} 
           theme={theme}
           onNavigate={setActiveTab}
-          onMenuClick={() => setIsMobileMenuOpen(true)}
+          onMenuClick={() => {}}
         />
         <div className="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
           {renderContent()}

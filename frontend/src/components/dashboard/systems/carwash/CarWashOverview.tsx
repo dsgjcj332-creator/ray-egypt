@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
-import DashboardCustomizer from '../DashboardCustomizer';
+import DashboardCustomizer from '../../DashboardCustomizer';
 
 interface CarWashOverviewProps {
   setActiveTab: (tab: string) => void;

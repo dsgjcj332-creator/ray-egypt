@@ -7,7 +7,7 @@ import {
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import StatusBadge from '../../../common/StatusBadge';
-import DashboardCustomizer from '../DashboardCustomizer';
+import DashboardCustomizer from '../../DashboardCustomizer';
 
 interface CarsOverviewProps {
   setActiveTab: (tab: string) => void;

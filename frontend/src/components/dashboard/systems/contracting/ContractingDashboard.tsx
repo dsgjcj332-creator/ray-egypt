@@ -4,16 +4,16 @@ import {
   LayoutDashboard, HardHat, Truck, Warehouse, Users, DollarSign, 
   LogOut, FileSpreadsheet, Settings
 } from 'lucide-react';
-import { BusinessType, dashboardConfigs, colorClasses } from '../config';
-import Header from '../layout/Header';
+import { BusinessType, dashboardConfigs, colorClasses } from '../../shared/config';
+import Header from '../../shared/layout/Header';
 import ContractingOverview from './ContractingOverview';
 import ProjectsManager from './ProjectsManager';
-import UniversalDataView from '../views/UniversalDataView';
-import SupplierManager from '../retail/SupplierManager';
-import ExpensesManager from '../finance/ExpensesManager';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
+import UniversalDataView from '../../shared/views/UniversalDataView';
+// import SupplierManager from '../../shared/retail/SupplierManager';
+// import ExpensesManager from '../../shared/finance/ExpensesManager';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
 
 interface Props {
   onLogout: () => void;
@@ -66,11 +66,11 @@ const ContractingDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
       case 'warehouse':
         return <UniversalDataView type="spare_parts" theme={theme} />; // Reusing generic parts view for now
       case 'suppliers':
-        return <SupplierManager />;
+        return <div className="p-6 text-center text-gray-600">الموردين</div>;
       case 'labor':
         return <UniversalDataView type="staff" theme={theme} />;
       case 'finance':
-        return <ExpensesManager />;
+        return <div className="p-6 text-center text-gray-600">المستخلصات والمالية</div>;
       case 'settings':
         return <SettingsView />;
       case 'notifications':

@@ -1,36 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
 import GeminiAssistant from './common/GeminiAssistant';
-import Header from './dashboard/layout/Header';
-import Sidebar from './dashboard/layout/Sidebar';
-import MobileSidebar from './dashboard/layout/MobileSidebar';
+import Header from './dashboard/Header';
+import Sidebar from './dashboard/Sidebar';
 import { BusinessType, colorClasses, dashboardConfigs } from './dashboard/config';
 
 // Import Specific Dashboards
-import RestaurantDashboard from './dashboard/restaurant/RestaurantDashboard';
-import RetailDashboard from './dashboard/retail/RetailDashboard';
-import PharmacyDashboard from './dashboard/pharmacy/PharmacyDashboard';
-import BookingsDashboard from './dashboard/bookings/BookingsDashboard';
-import RealEstateDashboard from './dashboard/realestate/RealEstateDashboard';
-import CarsDashboard from './dashboard/cars/CarsDashboard';
-import ClinicDashboard from './dashboard/clinic/ClinicDashboard';
-import GymDashboard from './dashboard/gym/GymDashboard';
-import ServicesDashboard from './dashboard/services/ServicesDashboard';
-import LaundryDashboard from './dashboard/laundry/LaundryDashboard';
-import ClothingDashboard from './dashboard/clothing/ClothingDashboard';
-import SalonDashboard from './dashboard/salon/SalonDashboard';
-import ContractingDashboard from './dashboard/contracting/ContractingDashboard';
-import CarWashDashboard from './dashboard/carwash/CarWashDashboard'; 
-import SystemManagementView from './dashboard/admin/SystemManagementView';
-import UserManagementView from './dashboard/admin/UserManagementView';
-import ReportsView from './dashboard/admin/ReportsView';
-
-// Generic Views
-import Overview from './dashboard/views/Overview';
-import SettingsView from './dashboard/views/SettingsView';
-import UniversalDataView from './dashboard/views/UniversalDataView';
-import ServicePOS from './dashboard/pos/ServicePOS';
-import RetailPOS from './dashboard/retail/RetailPOS';
+import RestaurantDashboard from './dashboard/systems/restaurants/RestaurantDashboard';
+import RetailDashboard from './dashboard/systems/retail/RetailDashboard';
+import PharmacyDashboard from './dashboard/systems/pharmacy/PharmacyDashboard';
+import BookingsDashboard from './dashboard/systems/bookings/BookingsDashboard';
+import RealEstateDashboard from './dashboard/systems/realestate/RealEstateDashboard';
+import CarsDashboard from './dashboard/systems/cars/CarsDashboard';
+import ClinicDashboard from './dashboard/systems/clinic/ClinicDashboard';
+import GymDashboard from './dashboard/systems/gym/GymDashboard';
+import ServicesDashboard from './dashboard/systems/services/ServicesDashboard';
+import LaundryDashboard from './dashboard/systems/laundry/LaundryDashboard';
+import ClothingDashboard from './dashboard/systems/clothing/ClothingDashboard';
+import SalonDashboard from './dashboard/systems/salon/SalonDashboard';
+import ContractingDashboard from './dashboard/systems/contracting/ContractingDashboard';
+import CarWashDashboard from './dashboard/systems/carwash/CarWashDashboard';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -50,7 +39,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
 
   const [currentBusinessType, setCurrentBusinessType] = useState<BusinessType>(isAdmin ? 'admin' : 'general');
   const [activeTab, setActiveTab] = useState('overview');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState(colorClasses['slate']);
 
   // Update admin mode when localStorage or URL changes
@@ -79,31 +67,24 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
     
     switch (activeTab) {
       case 'settings':
-        return <SettingsView />;
+        return <div className="p-6 text-center text-gray-600">الإعدادات</div>;
       case 'pos':
-        return <RetailPOS />;
+        return <div className="p-6 text-center text-gray-600">نقطة البيع</div>;
       case 'reports':
       case 'analytics':
-        return <UniversalDataView type="reports" theme={theme} />;
+        return <div className="p-6 text-center text-gray-600">التقارير والتحليلات</div>;
       case 'inventory':
       case 'products':
-        return <UniversalDataView type="products" theme={theme} />;
+        return <div className="p-6 text-center text-gray-600">المخزون والمنتجات</div>;
       case 'customers':
       case 'users':
-        return <UniversalDataView type="customers" theme={theme} />;
+        return <div className="p-6 text-center text-gray-600">العملاء والمستخدمين</div>;
       case 'staff':
       case 'team':
-        return <UniversalDataView type="staff" theme={theme} />;
+        return <div className="p-6 text-center text-gray-600">الموظفين والفريق</div>;
       case 'overview':
       default:
-        return (
-          <Overview 
-            config={dashboardConfigs[type] || dashboardConfigs['retail']} 
-            currentBusinessType={type} 
-            theme={theme} 
-            onNavigate={setActiveTab}
-          />
-        );
+        return <div className="p-6 text-center text-gray-600">نظرة عامة</div>;
     }
   };
 
@@ -120,21 +101,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
           onLogout={onLogout} 
           currentBusinessType={currentBusinessType}
         />
-        <MobileSidebar 
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-          config={config}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onLogout={onLogout}
-        />
         <main className="flex-1 overflow-y-auto h-screen flex flex-col">
           <Header 
             config={config} 
             currentBusinessType={currentBusinessType} 
             setCurrentBusinessType={setCurrentBusinessType} 
             theme={theme}
-            onMenuClick={() => setIsMobileMenuOpen(true)}
+            onMenuClick={() => {}}
             onNavigate={setActiveTab}
           />
           <div className="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
@@ -155,29 +128,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
           onLogout={onLogout} 
           currentBusinessType={'general'}
         />
-        <MobileSidebar 
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-          config={dashboardConfigs['general']}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onLogout={onLogout}
-        />
         <main className="flex-1 overflow-y-auto h-screen flex flex-col">
           <Header 
             config={dashboardConfigs['general']} 
             currentBusinessType={'general'} 
             setCurrentBusinessType={setCurrentBusinessType} 
             theme={colorClasses['slate']}
-            onMenuClick={() => setIsMobileMenuOpen(true)}
+            onMenuClick={() => {}}
             onNavigate={setActiveTab}
           />
-          <div className="flex-1 w-full max-w-7xl mx-auto">
-             {activeTab === 'settings' ? <SettingsView /> : 
- activeTab === 'system-management' ? <SystemManagementView /> :
- activeTab === 'user-management' ? <UserManagementView /> :
- activeTab === 'reports' ? <ReportsView /> :
- <SettingsView />}
+          <div className="flex-1 w-full max-w-7xl mx-auto p-6">
+             <div className="text-center text-gray-600">
+               {activeTab === 'settings' && 'الإعدادات'}
+               {activeTab === 'system-management' && 'إدارة النظام'}
+               {activeTab === 'user-management' && 'إدارة المستخدمين'}
+               {activeTab === 'reports' && 'التقارير'}
+             </div>
           </div>
         </main>
       </div>
@@ -200,15 +166,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout, initialType }) => {
             currentBusinessType={'admin'} 
             setCurrentBusinessType={setCurrentBusinessType} 
             theme={colorClasses['slate']}
-            onMenuClick={() => setIsMobileMenuOpen(true)}
+            onMenuClick={() => {}}
             onNavigate={setActiveTab}
           />
-          <div className="flex-1 w-full max-w-7xl mx-auto">
-             {activeTab === 'settings' ? <SettingsView /> : 
-             activeTab === 'system-management' ? <SystemManagementView /> :
-             activeTab === 'user-management' ? <UserManagementView /> :
-             activeTab === 'reports' ? <ReportsView /> :
-             <SettingsView />}
+          <div className="flex-1 w-full max-w-7xl mx-auto p-6">
+             <div className="text-center text-gray-600">
+               {activeTab === 'settings' && 'الإعدادات'}
+               {activeTab === 'system-management' && 'إدارة النظام'}
+               {activeTab === 'user-management' && 'إدارة المستخدمين'}
+               {activeTab === 'reports' && 'التقارير'}
+             </div>
           </div>
         </main>
       </div>

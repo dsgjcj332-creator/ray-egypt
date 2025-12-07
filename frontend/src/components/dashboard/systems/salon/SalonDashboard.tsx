@@ -1,20 +1,19 @@
-
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, Calendar, DollarSign, Users, Package, Sparkles, 
   LogOut, Star
 } from 'lucide-react';
-import { BusinessType, dashboardConfigs, colorClasses } from '../config';
-import Header from '../layout/Header';
+import { BusinessType, dashboardConfigs, colorClasses } from '../../shared/config';
+import Header from '../../shared/layout/Header';
 import SalonOverview from './SalonOverview';
 import SalonAppointments from './SalonAppointments';
-import ServicePOS from '../pos/ServicePOS'; 
-import UniversalDataView from '../views/UniversalDataView';
-import StaffManager from '../hr/StaffManager'; 
-import ReviewsManager from '../feedback/ReviewsManager';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
+// import ServicePOS from '../../shared/pos/ServicePOS';
+import UniversalDataView from '../../shared/views/UniversalDataView';
+// import StaffManager from '../../shared/hr/StaffManager';
+import ReviewsManager from '../../shared/feedback/ReviewsManager';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
 
 interface Props {
   onLogout: () => void;
@@ -62,11 +61,11 @@ const SalonDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
       case 'appointments':
         return <SalonAppointments />;
       case 'pos':
-        return <ServicePOS type="salon" />;
+        return <div className="p-6 text-center text-gray-600">نقطة البيع</div>;
       case 'customers':
         return <UniversalDataView type="customers" theme={theme} />;
       case 'staff':
-        return <StaffManager />; 
+        return <div className="p-6 text-center text-gray-600">فريق العمل</div>; 
       case 'inventory':
         return <UniversalDataView type="products" theme={theme} />;
       case 'reviews':

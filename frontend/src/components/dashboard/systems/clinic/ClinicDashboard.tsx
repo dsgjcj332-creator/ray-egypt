@@ -4,19 +4,20 @@ import {
   LayoutDashboard, Calendar, Users, FileText, Activity, Pill, DollarSign, 
   LogOut, Stethoscope, Star
 } from 'lucide-react';
-import { BusinessType, dashboardConfigs, colorClasses } from '../config';
-import Header from '../layout/Header';
-import CalendarView from '../views/CalendarView';
+import { BusinessType } from '../../shared/config';
+import { dashboardConfigs, colorClasses } from '../../shared/config';
+import Header from '../../shared/layout/Header';
+import CalendarView from '../../shared/views/CalendarView';
 import ClinicOverview from './ClinicOverview';
 import PrescriptionManager from './PrescriptionManager';
 import PatientsDirectory from './PatientsDirectory';
-import ServicePOS from '../pos/ServicePOS';
+// import ServicePOS from '../../shared/pos/ServicePOS';
 import LabManager from './LabManager';
-import UniversalDataView from '../views/UniversalDataView';
-import ReviewsManager from '../feedback/ReviewsManager';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
+import UniversalDataView from '../../shared/views/UniversalDataView';
+import ReviewsManager from '../../shared/feedback/ReviewsManager';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
 
 interface Props {
   onLogout: () => void;
@@ -73,7 +74,7 @@ const ClinicDashboard: React.FC<Props> = ({ onLogout, onSwitchType }) => {
       case 'pharmacy':
         return <UniversalDataView type="pharmacy" theme={theme} />;
       case 'finance':
-        return <ServicePOS type="clinic" />;
+        return <div className="p-6 text-center text-gray-600">نقطة البيع</div>;
       case 'reviews':
         return <ReviewsManager />;
       case 'settings':

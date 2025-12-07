@@ -6,8 +6,8 @@ import {
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
-import DashboardCustomizer from '../DashboardCustomizer';
-import LoyaltyWidget from '../widgets/LoyaltyWidget';
+import DashboardCustomizer from '../../DashboardCustomizer';
+import LoyaltyWidget from '../../shared/widgets/LoyaltyWidget';
 
 interface LaundryOverviewProps {
   setActiveTab: (tab: string) => void;

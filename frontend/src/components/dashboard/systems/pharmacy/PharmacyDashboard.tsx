@@ -5,22 +5,22 @@ import {
   FileText, LogOut, Tag, MessageSquare, 
   Megaphone, Star, Gift, Settings, AlertCircle, DollarSign
 } from 'lucide-react';
-import { BusinessType } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType } from '../../shared/config';
+import Header from '../../shared/layout/Header';
+import MobileSidebar from '../../shared/layout/MobileSidebar';
 import PharmacyOverview from './PharmacyOverview';
-import ProductManager from '../inventory/ProductManager';
-import CustomerManager from '../crm/CustomerManager';
-import FinancialReports from '../reports/FinancialReports';
-import SupplierManager from '../retail/SupplierManager'; 
-import MarketingManager from '../marketing/MarketingManager';
-import LoyaltyManager from '../loyalty/LoyaltyManager';
-import MessagesCenter from '../communication/MessagesCenter';
-import ReviewsManager from '../feedback/ReviewsManager';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
-import { dashboardConfigs, colorClasses } from '../config';
+import ProductManager from '../../shared/inventory/ProductManager';
+import CustomerManager from '../../shared/crm/CustomerManager';
+import FinancialReports from '../../shared/reports/FinancialReports';
+// import SupplierManager from './SupplierManager'; 
+import MarketingManager from '../../shared/marketing/MarketingManager';
+import LoyaltyManager from '../../shared/loyalty/LoyaltyManager';
+import MessagesCenter from '../../shared/communication/MessagesCenter';
+import ReviewsManager from '../../shared/feedback/ReviewsManager';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
+import { dashboardConfigs, colorClasses } from '../../shared/config';
 
 interface Props {
   onLogout: () => void;
@@ -87,7 +87,7 @@ const PharmacyDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'ph
       case 'products':
         return <ProductManager />;
       case 'suppliers':
-        return <SupplierManager />; 
+        return <div className="p-6 text-center text-gray-600">الموردين</div>; 
       case 'customers':
         return <CustomerManager />;
       case 'reports':

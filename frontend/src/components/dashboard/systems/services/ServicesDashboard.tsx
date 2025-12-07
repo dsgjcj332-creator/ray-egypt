@@ -1,23 +1,22 @@
-
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, Wrench, Calendar, Users, Settings, FileText, 
   LogOut, ClipboardList, Truck, Droplets, Layers, Map
 } from 'lucide-react';
-import { BusinessType, dashboardConfigs, colorClasses } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType, dashboardConfigs, colorClasses } from '../../shared/config';
+import Header from '../../shared/layout/Header';
+import MobileSidebar from '../../shared/layout/MobileSidebar';
 import ServiceRequestsView from './ServiceRequestsView';
 import ServicesOverview from './ServicesOverview';
 import CarWashOverview from '../carwash/CarWashOverview';
 import JobOrderManager from './JobOrderManager';
-import TechnicianTeam from './TechnicianTeam'; 
-import UniversalDataView from '../views/UniversalDataView';
-import InvoiceBuilder from '../finance/InvoiceBuilder';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
-import CalendarView from '../views/CalendarView';
+import TechnicianTeam from './TechnicianTeam';
+import UniversalDataView from '../../shared/views/UniversalDataView';
+// import InvoiceBuilder from '../../shared/finance/InvoiceBuilder';
+import SettingsView from '../../shared/views/SettingsView';
+import NotificationsView from '../../shared/views/NotificationsView';
+import ProfileView from '../../shared/views/ProfileView';
+import CalendarView from '../../shared/views/CalendarView';
 
 interface Props {
   onLogout: () => void;
@@ -101,7 +100,7 @@ const ServicesDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'se
       case 'customers':
         return <UniversalDataView type="customers" theme={theme} />;
       case 'invoices':
-        return <InvoiceBuilder />;
+        return <div className="p-6 text-center text-gray-600">الفواتير</div>;
       case 'settings':
         return <SettingsView />;
       case 'notifications':
