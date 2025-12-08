@@ -3,28 +3,88 @@ import React, { useState } from 'react';
 import { 
   Save, Store, Bell, Shield, CreditCard, Users, Mail, Lock, 
   Smartphone, CheckCircle, Plus, Trash2, FileText, AlertCircle, Printer,
-  Palette, Globe, Layout
+  Palette, Globe, Layout, Database, BarChart3, Download, Upload, Eye, EyeOff,
+  Zap, Key, LogOut, Trash, RotateCcw, Copy, ExternalLink, Phone, MessageSquare,
+  MapPin, Clock, DollarSign, TrendingUp, Settings as SettingsIcon
 } from 'lucide-react';
 import DocumentTemplateView from '../../systems/settings/DocumentTemplateView';
-import StorefrontBuilder from '../../systems/settings/StorefrontBuilder';
+
+const defaultCustomization = {
+  colors: {
+    primary: '#FF6B6B',
+    secondary: '#4ECDC4',
+    accent: '#FFE66D',
+    background: '#FFFFFF',
+    text: '#333333'
+  },
+  elements: {
+    showHero: true,
+    showGallery: true,
+    showReviews: true,
+    showMenu: true,
+    showProducts: true,
+    showBookings: true,
+    showContact: true,
+    showMap: true
+  },
+  buttons: {
+    primaryText: 'احجز الآن',
+    primaryColor: '#FF6B6B',
+    secondaryText: 'اعرف أكثر',
+    secondaryColor: '#4ECDC4',
+    showWhatsApp: true,
+    showPhone: true,
+    showEmail: true
+  },
+  media: {
+    heroImage: undefined,
+    logo: undefined,
+    gallery: []
+  }
+};
 
 const SettingsView: React.FC = () => {
   const [activeSection, setActiveSection] = useState('general');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [customizationTab, setCustomizationTab] = useState<'colors' | 'elements' | 'buttons' | 'media' | 'preview'>('colors');
+  const [customization, setCustomization] = useState(defaultCustomization);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = () => {
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
   };
 
+  const handleCustomizationSave = async () => {
+    setIsSaving(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error saving customization:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCustomizationReset = () => {
+    if (confirm('هل أنت متأكد من رغبتك في إعادة تعيين جميع الإعدادات؟')) {
+      setCustomization(defaultCustomization);
+    }
+  };
+
   const sections = [
     { id: 'general', label: 'عام', icon: Store },
-    { id: 'storefront', label: 'المتجر الإلكتروني', icon: Palette },
     { id: 'templates', label: 'الفواتير والطباعة', icon: Printer },
     { id: 'notifications', label: 'الإشعارات', icon: Bell },
+    { id: 'integrations', label: 'التكاملات', icon: Zap },
     { id: 'security', label: 'الأمان والصلاحيات', icon: Shield },
     { id: 'billing', label: 'الاشتراك والفواتير', icon: CreditCard },
     { id: 'team', label: 'فريق العمل', icon: Users },
+    { id: 'backup', label: 'النسخ الاحتياطية', icon: Database },
+    { id: 'analytics', label: 'التحليلات', icon: BarChart3 },
   ];
 
   return (
@@ -109,11 +169,6 @@ const SettingsView: React.FC = () => {
               </button>
             </div>
           </div>
-        )}
-
-        {/* --- Storefront Builder --- */}
-        {activeSection === 'storefront' && (
-           <StorefrontBuilder />
         )}
 
         {/* --- Templates Settings --- */}
@@ -285,6 +340,138 @@ const SettingsView: React.FC = () => {
                   <h4 className="font-bold text-sm text-blue-900 dark:text-blue-200">صلاحيات الفريق</h4>
                   <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">يمكن للمدير فقط إضافة أو حذف أعضاء الفريق وتعديل الإعدادات الحساسة.</p>
                </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- Integrations Settings --- */}
+        {activeSection === 'integrations' && (
+          <div className="space-y-6 animate-in fade-in">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">التكاملات والإضافات</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">ربط تطبيقاتك المفضلة مع RAY</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { name: 'WhatsApp Business', icon: '💬', status: 'connected', desc: 'إرسال الرسائل والإشعارات' },
+                { name: 'Google Analytics', icon: '📊', status: 'disconnected', desc: 'تحليل الزيارات والعملاء' },
+                { name: 'Stripe', icon: '💳', status: 'connected', desc: 'معالجة الدفع الإلكترونية' },
+                { name: 'Mailchimp', icon: '📧', status: 'disconnected', desc: 'حملات البريد الإلكتروني' },
+                { name: 'Facebook Pixel', icon: '👥', status: 'connected', desc: 'تتبع الإعلانات والعملاء' },
+                { name: 'Slack', icon: '🔔', status: 'disconnected', desc: 'إشعارات فريق العمل' },
+              ].map((integration, idx) => (
+                <div key={idx} className="p-4 border border-gray-100 dark:border-gray-700 rounded-xl flex items-center justify-between hover:shadow-sm transition bg-white dark:bg-gray-800/50">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">{integration.icon}</div>
+                    <div>
+                      <h4 className="font-bold text-sm text-gray-900 dark:text-white">{integration.name}</h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{integration.desc}</p>
+                    </div>
+                  </div>
+                  <button className={`px-3 py-1 rounded-lg text-xs font-bold transition ${integration.status === 'connected' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-red-100 hover:text-red-700' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 hover:bg-blue-100 hover:text-blue-700'}`}>
+                    {integration.status === 'connected' ? 'متصل' : 'ربط'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* --- Backup Settings --- */}
+        {activeSection === 'backup' && (
+          <div className="space-y-6 animate-in fade-in">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">النسخ الاحتياطية</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">حماية بيانات نشاطك التجاري</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-xl p-6 space-y-4">
+              <h3 className="font-bold text-blue-900 dark:text-blue-300 flex items-center gap-2">
+                <Database className="w-5 h-5" />
+                النسخة الأخيرة
+              </h3>
+              <div className="space-y-2">
+                <p className="text-sm text-blue-800 dark:text-blue-200"><strong>التاريخ:</strong> 8 ديسمبر 2025 - 08:30</p>
+                <p className="text-sm text-blue-800 dark:text-blue-200"><strong>الحجم:</strong> 245 MB</p>
+                <p className="text-sm text-blue-800 dark:text-blue-200"><strong>الحالة:</strong> <span className="text-green-600 dark:text-green-400 font-bold">✓ مكتملة</span></p>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                  <Download className="w-4 h-4" />
+                  تحميل
+                </button>
+                <button className="flex-1 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition border border-blue-200 dark:border-blue-800">
+                  استعادة
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-bold text-gray-800 dark:text-white">جدول النسخ الاحتياطية</h3>
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-gray-500" />
+                  <div>
+                    <p className="font-bold text-sm text-gray-900 dark:text-white">نسخ احتياطية يومية</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">الساعة 02:00 صباحاً</p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- Analytics Settings --- */}
+        {activeSection === 'analytics' && (
+          <div className="space-y-6 animate-in fade-in">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">التحليلات والإحصائيات</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">تحكم في جمع البيانات والتقارير</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  <h3 className="font-bold text-purple-900 dark:text-purple-300">تتبع الأداء</h3>
+                </div>
+                <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">تتبع مبيعاتك والعملاء الجدد والإيرادات</p>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+
+              <div className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/10 border border-orange-200 dark:border-orange-800 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <BarChart3 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                  <h3 className="font-bold text-orange-900 dark:text-orange-300">التقارير المتقدمة</h3>
+                </div>
+                <p className="text-sm text-orange-800 dark:text-orange-200 mb-4">تقارير مفصلة عن الأداء والعملاء</p>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                </label>
+              </div>
+            </div>
+
+            <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700 space-y-3">
+              <h3 className="font-bold text-gray-800 dark:text-white">تصدير البيانات</h3>
+              <div className="flex gap-2">
+                <button className="flex-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2">
+                  <Download className="w-4 h-4" />
+                  تصدير CSV
+                </button>
+                <button className="flex-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2">
+                  <Download className="w-4 h-4" />
+                  تصدير PDF
+                </button>
+              </div>
             </div>
           </div>
         )}

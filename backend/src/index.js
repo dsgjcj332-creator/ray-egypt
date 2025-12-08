@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './config/mongodb.js';
-import productRoutes from './routes/products.js';
+import productRoutes from './api/routes/products.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

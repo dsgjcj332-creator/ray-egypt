@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, Bell, LayoutGrid, Search, Sun, Moon } from 'lucide-react';
+import { Menu, Bell, LayoutGrid, Search, Sun, Moon, Palette } from 'lucide-react';
+import Link from 'next/link';
 import { DashboardConfig, BusinessType, colorClasses } from '../../config';
 import CommandPalette from './CommandPalette';
 import { useTheme } from '../../../common/ThemeContext';
@@ -68,6 +69,16 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
+          {/* Storefront Button */}
+          <Link 
+            href="/storefront"
+            className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold text-sm transition active:scale-95 shadow-md hover:shadow-lg"
+            title="المتجر الإلكتروني"
+          >
+            <Palette className="w-4 h-4" />
+            <span className="hidden md:inline">🎨 المتجر</span>
+          </Link>
+
           {/* Theme Toggle */}
           <button 
             onClick={toggleTheme}

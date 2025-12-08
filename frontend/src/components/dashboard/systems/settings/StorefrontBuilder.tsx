@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Smartphone, Palette, Layout, Link as LinkIcon, Plus, Trash2, 
   Eye, EyeOff, Move, Save, CheckCircle, Share2, QrCode, Copy, ExternalLink, Download,
-  Image as ImageIcon, MessageCircle, Database
+  Image as ImageIcon, MessageCircle, Database, RotateCcw, Zap
 } from 'lucide-react';
 import FileUploader from '../../../common/FileUploader';
 import MerchantHero from '../../../merchant/MerchantHero';
@@ -20,19 +20,44 @@ const StorefrontBuilder: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const [config, setConfig] = useState({
+    // الألوان المتقدمة
     primaryColor: 'blue',
+    customPrimaryColor: '#FF6B6B',
+    customSecondaryColor: '#4ECDC4',
+    customAccentColor: '#FFE66D',
+    customBackgroundColor: '#FFFFFF',
+    customTextColor: '#333333',
+    useCustomColors: false,
+    
+    // الصور والوسائط
     coverImage: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=80',
     logo: 'https://ui-avatars.com/api/?name=AL&background=random',
+    galleryImages: [] as string[],
+    
+    // المحتوى
     name: 'مطعم النور للمأكولات',
     description: 'نقدم لكم أشهى المأكولات الشرقية والغربية بأفضل جودة',
+    
+    // العناصر المرئية
     showReviews: true,
     showAbout: true,
     showLocation: true,
+    showHero: true,
+    showGallery: true,
+    showMenu: true,
+    showProducts: true,
+    showBookings: true,
+    showContact: true,
+    showMap: true,
+    
+    // التواصل
     showPhone: true,
     showWhatsapp: true,
+    customButtons: [] as LinkButton[],
+    
+    // الأنظمة
     enablePOS: true,
-    showInventory: false,
-    customButtons: [] as LinkButton[]
+    showInventory: false
   });
 
   const [newLink, setNewLink] = useState({ label: '', url: '' });
@@ -123,17 +148,92 @@ const StorefrontBuilder: React.FC = () => {
           {/* --- Design Tab --- */}
           {activeTab === 'design' && (
             <div className="space-y-6 animate-in fade-in">
+              {/* الألوان - الخيار السريع */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">لون العلامة التجارية</label>
+                <label className="block text-sm font-bold text-gray-700 mb-3">🎨 لون العلامة التجارية</label>
                 <div className="flex gap-3">
                   {colors.map(c => (
                     <button
                       key={c.id}
-                      onClick={() => setConfig({...config, primaryColor: c.id})}
-                      className={`w-10 h-10 rounded-full ${c.bg} transition-transform shadow-sm ${config.primaryColor === c.id ? 'scale-110 ring-4 ring-offset-2 ring-gray-200' : 'hover:scale-110'}`}
+                      onClick={() => setConfig({...config, primaryColor: c.id, useCustomColors: false})}
+                      className={`w-10 h-10 rounded-full ${c.bg} transition-transform shadow-sm ${!config.useCustomColors && config.primaryColor === c.id ? 'scale-110 ring-4 ring-offset-2 ring-gray-200' : 'hover:scale-110'}`}
                     />
                   ))}
                 </div>
+              </div>
+
+              {/* الألوان المتقدمة */}
+              <div className="pt-4 border-t border-gray-100">
+                <label className="flex items-center gap-2 mb-4 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={config.useCustomColors}
+                    onChange={e => setConfig({...config, useCustomColors: e.target.checked})}
+                    className="w-5 h-5 accent-blue-600 rounded"
+                  />
+                  <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-blue-600" />
+                    تخصيص متقدم للألوان
+                  </span>
+                </label>
+
+                {config.useCustomColors && (
+                  <div className="space-y-4 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-700">اللون الأساسي</label>
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="color" 
+                          value={config.customPrimaryColor}
+                          onChange={e => setConfig({...config, customPrimaryColor: e.target.value})}
+                          className="w-12 h-10 rounded-lg cursor-pointer"
+                        />
+                        <input 
+                          type="text" 
+                          value={config.customPrimaryColor}
+                          onChange={e => setConfig({...config, customPrimaryColor: e.target.value})}
+                          className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-700">اللون الثانوي</label>
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="color" 
+                          value={config.customSecondaryColor}
+                          onChange={e => setConfig({...config, customSecondaryColor: e.target.value})}
+                          className="w-12 h-10 rounded-lg cursor-pointer"
+                        />
+                        <input 
+                          type="text" 
+                          value={config.customSecondaryColor}
+                          onChange={e => setConfig({...config, customSecondaryColor: e.target.value})}
+                          className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-700">لون التأكيد</label>
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="color" 
+                          value={config.customAccentColor}
+                          onChange={e => setConfig({...config, customAccentColor: e.target.value})}
+                          className="w-12 h-10 rounded-lg cursor-pointer"
+                        />
+                        <input 
+                          type="text" 
+                          value={config.customAccentColor}
+                          onChange={e => setConfig({...config, customAccentColor: e.target.value})}
+                          className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -185,11 +285,21 @@ const StorefrontBuilder: React.FC = () => {
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-bold text-gray-800 text-sm">خيارات العرض</h4>
+                <h4 className="font-bold text-gray-800 text-sm flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-blue-600" />
+                  خيارات العرض والعناصر المرئية
+                </h4>
                 {[
-                  { key: 'showAbout', label: 'معلومات عن المتجر' },
-                  { key: 'showReviews', label: 'آراء العملاء' },
-                  { key: 'showLocation', label: 'الموقع والخريطة' }
+                  { key: 'showHero', label: '🖼️ صورة الغلاف' },
+                  { key: 'showGallery', label: '📸 المعرض' },
+                  { key: 'showAbout', label: 'ℹ️ معلومات عن المتجر' },
+                  { key: 'showReviews', label: '⭐ آراء العملاء' },
+                  { key: 'showLocation', label: '📍 الموقع والخريطة' },
+                  { key: 'showMenu', label: '📋 القائمة' },
+                  { key: 'showProducts', label: '🛍️ المنتجات' },
+                  { key: 'showBookings', label: '📅 الحجوزات' },
+                  { key: 'showContact', label: '📞 جهات الاتصال' },
+                  { key: 'showMap', label: '🗺️ الخريطة' }
                 ].map(opt => (
                   <label key={opt.key} className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100 cursor-pointer hover:bg-gray-50 transition">
                     <span className="text-sm text-gray-600 font-medium">{opt.label}</span>

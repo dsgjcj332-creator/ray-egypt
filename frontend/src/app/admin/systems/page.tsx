@@ -6,7 +6,7 @@ import {
   Wrench, Shirt, ShoppingBag, Scissors, Pill, Briefcase,
   Baby, Gavel, Users, Sun, ArrowLeft, Search, Filter,
   LayoutGrid, ChevronRight, CheckCircle, AlertCircle,
-  Calendar, Package, Shirt as ShirtIcon
+  Calendar, Package, Shirt as ShirtIcon, Truck
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -52,11 +52,14 @@ export default function SystemsPage() {
 
     // أنظمة إضافية - لوحة التحكم ✅
     { id: 'bookings', title: 'لوحة الحجوزات المركزية', icon: Calendar, desc: 'إدارة جميع الحجوزات والتقارير', color: 'bg-indigo-100 text-indigo-600', href: '/dashboard/bookings', category: 'admin', status: 'ready' },
+    
+    // قطاع التجارة والمطاعم - الموردين ✅
+    { id: 'supplier', title: 'لوحة الموردين', icon: Truck, desc: 'إدارة الموردين والمنتجات والمخزون', color: 'bg-orange-100 text-orange-700', href: '/supplier/dashboard', category: 'commerce', status: 'ready' },
   ];
 
   const categories = [
-    { id: 'all', label: 'جميع الأنظمة', count: 16 },
-    { id: 'commerce', label: 'التجارة والمطاعم', count: 4 },
+    { id: 'all', label: 'جميع الأنظمة', count: 17 },
+    { id: 'commerce', label: 'التجارة والمطاعم', count: 5 },
     { id: 'health', label: 'الصحة واللياقة', count: 4 },
     { id: 'services', label: 'الخدمات والتشغيل', count: 4 },
     { id: 'business', label: 'الأعمال والأصول', count: 4 },
@@ -81,7 +84,7 @@ export default function SystemsPage() {
               </Link>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">جميع الأنظمة</h1>
-                <p className="text-sm text-gray-600 mt-1">16 نظام متخصص + 43+ مكون متقدم</p>
+                <p className="text-sm text-gray-600 mt-1">17 نظام متخصص + 44+ مكون متقدم</p>
               </div>
             </div>
             <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
@@ -331,11 +334,11 @@ export default function SystemsPage() {
         <h2 className="text-2xl font-bold mb-8">إحصائيات النظام</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div>
-            <div className="text-3xl font-black mb-2">16</div>
+            <div className="text-3xl font-black mb-2">17</div>
             <p className="text-blue-100">نظام متخصص</p>
           </div>
           <div>
-            <div className="text-3xl font-black mb-2">43+</div>
+            <div className="text-3xl font-black mb-2">44+</div>
             <p className="text-blue-100">مكون متقدم</p>
           </div>
           <div>

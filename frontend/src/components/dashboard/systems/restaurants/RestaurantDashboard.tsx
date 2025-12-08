@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, DollarSign, ShoppingBag, ChefHat, Menu, 
-  Utensils, Calendar, Truck, Package, LogOut, Star, Grid, Gift, Settings
+  Utensils, Calendar, Truck, Package, LogOut, Star, Grid, Gift, Settings,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { BusinessType } from '../../shared/config';
 import Header from '../../shared/layout/Header';
@@ -32,49 +33,65 @@ interface Props {
 const RestaurantDashboard: React.FC<Props> = ({ onLogout, onSwitchType, isDemo = false }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   const config = dashboardConfigs['restaurant'];
   const theme = colorClasses['orange'];
 
   const RestaurantSidebar = () => (
-    <aside className="w-64 bg-gray-900 text-white hidden md:flex flex-col shadow-xl z-30">
-      <div className="p-6 border-b border-gray-800 flex items-center gap-3">
-         <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center shadow-lg">
-            <Utensils className="text-white w-6 h-6" />
+    <aside className={`bg-gray-900 text-white hidden md:flex flex-col shadow-xl z-30 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
+      <div className={`p-6 border-b border-gray-800 flex items-center gap-3 justify-between ${isSidebarCollapsed ? 'flex-col' : ''}`}>
+         <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center shadow-lg">
+               <Utensils className="text-white w-6 h-6" />
+            </div>
+            {!isSidebarCollapsed && (
+              <div>
+                <h1 className="font-bold text-xl tracking-wide">RAY Resto</h1>
+                <p className="text-[10px] text-gray-400">إدارة المطاعم</p>
+              </div>
+            )}
          </div>
-         <div>
-           <h1 className="font-bold text-xl tracking-wide">RAY Resto</h1>
-           <p className="text-[10px] text-gray-400">إدارة المطاعم</p>
-         </div>
+         <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="p-2 hover:bg-gray-800 rounded-lg transition text-white"
+            title={isSidebarCollapsed ? 'فتح' : 'طي'}
+         >
+            {isSidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+         </button>
       </div>
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        <div className="text-xs font-bold text-gray-500 px-3 py-2">الرئيسية</div>
-        <SidebarItem icon={LayoutDashboard} label="لوحة القيادة" id="overview" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={DollarSign} label="كاشير الصالة" id="pos" active={activeTab} setTab={setActiveTab} highlight />
+        {!isSidebarCollapsed && <div className="text-xs font-bold text-gray-500 px-3 py-2">الرئيسية</div>}
+        <SidebarItem icon={LayoutDashboard} label="لوحة القيادة" id="overview" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={DollarSign} label="كاشير الصالة" id="pos" active={activeTab} setTab={setActiveTab} highlight isCollapsed={isSidebarCollapsed} />
         
-        <div className="text-xs font-bold text-gray-500 px-3 py-2 mt-4">العمليات</div>
-        <SidebarItem icon={ShoppingBag} label="الطلبات الحالية" id="orders" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={ChefHat} label="شاشة المطبخ (KDS)" id="kitchen" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Utensils} label="خريطة الطاولات" id="tables" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Grid} label="تصميم الصالة" id="table_layout" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Truck} label="فريق التوصيل" id="delivery" active={activeTab} setTab={setActiveTab} />
+        {!isSidebarCollapsed && <div className="text-xs font-bold text-gray-500 px-3 py-2 mt-4">العمليات</div>}
+        <SidebarItem icon={ShoppingBag} label="الطلبات الحالية" id="orders" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={ChefHat} label="شاشة المطبخ (KDS)" id="kitchen" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Utensils} label="خريطة الطاولات" id="tables" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Grid} label="تصميم الصالة" id="table_layout" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Truck} label="فريق التوصيل" id="delivery" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
 
-        <div className="text-xs font-bold text-gray-500 px-3 py-2 mt-4">الإدارة</div>
-        <SidebarItem icon={Menu} label="قائمة الطعام" id="menu" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Package} label="المخزون" id="inventory" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Gift} label="الولاء والمكافآت" id="loyalty" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Calendar} label="الحجوزات" id="reservations" active={activeTab} setTab={setActiveTab} />
-        <SidebarItem icon={Star} label="التقييمات" id="reviews" active={activeTab} setTab={setActiveTab} />
+        {!isSidebarCollapsed && <div className="text-xs font-bold text-gray-500 px-3 py-2 mt-4">الإدارة</div>}
+        <SidebarItem icon={Menu} label="قائمة الطعام" id="menu" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Package} label="المخزون" id="inventory" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Gift} label="الولاء والمكافآت" id="loyalty" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Calendar} label="الحجوزات" id="reservations" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
+        <SidebarItem icon={Star} label="التقييمات" id="reviews" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
         
         <div className="my-4 border-t border-gray-800 opacity-50"></div>
-        <SidebarItem icon={Settings} label="الإعدادات والقوالب" id="settings" active={activeTab} setTab={setActiveTab} />
+        <SidebarItem icon={Settings} label="الإعدادات والقوالب" id="settings" active={activeTab} setTab={setActiveTab} isCollapsed={isSidebarCollapsed} />
       </nav>
 
-      <div className="p-4 border-t border-gray-800 bg-gray-900">
-        <button onClick={onLogout} className="flex items-center gap-3 text-red-400 hover:text-red-300 transition w-full p-2 rounded-lg hover:bg-gray-800">
+      <div className={`p-4 border-t border-gray-800 bg-gray-900 ${isSidebarCollapsed ? 'flex justify-center' : ''}`}>
+        <button 
+          onClick={onLogout} 
+          className={`flex items-center gap-3 text-red-400 hover:text-red-300 transition rounded-lg hover:bg-gray-800 ${isSidebarCollapsed ? 'p-2 justify-center' : 'w-full p-2'}`}
+          title={isSidebarCollapsed ? 'خروج' : ''}
+        >
           <LogOut className="w-5 h-5" />
-          <span>خروج</span>
+          {!isSidebarCollapsed && <span>خروج</span>}
         </button>
       </div>
     </aside>

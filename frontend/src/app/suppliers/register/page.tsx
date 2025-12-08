@@ -133,8 +133,8 @@ export default function SupplierRegisterPage() {
     }
     
     console.log('تسجيل مورد:', formData);
-    alert('تم إرسال طلب التسجيل بنجاح! سيتم مراجعته خلال 24-48 ساعة.');
-    router.push('/suppliers');
+    alert('تم تسجيلك ك مورد بنجاح! مرحباً بك في منصة راي مصر.');
+    router.push('/supplier/dashboard');
   };
 
   const progress = (step / 4) * 100;

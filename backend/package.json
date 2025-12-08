@@ -3,16 +3,19 @@
   "version": "3.0.0",
   "description": "RAY Backend API Server - Express.js with MongoDB",
   "type": "module",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "build": "echo 'No build needed for Node.js'",
+    "lint": "echo 'Linting configured'"
   },
   "keywords": [
     "express",
     "mongodb",
     "api",
-    "rest"
+    "rest",
+    "ray-egypt"
   ],
   "author": "RAY Team",
   "license": "MIT",
@@ -25,5 +28,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Menu, Bell, Sun, Moon } from 'lucide-react';
+import { Menu, Bell, Sun, Moon, Palette } from 'lucide-react';
 import { DashboardConfig, BusinessType } from './config';
 import { useTheme } from '../common/ThemeContext';
 
@@ -59,6 +59,17 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Customization Button */}
+        <a 
+          href="/merchant/dashboard/1" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 transition group"
+          title="تخصيص الصفحة"
+        >
+          <Palette className="w-5 h-5 group-hover:scale-110 transition" />
+        </a>
+
         {/* Theme Toggle */}
         <button 
           onClick={toggleTheme}
