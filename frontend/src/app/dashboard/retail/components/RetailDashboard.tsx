@@ -5,25 +5,25 @@ import {
   FileText, Truck, Percent, LogOut, Store, Pill, MessageSquare, 
   Megaphone, Star, Gift, Settings
 } from 'lucide-react';
-import { BusinessType } from '../config';
-import Header from '../layout/Header';
-import MobileSidebar from '../layout/MobileSidebar';
+import { BusinessType } from '../../../../components/dashboard/config';
+import Header from '../../../../components/dashboard/shared/layout/Header';
+import MobileSidebar from '../../../../components/dashboard/shared/layout/MobileSidebar';
 import RetailPOS from './RetailPOS';
 import RetailOverview from './RetailOverview';
 import PharmacyOverview from './PharmacyOverview';
-import UniversalDataView from '../views/UniversalDataView';
-import ProductManager from '../inventory/ProductManager';
-import CustomerManager from '../crm/CustomerManager';
-import FinancialReports from '../reports/FinancialReports';
+import UniversalDataView from '../../../../components/dashboard/shared/views/UniversalDataView';
+import ProductManager from '../../../../components/dashboard/shared/inventory/ProductManager';
+import CustomerManager from '../../../../components/dashboard/shared/crm/CustomerManager';
+import FinancialReports from '../../../../components/dashboard/shared/reports/FinancialReports';
 import SupplierManager from './SupplierManager'; 
-import MarketingManager from '../marketing/MarketingManager';
-import LoyaltyManager from '../loyalty/LoyaltyManager';
-import MessagesCenter from '../communication/MessagesCenter';
-import ReviewsManager from '../feedback/ReviewsManager';
-import SettingsView from '../views/SettingsView';
-import NotificationsView from '../views/NotificationsView';
-import ProfileView from '../views/ProfileView';
-import { dashboardConfigs, colorClasses } from '../config';
+import MarketingManager from '../../../../components/dashboard/shared/marketing/MarketingManager';
+import LoyaltyManager from '../../../../components/dashboard/shared/loyalty/LoyaltyManager';
+import MessagesCenter from '../../../../components/dashboard/shared/communication/MessagesCenter';
+import ReviewsManager from '../../../../components/dashboard/shared/feedback/ReviewsManager';
+import SettingsView from '../../../../components/dashboard/shared/views/SettingsView';
+import NotificationsView from '../../../../components/dashboard/shared/views/NotificationsView';
+import ProfileView from '../../../../components/dashboard/shared/views/ProfileView';
+import { dashboardConfigs, colorClasses } from '../../../../components/dashboard/config';
 
 interface Props {
   onLogout: () => void;

@@ -1,7 +1,11 @@
 import React from 'react';
 import { Pill } from 'lucide-react';
 
-const PharmacyOverview: React.FC = () => {
+interface PharmacyOverviewProps {
+  setActiveTab: (tab: string) => void;
+}
+
+const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => {
   return (
     <div className="p-6">
       <div className="flex items-center gap-3 mb-6">

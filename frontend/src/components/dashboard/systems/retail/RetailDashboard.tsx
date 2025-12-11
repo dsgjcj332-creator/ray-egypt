@@ -5,7 +5,7 @@ import {
   FileText, Truck, Percent, LogOut, Store, Pill, MessageSquare, 
   Megaphone, Star, Gift, Settings
 } from 'lucide-react';
-import { BusinessType } from '../../shared/config';
+import { BusinessType } from '../../config';
 import Header from '../../shared/layout/Header';
 import MobileSidebar from '../../shared/layout/MobileSidebar';
 import UnifiedPOS from './UnifiedPOS';
@@ -23,7 +23,7 @@ import ReviewsManager from '../../shared/feedback/ReviewsManager';
 import SettingsView from '../../shared/views/SettingsView';
 import NotificationsView from '../../shared/views/NotificationsView';
 import ProfileView from '../../shared/views/ProfileView';
-import { dashboardConfigs, colorClasses } from '../../shared/config';
+import { dashboardConfigs, colorClasses } from '../../config';
 
 interface Props {
   onLogout: () => void;
@@ -52,7 +52,7 @@ const RetailDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'reta
       </div>
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {config.navItems.map((item) => (
+        {config.navItems.map((item: any) => (
           <SidebarItem 
             key={item.id} 
             icon={item.icon} 
@@ -113,8 +113,8 @@ const RetailDashboard: React.FC<Props> = ({ onLogout, onSwitchType, type = 'reta
       case 'overview':
       default:
         return isPharmacy ?
-          <PharmacyOverview /> :
-          <RetailOverview />;
+          <PharmacyOverview setActiveTab={setActiveTab} /> :
+          <RetailOverview setActiveTab={setActiveTab} />;
     }
   };
 
