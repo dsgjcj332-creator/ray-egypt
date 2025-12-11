@@ -39,14 +39,54 @@ const HomePage: React.FC<HomePageProps> = ({ onProductClick, onNavigate }) => {
     const fetchOffers = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_URL}/api/offers/featured`);
-        if (response.ok) {
-          const data = await response.json();
-          setFeaturedOffers(data);
-        }
+        // Use mock data for now since API might not be ready
+        const mockData: Offer[] = [
+          {
+            id: '1',
+            title: 'وجبة برجر شهية',
+            shop: 'مطعم النور',
+            image: 'https://images.unsplash.com/photo-1568901346405-85128fbb1b0e?auto=format&fit=crop&w=800&q=80',
+            price: '50 ج',
+            oldPrice: '70 ج',
+            rating: 4.5,
+            tag: 'خصم 30%'
+          },
+          {
+            id: '2',
+            title: 'قهوة عربية',
+            shop: 'مقهى الشام',
+            image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80',
+            price: '25 ج',
+            oldPrice: '35 ج',
+            rating: 4.8,
+            tag: 'خصم 29%'
+          },
+          {
+            id: '3',
+            title: 'حجز ملعب كرة قدم',
+            shop: 'نادي الأمل',
+            image: 'https://images.unsplash.com/photo-1551698618-6d2e8f8b4c1e?auto=format&fit=crop&w=800&q=80',
+            price: '200 ج/ساعة',
+            rating: 4.6,
+            tag: 'عروض المساء'
+          },
+          {
+            id: '4',
+            title: 'توصيل طلبات',
+            shop: 'سوبر ماركت البركة',
+            image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80',
+            price: 'من 50 ج',
+            rating: 4.7,
+            tag: 'توصيل مجاني'
+          }
+        ];
+        
+        // Show data immediately
+        setFeaturedOffers(mockData);
+        setIsLoading(false);
+        
       } catch (error) {
         console.error('خطأ في جلب العروض:', error);
-      } finally {
         setIsLoading(false);
       }
     };
