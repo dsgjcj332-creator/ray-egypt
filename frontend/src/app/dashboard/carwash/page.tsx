@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import CarWashDashboard from '@/components/dashboard/carwash/CarWashDashboard';
+import CarWashDashboard from '@/components/dashboard/systems/carwash/CarWashDashboard';
 
 export default function CarWashPage() {
   const handleLogout = () => {

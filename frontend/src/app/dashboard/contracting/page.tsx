@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ContractingDashboard from '@/components/dashboard/contracting/ContractingDashboard';
+import ContractingDashboard from '@/components/dashboard/systems/contracting/ContractingDashboard';
 
 export default function ContractingPage() {
   const handleLogout = () => {
