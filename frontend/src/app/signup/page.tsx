@@ -27,11 +27,16 @@ const SignupPage = () => {
     setIsLoading(true);
     
     try {
-      const userData = {
+      const userData: {
+        name: string;
+        email: string;
+        password: string;
+        role: 'user' | 'merchant';
+      } = {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: type
+        role: type === 'customer' ? 'user' : 'merchant'
       };
       
       await register(userData);

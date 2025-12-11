@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Sparkles, RefreshCw, ChevronRight, Lightbulb, Zap } from 'lucide-react';
-import { getGeminiResponse } from '../../../services/geminiService';
+import { getGeminiResponse } from '../../../../services/geminiService';
 
 interface SmartInsightsWidgetProps {
   dataContext: string;
