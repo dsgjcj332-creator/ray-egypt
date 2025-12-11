@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import RealEstateDashboard from '@/components/dashboard/realestate/RealEstateDashboard';
+import RealEstateDashboard from '@/components/dashboard/systems/realestate/RealEstateDashboard';
 
 export default function RealEstatePage() {
   const handleLogout = () => {

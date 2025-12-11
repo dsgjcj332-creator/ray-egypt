@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import BookingsDashboard from '@/components/dashboard/bookings/BookingsDashboard';
+import BookingsDashboard from '@/components/dashboard/systems/bookings/BookingsDashboard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BusinessType } from '@/components/dashboard/config';
 

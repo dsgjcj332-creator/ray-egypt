@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import LaundryDashboard from '@/components/dashboard/laundry/LaundryDashboard';
+import LaundryDashboard from '@/components/dashboard/systems/laundry/LaundryDashboard';
 
 export default function LaundryPage() {
   const handleLogout = () => {

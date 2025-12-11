@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ServicesDashboard from '@/components/dashboard/services/ServicesDashboard';
+import ServicesDashboard from '@/components/dashboard/systems/services/ServicesDashboard';
 
 export default function ServicesPage() {
   const handleLogout = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import PharmacyDashboard from '@/components/dashboard/pharmacy/PharmacyDashboard';
+import PharmacyDashboard from '@/components/dashboard/systems/pharmacy/PharmacyDashboard';
 import { useRouter } from 'next/navigation';
 
 export default function PharmacyPage() {
