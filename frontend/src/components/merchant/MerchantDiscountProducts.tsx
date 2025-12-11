@@ -1,5 +1,6 @@
-import React from 'react';
-import { Tag, Clock, TrendingUp, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Tag, Clock, TrendingUp, Star, Loader, AlertCircle } from 'lucide-react';
+import axios from 'axios';
 
 interface DiscountProduct {
   id: number;
@@ -20,87 +21,31 @@ interface MerchantDiscountProductsProps {
 }
 
 const MerchantDiscountProducts: React.FC<MerchantDiscountProductsProps> = ({ merchantId }) => {
-  // Mock products with discounts - في الواقع ستأتي من API
-  const discountProducts: DiscountProduct[] = [
-    {
-      id: 1,
-      name: 'تيشيرت قطن أبيض',
-      price: 96,
-      originalPrice: 120,
-      discount: '20%',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
-      category: 'ملابس',
-      rating: 4.5,
-      reviews: 23,
-      validUntil: '2024-12-31',
-      description: 'تيشيرت قطن 100% مريح وناعم'
-    },
-    {
-      id: 2,
-      name: 'بنطلون جينز أزرق',
-      price: 224,
-      originalPrice: 280,
-      discount: '20%',
-      image: 'https://images.unsplash.com/photo-1542272617-08f086302542?w=400',
-      category: 'ملابس',
-      rating: 4.8,
-      reviews: 45,
-      validUntil: '2024-12-31',
-      description: 'جينز أصلي مريح وعملي'
-    },
-    {
-      id: 3,
-      name: 'حذاء رياضي أسود',
-      price: 360,
-      originalPrice: 450,
-      discount: '20%',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
-      category: 'أحذية',
-      rating: 4.7,
-      reviews: 31,
-      validUntil: '2024-12-31',
-      description: 'حذاء رياضي مريح وعالي الجودة'
-    },
-    {
-      id: 4,
-      name: 'شنطة يد جلدية',
-      price: 280,
-      originalPrice: 350,
-      discount: '20%',
-      image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
-      category: 'إكسسوارات',
-      rating: 4.6,
-      reviews: 18,
-      validUntil: '2024-12-31',
-      description: 'شنطة جلدية أصلية فاخرة'
-    },
-    {
-      id: 5,
-      name: 'ساعة يد ذهبية',
-      price: 520,
-      originalPrice: 650,
-      discount: '20%',
-      image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400',
-      category: 'إكسسوارات',
-      rating: 4.9,
-      reviews: 27,
-      validUntil: '2024-12-31',
-      description: 'ساعة يد فاخرة بتصميم عصري'
-    },
-    {
-      id: 6,
-      name: 'نظارة شمسية',
-      price: 224,
-      originalPrice: 280,
-      discount: '20%',
-      image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400',
-      category: 'إكسسوارات',
-      rating: 4.4,
-      reviews: 12,
-      validUntil: '2024-12-31',
-      description: 'نظارة شمسية عالية الجودة'
+  const [discountProducts, setDiscountProducts] = useState<DiscountProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDiscountProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get<DiscountProduct[]>(`/api/merchants/${merchantId}/discounts`);
+        setDiscountProducts(response.data);
+      } catch (err) {
+        console.error('Error fetching discount products:', err);
+        setError('فشل في تحميل المنتجات المخفضة');
+        setDiscountProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (merchantId) {
+      fetchDiscountProducts();
     }
-  ];
+  }, [merchantId]);
+
 
   const calculateSavings = (original: number, discounted: number) => {
     return original - discounted;
@@ -120,6 +65,19 @@ const MerchantDiscountProducts: React.FC<MerchantDiscountProductsProps> = ({ mer
         </div>
       </div>
 
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+          <span className="mr-2">جاري تحميل المنتجات المخفضة...</span>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+          <AlertCircle className="w-5 h-5" />
+          <span>{error}</span>
+        </div>
+      ) : (
+      <>
       {/* Products Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {discountProducts.map((product) => (
@@ -217,6 +175,8 @@ const MerchantDiscountProducts: React.FC<MerchantDiscountProductsProps> = ({ mer
           استفد من العرض
         </button>
       </div>
+      </>
+      )}
     </div>
   );
 };

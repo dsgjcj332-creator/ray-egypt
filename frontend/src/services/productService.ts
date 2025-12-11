@@ -15,34 +15,57 @@ export interface Product {
   dailySales?: number;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export async function fetchProducts(): Promise<Product[]> {
-  // Mock data
-  return [
-    {
-      id: '1',
-      name: 'تيشيرت قطن أبيض',
-      category: 'ملابس',
-      description: 'تيشيرت قطن 100% مريح وناعم',
-      price: 120,
-      cost: 60,
-      stock: 50,
-      minStock: 10,
-      sku: 'TS-WHT-001',
-      barcode: '1234567890',
-      status: 'active',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400'
-    }
-  ];
+  try {
+    const response = await fetch(`${API_URL}/api/products`);
+    if (!response.ok) throw new Error('فشل جلب المنتجات');
+    return await response.json();
+  } catch (error) {
+    console.error('خطأ في جلب المنتجات:', error);
+    return [];
+  }
 }
 
 export async function saveProduct(product: Product): Promise<Product> {
-  return product;
+  try {
+    const response = await fetch(`${API_URL}/api/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product)
+    });
+    if (!response.ok) throw new Error('فشل حفظ المنتج');
+    return await response.json();
+  } catch (error) {
+    console.error('خطأ في حفظ المنتج:', error);
+    throw error;
+  }
 }
 
 export async function updateProduct(product: Product): Promise<Product> {
-  return product;
+  try {
+    const response = await fetch(`${API_URL}/api/products/${product.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product)
+    });
+    if (!response.ok) throw new Error('فشل تحديث المنتج');
+    return await response.json();
+  } catch (error) {
+    console.error('خطأ في تحديث المنتج:', error);
+    throw error;
+  }
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  // Mock delete
+  try {
+    const response = await fetch(`${API_URL}/api/products/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('فشل حذف المنتج');
+  } catch (error) {
+    console.error('خطأ في حذف المنتج:', error);
+    throw error;
+  }
 }

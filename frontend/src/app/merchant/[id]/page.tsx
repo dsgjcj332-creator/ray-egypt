@@ -1,10 +1,27 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MerchantPublicView from '@/components/views/MerchantPublicView';
 import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import GeminiAssistant from '@/components/common/GeminiAssistant';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+interface Merchant {
+  id: string;
+  name: string;
+  category: string;
+  type: string;
+  rating: number;
+  reviews: number;
+  location: string;
+  image: string;
+  cover: string;
+  phone?: string;
+  whatsapp?: string;
+  email?: string;
+}
 
 export default function MerchantPage() {
   const router = useRouter();
@@ -12,59 +29,44 @@ export default function MerchantPage() {
   const searchParams = useSearchParams();
   const type = searchParams.get('type') || 'food';
   const id = params.id;
+  
+  const [merchant, setMerchant] = useState<Merchant | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // In a real app, fetch merchant data by ID here
-  const getMockMerchant = (merchantId: string) => {
-    const merchants = {
-      'supermarket-khair-zaman': {
-        id: merchantId,
-        name: 'سوبر ماركت خير زمان',
-        category: 'supermarket',
-        type: 'سوبر ماركت',
-        rating: 4.8,
-        reviews: 156,
-        location: 'المعادي، القاهرة',
-        image: 'https://ui-avatars.com/api/?name=خير+زمان&background=10B981&color=fff',
-        cover: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80',
-        phone: '01234567890',
-        whatsapp: '201234567890',
-        email: 'info@khairzaman.com'
-      },
-      'restaurant-almaza': {
-        id: merchantId,
-        name: 'مطعم المزة',
-        category: 'food',
-        type: 'مطعم',
-        rating: 4.6,
-        reviews: 89,
-        location: 'الشيخ زايد، الجيزة',
-        image: 'https://ui-avatars.com/api/?name=المزة&background=F59E0B&color=fff',
-        cover: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80',
-        phone: '01123456789',
-        whatsapp: '201123456789',
-        email: 'info@almaza.com'
+  useEffect(() => {
+    const fetchMerchant = async () => {
+      try {
+        setIsLoading(true);
+        const merchantId = Array.isArray(id) ? id[0] : id;
+        const response = await fetch(`${API_URL}/api/merchants/${merchantId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMerchant(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب بيانات المتجر:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    
-    return merchants[merchantId as keyof typeof merchants] || {
-      id: merchantId,
-      name: 'اسم المتجر (مثال)',
-      category: type,
-      type: 'متجر',
-      rating: 4.5,
-      reviews: 50,
-      location: 'القاهرة، مصر',
-      image: 'https://ui-avatars.com/api/?name=Merchant&background=random',
-      cover: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80'
-    };
-  };
-  
-  const mockMerchant = getMockMerchant(Array.isArray(id) ? id[0] : id);
+
+    if (id) {
+      fetchMerchant();
+    }
+  }, [id]);
+
+  if (isLoading || !merchant) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 font-sans text-ray-black dark:text-white dir-rtl flex items-center justify-center">
+        <p>جاري التحميل...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 font-sans text-ray-black dark:text-white dir-rtl">
       <MerchantPublicView 
-        merchant={mockMerchant} 
+        merchant={merchant} 
         onBack={() => router.back()} 
       />
       <GeminiAssistant context="customer" />

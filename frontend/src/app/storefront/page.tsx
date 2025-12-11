@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft, Save, RotateCcw, Copy, Check, AlertCircle,
   Palette, Layout, Video, Eye, Monitor, Tablet, Smartphone,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, ExternalLink, Loader
 } from 'lucide-react';
+import { saveStorefrontConfig, resetStorefrontConfig } from '@/services/storefrontService';
+import ImageUploader from '@/components/storefront/ImageUploader';
 
 interface StorefrontConfig {
   // الألوان الأساسية
@@ -55,6 +58,9 @@ interface StorefrontConfig {
   showReviews: boolean;
   showBookings: boolean;
   showMap: boolean;
+
+  // الصور
+  galleryImages?: string[];
 }
 
 const defaultConfig: StorefrontConfig = {
@@ -91,13 +97,18 @@ const defaultConfig: StorefrontConfig = {
   showReviews: true,
   showBookings: true,
   showMap: true,
+  galleryImages: [],
 };
 
 export default function StorefrontPage() {
+  const router = useRouter();
   const [config, setConfig] = useState<StorefrontConfig>(defaultConfig);
-  const [activeTab, setActiveTab] = useState<'colors' | 'buttons' | 'banner' | 'elements'>('colors');
+  const [activeTab, setActiveTab] = useState<'colors' | 'buttons' | 'banner' | 'elements' | 'media'>('colors');
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [merchantId] = useState('default');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     headerButtons: true,
     footerButtons: true,
@@ -111,14 +122,37 @@ export default function StorefrontPage() {
     }));
   };
 
-  const handleSave = () => {
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+  const handleSave = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await saveStorefrontConfig(merchantId, config);
+      localStorage.setItem(`storefront-${merchantId}`, JSON.stringify(config));
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      setError('فشل حفظ الإعدادات');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm('هل أنت متأكد من رغبتك في إعادة تعيين جميع الإعدادات؟')) {
-      setConfig(defaultConfig);
+      setLoading(true);
+      setError(null);
+      try {
+        const resetConfig = await resetStorefrontConfig(merchantId);
+        setConfig(resetConfig as StorefrontConfig);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      } catch (err) {
+        setError('فشل إعادة تعيين الإعدادات');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -193,20 +227,39 @@ export default function StorefrontPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+              onClick={() => {
+                handleSave();
+                setTimeout(() => router.push('/storefront/default'), 500);
+              }}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
             >
-              <RotateCcw className="w-4 h-4" />
+              {loading ? <Loader className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+              معاينة
+            </button>
+            <button
+              onClick={handleReset}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition disabled:opacity-50"
+            >
+              {loading ? <Loader className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
               إعادة تعيين
             </button>
             <button
               onClick={handleSave}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
             >
-              <Save className="w-4 h-4" />
+              {loading ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               {saveSuccess ? 'تم الحفظ!' : 'حفظ'}
             </button>
           </div>
+          {error && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg">
+              <AlertCircle className="w-4 h-4" />
+              {error}
+            </div>
+          )}
         </div>
       </div>
 
@@ -222,6 +275,7 @@ export default function StorefrontPage() {
                 { id: 'buttons', label: '⚡ الأزرار', icon: Layout },
                 { id: 'banner', label: '🎬 البنر', icon: Video },
                 { id: 'elements', label: '👁️ العناصر', icon: Eye },
+                { id: 'media', label: '📸 الوسائط', icon: Eye },
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -474,6 +528,41 @@ export default function StorefrontPage() {
                     <span className="text-sm text-gray-700 dark:text-gray-300">{elem.label}</span>
                   </label>
                 ))}
+              </div>
+            )}
+
+            {/* Media Tab */}
+            {activeTab === 'media' && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-6">
+                <div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-4">🖼️ صورة البنر</h3>
+                  <ImageUploader
+                    merchantId={merchantId}
+                    type="banner"
+                    currentImage={config.bannerImage}
+                    onSuccess={(url) => {
+                      setConfig({ ...config, bannerImage: url as string });
+                      setSaveSuccess(true);
+                      setTimeout(() => setSaveSuccess(false), 2000);
+                    }}
+                    onError={(err) => setError(err)}
+                  />
+                </div>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-4">📸 معرض الصور</h3>
+                  <ImageUploader
+                    merchantId={merchantId}
+                    type="gallery"
+                    currentGallery={config.galleryImages}
+                    onSuccess={(urls) => {
+                      setConfig({ ...config, galleryImages: urls as string[] });
+                      setSaveSuccess(true);
+                      setTimeout(() => setSaveSuccess(false), 2000);
+                    }}
+                    onError={(err) => setError(err)}
+                  />
+                </div>
               </div>
             )}
           </div>

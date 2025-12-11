@@ -2,25 +2,49 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Phone, ArrowRight, ArrowLeft, Store } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 const SignupPage = () => {
-  const { login } = useAuth();
+  const router = useRouter();
+  const { register } = useAuth();
   const [type, setType] = useState<'customer' | 'merchant'>('customer');
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    businessName: '',
+    businessType: ''
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Mock signup logic
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    await login('newuser@example.com', type);
-    setIsLoading(false);
-    if (type === 'merchant') {
-        // Navigate to systems
-    } else {
-        // Navigate to profile
+    
+    try {
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: type
+      };
+      
+      await register(userData);
+      
+      if (type === 'merchant') {
+        router.push('/admin');
+      } else {
+        router.push('/profile');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

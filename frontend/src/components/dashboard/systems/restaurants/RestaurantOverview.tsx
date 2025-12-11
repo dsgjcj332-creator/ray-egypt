@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   DollarSign, ChefHat, Utensils, Truck, Plus, Calendar, 
-  Clock, Package, Printer, AlertCircle, CheckCircle, Settings2 
+  Clock, Package, Printer, AlertCircle, CheckCircle, Settings2, Loader
 } from 'lucide-react';
+import axios from 'axios';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import StatusBadge from '../../../common/StatusBadge';
@@ -13,31 +14,103 @@ interface RestaurantOverviewProps {
   setActiveTab: (tab: string) => void;
 }
 
+interface DashboardStats {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any;
+  color: 'orange' | 'yellow' | 'blue' | 'green';
+  trend: string;
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any;
+  color: string;
+  onClick: () => void;
+}
+
 const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
-  
-  const defaultStats = [
-    { id: 'stat_sales', title: "مبيعات اليوم", value: "4,850 ج", sub: "120 طلب", icon: DollarSign, color: "orange" as const, trend: "+12%" },
-    { id: 'stat_kitchen', title: "طلبات المطبخ", value: "8", sub: "جاري التحضير", icon: ChefHat, color: "yellow" as const, trend: "-5%" },
-    { id: 'stat_tables', title: "الطاولات المشغولة", value: "6/15", sub: "40% إشغال", icon: Utensils, color: "blue" as const, trend: "+8%" },
-    { id: 'stat_delivery', title: "التوصيل", value: "4", sub: "جاري التوصيل", icon: Truck, color: "green" as const, trend: "+3%" },
-    { id: 'stat_rating', title: "تقييم اليوم", value: "4.8/5", sub: "من 45 تقييم", icon: CheckCircle, color: "blue" as const, trend: "+0.2" },
-    { id: 'stat_revenue', title: "الإيرادات المتوقعة", value: "8,500 ج", sub: "حتى نهاية اليوم", icon: DollarSign, color: "green" as const, trend: "+15%" },
-  ];
+  const [stats, setStats] = useState<DashboardStats[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const defaultActions = [
-    { id: 'act_new_order', label: "طلب جديد", icon: Plus, color: "bg-orange-600 text-white", onClick: () => setActiveTab('pos') },
-    { id: 'act_book_table', label: "حجز طاولة", icon: Calendar, color: "bg-white text-gray-700 border border-gray-200 hover:border-orange-500", onClick: () => setActiveTab('reservations') },
-    { id: 'act_shift', label: "فتح/غلق الوردية", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-orange-500", onClick: () => setActiveTab('settings') },
-    { id: 'act_expense', label: "تسجيل مصروف", icon: DollarSign, color: "bg-white text-gray-700 border border-gray-200 hover:border-orange-500", onClick: () => setActiveTab('reports') },
-    { id: 'act_stock', label: "نواقص المطبخ", icon: Package, color: "bg-white text-gray-700 border border-gray-200 hover:border-orange-500", onClick: () => setActiveTab('inventory') },
-    { id: 'act_report', label: "طباعة تقرير", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-orange-500", onClick: () => setActiveTab('reports') },
-  ];
+  // Fetch dashboard data from API
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch stats from API
+        const statsResponse = await axios.get<DashboardStats[]>('/api/dashboard/restaurant/stats');
+        const fetchedStats = (statsResponse.data as DashboardStats[]).map((stat: any) => ({
+          ...stat,
+          icon: getIconForStat(stat.id)
+        }));
+        setStats(fetchedStats);
 
-  const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
-  ]);
+        // Fetch actions from API
+        const actionsResponse = await axios.get<DashboardAction[]>('/api/dashboard/restaurant/actions');
+        const fetchedActions = (actionsResponse.data as DashboardAction[]).map((action: any) => ({
+          ...action,
+          icon: getIconForAction(action.id),
+          onClick: () => setActiveTab(action.tabId)
+        }));
+        setActions(fetchedActions);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('فشل في تحميل بيانات لوحة التحكم');
+        // Set default empty arrays on error
+        setStats([]);
+        setActions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [setActiveTab]);
+
+  // Helper function to get icon based on stat ID
+  const getIconForStat = (statId: string) => {
+    const iconMap: Record<string, any> = {
+      'stat_sales': DollarSign,
+      'stat_kitchen': ChefHat,
+      'stat_tables': Utensils,
+      'stat_delivery': Truck,
+      'stat_rating': CheckCircle,
+      'stat_revenue': DollarSign,
+    };
+    return iconMap[statId] || DollarSign;
+  };
+
+  // Helper function to get icon based on action ID
+  const getIconForAction = (actionId: string) => {
+    const iconMap: Record<string, any> = {
+      'act_new_order': Plus,
+      'act_book_table': Calendar,
+      'act_shift': Clock,
+      'act_expense': DollarSign,
+      'act_stock': Package,
+      'act_report': Printer,
+    };
+    return iconMap[actionId] || Plus;
+  };
+
+  const [visibleIds, setVisibleIds] = useState<string[]>([]);
+
+  // Update visible IDs when stats and actions are loaded
+  useEffect(() => {
+    setVisibleIds([
+      ...stats.map(s => s.id),
+      ...actions.map(a => a.id)
+    ]);
+  }, [stats, actions]);
 
   const handleToggle = (id: string) => {
     setVisibleIds(prev => 
@@ -46,9 +119,29 @@ const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab })
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map((s: DashboardStats) => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map((a: DashboardAction) => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader className="w-8 h-8 text-orange-500 animate-spin" />
+        <span className="mr-2 text-gray-600">جاري تحميل لوحة التحكم...</span>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+        <AlertCircle className="w-5 h-5" />
+        <span>{error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 relative">
@@ -65,7 +158,7 @@ const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab })
 
       {/* Quick Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+        {stats.filter((s: DashboardStats) => visibleIds.includes(s.id)).map((stat: DashboardStats) => (
           <StatCard 
             key={stat.id}
             title={stat.title} 
@@ -79,7 +172,7 @@ const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab })
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter((a: DashboardAction) => visibleIds.includes(a.id)).map((action: DashboardAction) => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

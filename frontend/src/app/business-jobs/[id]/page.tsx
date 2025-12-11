@@ -39,56 +39,15 @@ interface Job {
   };
 }
 
-const mockJob: Job = {
-  id: '1',
-  title: 'محاسب متخصص',
-  company: 'مطعم المزة',
-  location: 'القاهرة، المعادي',
-  type: 'full-time',
-  category: 'مطاعم',
-  salary: '8,000 - 12,000 ج.م',
-  posted: 'منذ 2 أيام',
-  description: 'نبحث عن محاسب متخصص لإدارة الحسابات اليومية والمصروفات للمطعم. المتطلبات تشمل إدارة الفواتير، متابعة المدفوعات، وإعداد التقارير المالية الدورية.',
-  requirements: [
-    'خبرة 3+ سنوات في المحاسبة',
-    'إجادة برامج المحاسبة (QuickBooks, SAP)',
-    'شهادة محاسبة معتمدة',
-    'إجادة اللغة الإنجليزية',
-    'قدرة على العمل تحت الضغط'
-  ],
-  benefits: [
-    'تأمين صحي شامل',
-    'إجازة سنوية 21 يوم',
-    'وجبات مجانية',
-    'مكافآت أداء',
-    'تدريب متخصص'
-  ],
-  responsibilities: [
-    'إدارة الحسابات اليومية',
-    'إعداد التقارير المالية الشهرية',
-    'متابعة المدفوعات والمستحقات',
-    'التنسيق مع مدققي الحسابات',
-    'إدارة الفواتير والضرائب'
-  ],
-  logo: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=400',
-  rating: 4.5,
-  reviews: 12,
-  urgent: true,
-  featured: true,
-  contactInfo: {
-    phone: '+20 2 123456789',
-    email: 'careers@almazza.com',
-    website: 'www.almazza.com'
-  },
-  companyInfo: {
-    size: '50-100 موظف',
-    founded: '2015',
-    industry: 'مطاعم'
-  }
-};
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function JobDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const jobId = Array.isArray(params.id) ? params.id[0] : params.id;
+  
+  const [job, setJob] = useState<Job | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [applicationData, setApplicationData] = useState({
@@ -99,6 +58,27 @@ export default function JobDetailPage() {
     coverLetter: '',
     cvFile: null as File | null
   });
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/jobs/${jobId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setJob(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب الوظيفة:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (jobId) {
+      fetchJob();
+    }
+  }, [jobId]);
 
   const handleApply = () => {
     setShowApplicationForm(true);

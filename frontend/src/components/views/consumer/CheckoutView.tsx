@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle, CreditCard, MapPin, Truck, ChevronRight, 
-  ShieldCheck, Banknote, Wallet, ArrowLeft 
+  ShieldCheck, Banknote, Wallet, ArrowLeft, Loader, ShoppingCart
 } from 'lucide-react';
 
 interface CheckoutViewProps {
@@ -10,28 +10,102 @@ interface CheckoutViewProps {
   onComplete: (orderId: string) => void;
 }
 
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  qty: number;
+  image: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 const CheckoutView: React.FC<CheckoutViewProps> = ({ onBack, onComplete }) => {
   const [step, setStep] = useState(1); // 1: Address, 2: Payment, 3: Review
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock Cart Data
-  const items = [
-    { id: 1, name: 'برجر كلاسيك', price: 120, qty: 2, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200' },
-    { id: 2, name: 'بيتزا مارجريتا', price: 150, qty: 1, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200' },
-  ];
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/cart`);
+        if (response.ok) {
+          const data = await response.json();
+          setItems(data.items || []);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب عناصر السلة:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCart();
+  }, []);
 
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.qty), 0);
   const deliveryFee = 25;
   const total = subtotal + deliveryFee;
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${API_URL}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items,
+          paymentMethod,
+          total,
+          deliveryFee
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        onComplete(data.orderId);
+      }
+    } catch (error) {
+      console.error('خطأ في إنشاء الطلب:', error);
+    } finally {
       setIsProcessing(false);
-      onComplete('#ORD-9988');
-    }, 2000);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="flex items-center gap-3">
+            <Loader className="w-6 h-6 animate-spin text-blue-600" />
+            <span className="text-gray-600">جاري تحميل السلة...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center py-12">
+          <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">السلة فارغة</p>
+          <button 
+            onClick={onBack}
+            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            العودة للتسوق
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4">

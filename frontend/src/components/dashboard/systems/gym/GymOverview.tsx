@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Users, CreditCard, Clock, ShoppingBag, Plus, QrCode, Activity, Dumbbell, Settings2
+  Users, CreditCard, Clock, ShoppingBag, Plus, QrCode, Activity, Dumbbell, Settings2, Loader, AlertCircle
 } from 'lucide-react';
+import axios from 'axios';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
@@ -11,31 +12,96 @@ interface GymOverviewProps {
   setActiveTab: (tab: string) => void;
 }
 
+interface DashboardStats {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any;
+  color: 'yellow' | 'green' | 'red' | 'blue';
+  trend?: string;
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any;
+  color: string;
+  onClick: () => void;
+}
+
 const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStats[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const defaultStats = [
-    { id: 'stat_attendance', title: "حضور اليوم", value: "145", sub: "عضو", icon: Users, color: "yellow" as const },
-    { id: 'stat_new', title: "اشتراكات جديدة", value: "8", sub: "اليوم", icon: CreditCard, color: "green" as const },
-    { id: 'stat_expiring', title: "تنتهي قريباً", value: "12", sub: "عضوية", icon: Clock, color: "red" as const },
-    { id: 'stat_sales', title: "مبيعات المتجر", value: "3,200", sub: "جنيه", icon: ShoppingBag, color: "blue" as const },
-    { id: 'stat_revenue', title: "الإيرادات الشهرية", value: "85,000", sub: "جنيه", icon: CreditCard, color: "green" as const },
-    { id: 'stat_members', title: "إجمالي الأعضاء", value: "1,250", sub: "عضو نشط", icon: Users, color: "blue" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const statsResponse = await axios.get<DashboardStats[]>('/api/dashboard/gym/stats');
+        const fetchedStats = (statsResponse.data as DashboardStats[]).map((stat: any) => ({
+          ...stat,
+          icon: getIconForStat(stat.id)
+        }));
+        setStats(fetchedStats);
 
-  const defaultActions = [
-    { id: 'act_new_member', label: "عضو جديد", icon: Plus, color: "bg-yellow-500 text-black", onClick: () => setActiveTab('members') },
-    { id: 'act_renew', label: "تجديد اشتراك", icon: CreditCard, color: "bg-white text-gray-700 border border-gray-200 hover:border-yellow-500", onClick: () => setActiveTab('subscriptions') },
-    { id: 'act_checkin', label: "تسجيل دخول", icon: QrCode, color: "bg-white text-gray-700 border border-gray-200 hover:border-yellow-500", onClick: () => setActiveTab('access') },
-    { id: 'act_sell', label: "بيع منتج", icon: ShoppingBag, color: "bg-white text-gray-700 border border-gray-200 hover:border-yellow-500", onClick: () => setActiveTab('store') },
-    { id: 'act_inbody', label: "قياس InBody", icon: Activity, color: "bg-white text-gray-700 border border-gray-200 hover:border-yellow-500", onClick: () => setActiveTab('members') },
-    { id: 'act_class', label: "حجز كلاس", icon: Dumbbell, color: "bg-white text-gray-700 border border-gray-200 hover:border-yellow-500", onClick: () => setActiveTab('classes') },
-  ];
+        const actionsResponse = await axios.get<DashboardAction[]>('/api/dashboard/gym/actions');
+        const fetchedActions = (actionsResponse.data as DashboardAction[]).map((action: any) => ({
+          ...action,
+          icon: getIconForAction(action.id),
+          onClick: () => setActiveTab(action.tabId)
+        }));
+        setActions(fetchedActions);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('فشل في تحميل بيانات لوحة التحكم');
+        setStats([]);
+        setActions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
-  ]);
+    fetchDashboardData();
+  }, [setActiveTab]);
+
+  const getIconForStat = (statId: string) => {
+    const iconMap: Record<string, any> = {
+      'stat_attendance': Users,
+      'stat_new': CreditCard,
+      'stat_expiring': Clock,
+      'stat_sales': ShoppingBag,
+      'stat_revenue': CreditCard,
+      'stat_members': Users,
+    };
+    return iconMap[statId] || Users;
+  };
+
+  const getIconForAction = (actionId: string) => {
+    const iconMap: Record<string, any> = {
+      'act_new_member': Plus,
+      'act_renew': CreditCard,
+      'act_checkin': QrCode,
+      'act_sell': ShoppingBag,
+      'act_inbody': Activity,
+      'act_class': Dumbbell,
+    };
+    return iconMap[actionId] || Plus;
+  };
+
+  const [visibleIds, setVisibleIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setVisibleIds([
+      ...stats.map(s => s.id),
+      ...actions.map(a => a.id)
+    ]);
+  }, [stats, actions]);
 
   const handleToggle = (id: string) => {
     setVisibleIds(prev => 
@@ -44,9 +110,27 @@ const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map((s: DashboardStats) => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map((a: DashboardAction) => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader className="w-8 h-8 text-yellow-500 animate-spin" />
+        <span className="mr-2 text-gray-600">جاري تحميل لوحة التحكم...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+        <AlertCircle className="w-5 h-5" />
+        <span>{error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 relative">
@@ -63,7 +147,7 @@ const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter((s: DashboardStats) => visibleIds.includes(s.id)).map((stat: DashboardStats) => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -77,7 +161,7 @@ const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter((a: DashboardAction) => visibleIds.includes(a.id)).map((action: DashboardAction) => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

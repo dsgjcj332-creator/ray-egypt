@@ -1,16 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
-import { PiggyBank, TrendingUp, Download, BarChart3 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { PiggyBank, TrendingUp, Download, BarChart3, Loader } from 'lucide-react';
 import Link from 'next/link';
 
+interface ProfitData {
+  month: string;
+  revenue: number;
+  expenses: number;
+  profit: number;
+  margin: number;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function AdminProfit() {
-  const profitData = [
-    { month: 'يناير', revenue: 2500000, expenses: 1000000, profit: 1500000, margin: 60 },
-    { month: 'فبراير', revenue: 2700000, expenses: 1050000, profit: 1650000, margin: 61 },
-    { month: 'مارس', revenue: 2900000, expenses: 1100000, profit: 1800000, margin: 62 },
-    { month: 'أبريل', revenue: 2600000, expenses: 1125000, profit: 1475000, margin: 57 }
-  ];
+  const [profitData, setProfitData] = useState<ProfitData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfit = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/admin/profit`);
+        if (response.ok) {
+          const data = await response.json();
+          setProfitData(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب بيانات الأرباح:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfit();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

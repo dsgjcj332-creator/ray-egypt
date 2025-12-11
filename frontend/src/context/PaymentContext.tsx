@@ -31,108 +31,27 @@ interface PaymentContextType {
 
 const PaymentContext = createContext<PaymentContextType | undefined>(undefined);
 
-// بيانات تجريبية
-const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
-  {
-    id: 'pm-001',
-    type: 'credit_card',
-    name: 'بطاقة الائتمان الشخصية',
-    isDefault: true,
-    lastFourDigits: '4242',
-    expiryDate: '12/25',
-    provider: 'Visa'
-  },
-  {
-    id: 'pm-002',
-    type: 'mobile_wallet',
-    name: 'محفظة Fawry',
-    isDefault: false,
-    provider: 'Fawry'
-  }
-];
-
-const MOCK_WALLET: Wallet = {
-  id: 'wallet-001',
-  userId: 'user-001',
-  balance: 5000,
-  currency: 'EGP',
-  lastUpdated: new Date().toISOString(),
-  transactions: []
-};
-
-const MOCK_TRANSACTIONS: Transaction[] = [
-  {
-    id: 'txn-001',
-    userId: 'user-001',
-    type: 'subscription',
-    amount: 299,
-    currency: 'EGP',
-    status: 'completed',
-    paymentMethod: MOCK_PAYMENT_METHODS[0],
-    description: 'دفع اشتراك الخطة المتوسطة',
-    reference: 'REF-001',
-    createdAt: '2024-11-01',
-    completedAt: '2024-11-01'
-  },
-  {
-    id: 'txn-002',
-    userId: 'user-001',
-    type: 'payment',
-    amount: 1500,
-    currency: 'EGP',
-    status: 'completed',
-    paymentMethod: MOCK_PAYMENT_METHODS[1],
-    description: 'دفع فاتورة المبيعات',
-    reference: 'REF-002',
-    createdAt: '2024-10-15',
-    completedAt: '2024-10-15'
-  }
-];
-
-const MOCK_INVOICES: Invoice[] = [
-  {
-    id: 'inv-001',
-    userId: 'user-001',
-    invoiceNumber: 'INV-001',
-    amount: 5000,
-    currency: 'EGP',
-    status: 'sent',
-    items: [
-      {
-        id: 'item-001',
-        description: 'خدمات استشارة',
-        quantity: 10,
-        unitPrice: 500,
-        total: 5000
-      }
-    ],
-    subtotal: 5000,
-    tax: 700,
-    total: 5700,
-    dueDate: '2024-12-15',
-    issuedDate: '2024-11-15'
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export const PaymentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(MOCK_PAYMENT_METHODS);
-  const [wallet, setWallet] = useState<Wallet | null>(MOCK_WALLET);
-  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
-  const [invoices, setInvoices] = useState<Invoice[]>(MOCK_INVOICES);
-  const [isLoading, setIsLoading] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // محاكاة جلب بيانات الدفع من الخادم
     const loadPaymentData = async () => {
       try {
         setIsLoading(true);
-        // في الواقع، سيتم جلب البيانات من API
-        // const response = await fetch('/api/payments/data');
-        // const data = await response.json();
-        // setPaymentMethods(data.paymentMethods);
-        // setWallet(data.wallet);
-        // setTransactions(data.transactions);
-        // setInvoices(data.invoices);
+        const response = await fetch(`${API_URL}/api/payments/data`);
+        if (response.ok) {
+          const data = await response.json();
+          setPaymentMethods(data.paymentMethods || []);
+          setWallet(data.wallet || null);
+          setTransactions(data.transactions || []);
+          setInvoices(data.invoices || []);
+        }
       } catch (error) {
         console.error('خطأ في جلب بيانات الدفع:', error);
       } finally {

@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MessageSquare, Search, Filter, Download, Eye, Edit, Trash2,
   Send, Reply, Forward, Star, Clock, CheckCircle, CheckCheck,
   User, Mail, Phone, Calendar, AlertCircle, Archive,
   Plus, RefreshCw, Paperclip, Smile, Mic, Camera, Image,
-  Users, Settings, Bell, X, Check, ChevronDown, MoreVertical
+  Users, Settings, Bell, X, Check, ChevronDown, MoreVertical, Loader
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -24,73 +24,64 @@ interface Message {
   attachments: number;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function AdminMessages() {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [replyText, setReplyText] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const messages = [
-    {
-      id: 'MSG001',
-      sender: 'أحمد محمد',
-      email: 'ahmed@email.com',
-      phone: '+20 123 456 7890',
-      subject: 'استفسار عن المنتجات',
-      message: 'أود الاستفسار عن المنتجات المتوفرة وأسعارها. هل يوجد خصم على الكميات الكبيرة؟',
-      date: '2025-12-05 14:30',
-      status: 'unread',
-      priority: 'high',
-      category: 'inquiry',
-      attachments: 0
-    },
-    {
-      id: 'MSG002',
-      sender: 'سارة أحمد',
-      email: 'sara@email.com',
-      phone: '+20 987 654 3210',
-      subject: 'مشكلة في الطلب',
-      message: 'لقد وصلني الطلب ولكن هناك منتج ناقص. رقم الطلب ORD1234',
-      date: '2025-12-05 12:15',
-      status: 'read',
-      priority: 'medium',
-      category: 'complaint',
-      attachments: 2
-    },
-    {
-      id: 'MSG003',
-      sender: 'محمد علي',
-      email: 'mohammed@email.com',
-      phone: '+20 555 123 4567',
-      subject: 'شكر وتقدير',
-      message: 'أشكركم على الخدمة الممتازة والمنتجات عالية الجودة. سأستمر في التعامل معكم.',
-      date: '2025-12-04 18:45',
-      status: 'replied',
-      priority: 'low',
-      category: 'feedback',
-      attachments: 0
-    },
-    {
-      id: 'MSG004',
-      sender: 'فاطمة حسن',
-      email: 'fatima@email.com',
-      phone: '+20 777 987 6543',
-      subject: 'طلب استرداد أموال',
-      message: 'أرغب في استرداد أموال الطلب ORD5678 بسبب عدم ملاءمة المنتج.',
-      date: '2025-12-04 16:20',
-      status: 'pending',
-      priority: 'high',
-      category: 'refund',
-      attachments: 1
-    }
-  ];
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/admin/messages`);
+        if (response.ok) {
+          const data = await response.json();
+          setMessages(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب الرسائل:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="flex items-center gap-3">
+              <Loader className="w-6 h-6 animate-spin text-blue-600" />
+              <span className="text-gray-600">جاري تحميل الرسائل...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const filteredMessages = messages.filter(msg => {
+    const matchesSearch = msg.sender.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         msg.message.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = selectedFilter === 'all' || msg.status === selectedFilter;
+    return matchesSearch && matchesFilter;
+  });
 
   const categories = [
     { id: 'all', label: 'جميع الرسائل', count: messages.length },
-    { id: 'inquiry', label: 'استفسارات', count: 1 },
-    { id: 'complaint', label: 'شكاوى', count: 1 },
-    { id: 'feedback', label: 'ملاحظات', count: 1 },
-    { id: 'refund', label: 'استرداد', count: 1 }
+    { id: 'inquiry', label: 'استفسارات', count: messages.filter(m => m.category === 'inquiry').length },
+    { id: 'complaint', label: 'شكاوى', count: messages.filter(m => m.category === 'complaint').length },
+    { id: 'feedback', label: 'ملاحظات', count: messages.filter(m => m.category === 'feedback').length },
+    { id: 'refund', label: 'استرداد', count: messages.filter(m => m.category === 'refund').length }
   ];
 
   const getStatusBadge = (status: string) => {
@@ -164,14 +155,7 @@ export default function AdminMessages() {
     }
   };
 
-  const filteredMessages = messages.filter(msg => {
-    const matchesSearch = msg.sender.includes(searchTerm) || 
-                         msg.subject.includes(searchTerm) || 
-                         msg.message.includes(searchTerm);
-    const matchesFilter = selectedFilter === 'all' || msg.category === selectedFilter;
-    return matchesSearch && matchesFilter;
-  });
-
+  
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

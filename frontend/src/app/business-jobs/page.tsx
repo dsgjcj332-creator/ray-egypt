@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, MapPin, Building, Clock, DollarSign, 
   Calendar, Briefcase, Filter, ChevronDown, 
@@ -27,116 +27,7 @@ interface Job {
   featured: boolean;
 }
 
-const mockJobs: Job[] = [
-  {
-    id: '1',
-    title: 'محاسب متخصص',
-    company: 'مطعم المزة',
-    location: 'القاهرة، المعادي',
-    type: 'full-time',
-    category: 'مطاعم',
-    salary: '8,000 - 12,000 ج.م',
-    posted: 'منذ 2 أيام',
-    description: 'نبحث عن محاسب متخصص لإدارة الحسابات اليومية والمصروفات للمطعم',
-    requirements: ['خبرة 3+ سنوات', 'إجادة برامج المحاسبة', 'شهادة محاسبة'],
-    benefits: ['تأمين صحي', 'إجازة سنوية', 'وجبات مجانية'],
-    logo: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=400',
-    rating: 4.5,
-    reviews: 12,
-    urgent: true,
-    featured: true
-  },
-  {
-    id: '2',
-    title: 'مدير تسويق',
-    company: 'صالون التجميل الأنيق',
-    location: 'القاهرة، مصر الجديدة',
-    type: 'full-time',
-    category: 'صالونات',
-    salary: '10,000 - 15,000 ج.م',
-    posted: 'منذ 3 أيام',
-    description: 'مدير تسويق لتطوير استراتيجيات التسويق وجذب عملاء جدد',
-    requirements: ['خبرة 5+ سنوات', 'شهادة تسويق', 'مهارات قيادية'],
-    benefits: ['عمولات', 'تأمين صحي', 'تدريب متخصص'],
-    logo: 'https://images.unsplash.com/photo-1560066988-bc21368275c6?w=400',
-    rating: 4.8,
-    reviews: 8,
-    urgent: false,
-    featured: true
-  },
-  {
-    id: '3',
-    title: 'مدرب شخصي',
-    company: 'الجيم المثالي',
-    location: 'القاهرة، الشيخ زايد',
-    type: 'part-time',
-    category: 'أندية رياضية',
-    salary: '150 - 300 ج.م/ساعة',
-    posted: 'منذ يوم',
-    description: 'مدرب شخصي متخصص لتدريب الأفراد وتصميم برامج رياضية',
-    requirements: ['شهادة تدريب', 'خبرة 2+ سنوات', 'مهارات تواصل'],
-    benefits: ['مرونة الوقت', 'عمولات', 'تدريب مجاني'],
-    logo: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
-    rating: 4.7,
-    reviews: 15,
-    urgent: false,
-    featured: false
-  },
-  {
-    id: '4',
-    title: 'أخصائي علاج طبيعي',
-    company: 'مركز العلاج الطبيعي المتقدم',
-    location: 'الإسكندرية',
-    type: 'full-time',
-    category: 'مراكز طبية',
-    salary: '12,000 - 18,000 ج.م',
-    posted: 'منذ 5 أيام',
-    description: 'أخصائي علاج طبيعي لتقديم العلاج للمرضى في مركزنا المتقدم',
-    requirements: ['بكالوريوس علاج طبيعي', 'خبرة 3+ سنوات', 'ترخيص مزاولة'],
-    benefits: ['تأمين شامل', 'إجازات مرضية', 'تطوير مهني'],
-    logo: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400',
-    rating: 4.9,
-    reviews: 20,
-    urgent: true,
-    featured: true
-  },
-  {
-    id: '5',
-    title: 'مندوب مبيعات',
-    company: 'محلات الملابس العصرية',
-    location: 'القاهرة، وسط البلد',
-    type: 'contract',
-    category: 'محلات تجارية',
-    salary: '5,000 + عمولات',
-    posted: 'منذ أسبوع',
-    description: 'مندوب مبيعات لزيادة المبيعات وتوسيع قاعدة العملاء',
-    requirements: ['خبرة مبيعات', 'مهارات تواصل', 'رخصة قيادة'],
-    benefits: ['عمولات سخية', 'مكافآت', 'تدريب'],
-    logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400',
-    rating: 4.3,
-    reviews: 6,
-    urgent: false,
-    featured: false
-  },
-  {
-    id: '6',
-    title: 'مطور واجهات أمامية',
-    company: 'شركة التطوير التقني',
-    location: 'القاهرة، 6 أكتوبر',
-    type: 'full-time',
-    category: 'شركات تقنية',
-    salary: '15,000 - 25,000 ج.م',
-    posted: 'منذ يومين',
-    description: 'مطور واجهات أمامية للعمل على مشاريع الويب والمتاجر الإلكترونية',
-    requirements: ['React/Next.js', 'TypeScript', 'خبرة 3+ سنوات'],
-    benefits: ['عمل عن بعد', 'تأمين صحي', 'أسهم الشركة'],
-    logo: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400',
-    rating: 4.6,
-    reviews: 9,
-    urgent: false,
-    featured: true
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const categories = [
   'الكل', 'مطاعم', 'صالونات', 'أندية رياضية', 'مراكز طبية', 
@@ -152,13 +43,34 @@ const jobTypes = [
 ];
 
 export default function BusinessJobsPage() {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('الكل');
   const [selectedType, setSelectedType] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [savedJobs, setSavedJobs] = useState<string[]>([]);
 
-  const filteredJobs = mockJobs.filter(job => {
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/jobs`);
+        if (response.ok) {
+          const data = await response.json();
+          setJobs(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب الوظائف:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.description.toLowerCase().includes(searchTerm.toLowerCase());

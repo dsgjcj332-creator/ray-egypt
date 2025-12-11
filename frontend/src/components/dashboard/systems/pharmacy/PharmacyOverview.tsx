@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Pill, FileText, AlertCircle, DollarSign, Plus, 
-  ShoppingBag, Truck, Search, Tag, Settings2, Clock, CheckCircle, MapPin, Phone
+  ShoppingBag, Truck, Search, Tag, Settings2, Clock, CheckCircle, MapPin, Phone, Loader
 } from 'lucide-react';
+import axios from 'axios';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
@@ -12,29 +13,94 @@ interface PharmacyOverviewProps {
   setActiveTab: (tab: string) => void;
 }
 
+interface DashboardStats {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any;
+  color: 'orange' | 'green' | 'teal' | 'blue';
+  trend?: string;
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any;
+  color: string;
+  onClick: () => void;
+}
+
 const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStats[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const defaultStats = [
-    { id: 'stat_pending', title: "طلبات معلقة", value: "12", sub: "تحتاج توصيل", icon: Clock, color: "orange" as const },
-    { id: 'stat_completed', title: "طلبات مكتملة", value: "48", sub: "اليوم", icon: CheckCircle, color: "green" as const },
-    { id: 'stat_earnings', title: "أرباحك اليوم", value: "1,200 ج", sub: "من التوصيلات", icon: DollarSign, color: "teal" as const },
-    { id: 'stat_rating', title: "تقييمك", value: "4.8", sub: "من 5 نجوم", icon: Pill, color: "blue" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const statsResponse = await axios.get<DashboardStats[]>('/api/dashboard/pharmacy/stats');
+        const fetchedStats = (statsResponse.data as DashboardStats[]).map((stat: any) => ({
+          ...stat,
+          icon: getIconForStat(stat.id)
+        }));
+        setStats(fetchedStats);
 
-  const defaultActions = [
-    { id: 'act_pending', label: "الطلبات المعلقة", icon: Clock, color: "bg-orange-600 text-white", onClick: () => setActiveTab('prescriptions') },
-    { id: 'act_messages', label: "الرسائل", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('messages') },
-    { id: 'act_location', label: "الخريطة", icon: MapPin, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('overview') },
-    { id: 'act_earnings', label: "أرباحك", icon: DollarSign, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('payments') },
-    { id: 'act_contact', label: "تواصل الدعم", icon: Phone, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('messages') },
-    { id: 'act_profile', label: "ملفك الشخصي", icon: Plus, color: "bg-white text-gray-700 border border-gray-200 hover:border-teal-600", onClick: () => setActiveTab('settings') },
-  ];
+        const actionsResponse = await axios.get<DashboardAction[]>('/api/dashboard/pharmacy/actions');
+        const fetchedActions = (actionsResponse.data as DashboardAction[]).map((action: any) => ({
+          ...action,
+          icon: getIconForAction(action.id),
+          onClick: () => setActiveTab(action.tabId)
+        }));
+        setActions(fetchedActions);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('فشل في تحميل بيانات لوحة التحكم');
+        setStats([]);
+        setActions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
-  ]);
+    fetchDashboardData();
+  }, [setActiveTab]);
+
+  const getIconForStat = (statId: string) => {
+    const iconMap: Record<string, any> = {
+      'stat_pending': Clock,
+      'stat_completed': CheckCircle,
+      'stat_earnings': DollarSign,
+      'stat_rating': Pill,
+    };
+    return iconMap[statId] || Pill;
+  };
+
+  const getIconForAction = (actionId: string) => {
+    const iconMap: Record<string, any> = {
+      'act_pending': Clock,
+      'act_messages': FileText,
+      'act_location': MapPin,
+      'act_earnings': DollarSign,
+      'act_contact': Phone,
+      'act_profile': Plus,
+    };
+    return iconMap[actionId] || Plus;
+  };
+
+  const [visibleIds, setVisibleIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setVisibleIds([
+      ...stats.map(s => s.id),
+      ...actions.map(a => a.id)
+    ]);
+  }, [stats, actions]);
 
   const handleToggle = (id: string) => {
     setVisibleIds(prev => 
@@ -43,9 +109,27 @@ const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => 
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map((s: DashboardStats) => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map((a: DashboardAction) => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader className="w-8 h-8 text-teal-500 animate-spin" />
+        <span className="mr-2 text-gray-600">جاري تحميل لوحة التحكم...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+        <AlertCircle className="w-5 h-5" />
+        <span>{error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 relative">
@@ -62,7 +146,7 @@ const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => 
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter((s: DashboardStats) => visibleIds.includes(s.id)).map((stat: DashboardStats) => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -76,7 +160,7 @@ const PharmacyOverview: React.FC<PharmacyOverviewProps> = ({ setActiveTab }) => 
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter((a: DashboardAction) => visibleIds.includes(a.id)).map((action: DashboardAction) => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

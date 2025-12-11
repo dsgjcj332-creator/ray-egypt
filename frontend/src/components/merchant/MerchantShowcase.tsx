@@ -1,8 +1,16 @@
 
-import React, { useState } from 'react';
-import { Image as ImageIcon, MapPin, DollarSign, Gauge, Fuel, Car, Bed, Bath, Ruler, Home, X, CheckCircle, Scale } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Image as ImageIcon, MapPin, DollarSign, Gauge, Fuel, Car, Bed, Bath, Ruler, Home, X, CheckCircle, Scale, Loader, AlertCircle } from 'lucide-react';
 import ContactSellerModal from '../modals/ContactSellerModal';
 import SmartCompareModal from '../modals/SmartCompareModal';
+import axios from 'axios';
+
+interface Merchant {
+  id: string;
+  name: string;
+  inventory?: any[];
+  [key: string]: any;
+}
 
 interface MerchantShowcaseProps {
   galleryImages: string[];
@@ -10,31 +18,49 @@ interface MerchantShowcaseProps {
   merchantId?: string;
 }
 
-// Mock data for specific inventories
-const carInventory = [
-  { id: 1, title: 'Kia Sportage TopLine', year: '2024', price: '1,850,000', image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=500', specs: { km: '0 كم', trans: 'أوتوماتيك', engine: '1600cc Turbo' }, desc: 'سيارة كيا سبورتاج موديل 2024 فئة توب لاين، لون أبيض، فرش جلد، فتحة سقف بانوراما.' },
-  { id: 2, title: 'Mercedes C180', year: '2023', price: '3,200,000', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=500', specs: { km: '15,000 كم', trans: 'أوتوماتيك', engine: '1500cc Turbo' }, desc: 'مرسيدس C180 حالة الزيرو، صيانة توكيل، رخصة سارية.' },
-  { id: 3, title: 'Hyundai Tucson', year: '2024', price: '1,950,000', image: 'https://images.unsplash.com/photo-1633509729057-9397c72df23c?w=500', specs: { km: '0 كم', trans: 'أوتوماتيك', engine: '1600cc Turbo' }, desc: 'توسان 2024 الفئة الرابعة، استلام فوري، ألوان متعددة.' },
-  { id: 4, title: 'BMW 320i', year: '2024', price: '4,100,000', image: 'https://images.unsplash.com/photo-1555215695-3004980adade?w=500', specs: { km: '5,000 كم', trans: 'أوتوماتيك', engine: '2000cc TwinPower' }, desc: 'BMW 320i M Sport package, like new condition.' },
-];
-
-const realEstateInventory = [
-  { id: 1, title: 'شقة 180م بحديقة', type: 'بيع', price: '3,500,000', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500', specs: { area: '180م', rooms: 3, bath: 2 }, desc: 'شقة أرضي بحديقة 50 متر، تشطيب سوبر لوكس، استلام فوري في كمبوند متكامل الخدمات.' },
-  { id: 2, title: 'فيلا مستقلة', type: 'بيع', price: '12,000,000', image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=500', specs: { area: '450م', rooms: 5, bath: 4 }, desc: 'فيلا مستقلة في موقع متميز، فيو مفتوح، حمام سباحة خاص.' },
-  { id: 3, title: 'شالية أرضي', type: 'بيع', price: '4,200,000', image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500', specs: { area: '120م', rooms: 2, bath: 1 }, desc: 'شالية صف أول على البحر، تشطيب كامل بالفرش والأجهزة.' },
-  { id: 4, title: 'مكتب إداري', type: 'إيجار', price: '45,000/شهر', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500', specs: { area: '90م', rooms: 2, bath: 1 }, desc: 'مقر إداري مرخص، تشطيب مكتب، تكييف مركزي، انترنت فايبر.' },
-];
-
 const MerchantShowcase: React.FC<MerchantShowcaseProps> = ({ galleryImages, merchantType, merchantId }) => {
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Comparison State
   const [compareList, setCompareList] = useState<any[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   
   const isRealEstate = merchantType === 'realestate';
-  const items = isRealEstate ? realEstateInventory : carInventory;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        if (!merchantId) {
+          setError('معرف المتجر غير متاح');
+          setLoading(false);
+          return;
+        }
+
+        // Fetch merchant details to get inventory
+        const response = await axios.get<Merchant>(`/api/merchants/${merchantId}`);
+        const merchant = response.data;
+        
+        // Use merchant's inventory or generate default items
+        const inventory = merchant.inventory || [];
+        setItems(inventory.length > 0 ? inventory : []);
+      } catch (err) {
+        console.error('Error fetching inventory:', err);
+        setError('فشل في تحميل المنتجات. يرجى المحاولة مرة أخرى.');
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventory();
+  }, [merchantId]);
 
   const description = isRealEstate
     ? "نقدم لكم مجموعة متميزة من الوحدات السكنية والتجارية في أرقى المناطق. نتميز بالمصداقية في التعامل والالتزام بمواعيد التسليم، مع توفير أنظمة سداد مرنة تناسب الجميع."
@@ -70,6 +96,22 @@ const MerchantShowcase: React.FC<MerchantShowcaseProps> = ({ galleryImages, merc
           {isRealEstate ? 'الوحدات المتاحة' : 'السيارات المعروضة'}
         </h3>
         
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+            <span className="mr-2">جاري تحميل المنتجات...</span>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            <span>{error}</span>
+          </div>
+        ) : items.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">لا توجد منتجات متاحة حالياً</p>
+            <p className="text-gray-400 text-sm mt-2">يرجى المحاولة لاحقاً</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
           {items.map((item: any) => {
             const isSelectedForCompare = compareList.find(i => i.id === item.id);
@@ -127,6 +169,7 @@ const MerchantShowcase: React.FC<MerchantShowcaseProps> = ({ galleryImages, merc
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Compare Floating Button */}

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, MapPin, Plus, Edit, Trash2, Home, Building, Briefcase } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, MapPin, Plus, Edit, Trash2, Home, Building, Briefcase, Loader } from 'lucide-react';
 import Link from 'next/link';
 
 interface Address {
@@ -18,34 +18,7 @@ interface Address {
   isDefault: boolean;
 }
 
-const mockAddresses: Address[] = [
-  {
-    id: '1',
-    type: 'home',
-    title: 'المنزل',
-    street: 'شارع التحرير',
-    building: '15',
-    floor: '5',
-    apartment: '12',
-    city: 'القاهرة',
-    governorate: 'القاهرة',
-    postalCode: '11511',
-    isDefault: true
-  },
-  {
-    id: '2',
-    type: 'work',
-    title: 'العمل',
-    street: 'شارع النيل',
-    building: '25',
-    floor: '10',
-    apartment: '100',
-    city: 'الجيزة',
-    governorate: 'الجيزة',
-    postalCode: '12511',
-    isDefault: false
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -64,8 +37,28 @@ const getTypeLabel = (type: string) => {
 };
 
 export default function AddressesPage() {
-  const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/profile/addresses`);
+        if (response.ok) {
+          const data = await response.json();
+          setAddresses(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب العناوين:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAddresses();
+  }, []);
 
   const handleDelete = (id: string) => {
     setAddresses(prev => prev.filter(addr => addr.id !== id));

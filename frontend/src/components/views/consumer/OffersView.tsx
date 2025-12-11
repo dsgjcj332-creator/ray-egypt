@@ -1,16 +1,30 @@
 
-import React, { useState } from 'react';
-import { Tag, Search, Utensils, Stethoscope, ShoppingBag, Home, Gift, Percent } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Tag, Search, Utensils, Stethoscope, ShoppingBag, Home, Gift, Percent, Loader, AlertCircle } from 'lucide-react';
 import ProductCard from '../../cards/ProductCard';
+import axios from 'axios';
 
-const offers = [
-  { id: 1, title: 'خصم 50% على البرجر', merchant: 'مطعم النور', type: 'food', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500', price: 80, oldPrice: 160, discount: '50%', date: 'ينتهي غداً', rating: 4.8 },
-  { id: 2, title: 'جلسة تنظيف بشرة', merchant: 'عيادات الشفاء', type: 'clinic', image: 'https://images.unsplash.com/photo-1579684385183-1b60fe9e8e7d?w=500', price: 300, oldPrice: 500, discount: '40%', date: 'متاح لنهاية الأسبوع', rating: 4.9 },
-  { id: 3, title: 'غسيل كيماوي للسيارة', merchant: 'سبيد واش', type: 'service', image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=500', price: 250, oldPrice: 400, discount: '35%', date: 'عرض محدود', rating: 4.5 },
-  { id: 4, title: 'بدلة رجالي كلاسيك', merchant: 'ZARA', type: 'retail', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500', price: 2500, oldPrice: 3500, discount: '1000 ج', date: 'تصفية شتاء', rating: 4.7 },
-  { id: 5, title: 'شقة 180م - مقدم 10%', merchant: 'إعمار مصر', type: 'realestate', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500', price: 350000, oldPrice: 400000, discount: 'تسهيلات', date: 'وحدات محدودة', rating: 5.0 },
-  { id: 6, title: 'اشتراك جيم سنوي', merchant: 'Gold\'s Gym', type: 'gym', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500', price: 4000, oldPrice: 6000, discount: '30%', date: 'عرض السنة الجديدة', rating: 4.6 },
-];
+interface Offer {
+  id?: string;
+  _id?: string;
+  title: string;
+  shop: string;
+  image: string;
+  price: number | string;
+  oldPrice?: number | string;
+  rating: number;
+  tag?: string;
+  category: string;
+  type?: string;
+  merchant?: string;
+  discount?: string;
+}
+
+interface Category {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
 
 interface Props {
   onNavigate: (view: string, params?: any) => void;
@@ -18,10 +32,13 @@ interface Props {
 }
 
 const OffersView: React.FC<Props> = ({ onNavigate, onProductClick }) => {
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<string>('all');
+  const [search, setSearch] = useState<string>('');
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const categories = [
+  const categories: Category[] = [
     { id: 'all', label: 'الكل', icon: Tag },
     { id: 'food', label: 'مطاعم', icon: Utensils },
     { id: 'clinic', label: 'صحة وجمال', icon: Stethoscope },
@@ -29,10 +46,43 @@ const OffersView: React.FC<Props> = ({ onNavigate, onProductClick }) => {
     { id: 'realestate', label: 'عقارات', icon: Home },
   ];
 
-  const filteredOffers = offers.filter(o => 
-    (filter === 'all' || o.type === filter) &&
-    o.title.includes(search)
-  );
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<Offer[]>('/api/offers');
+        setOffers(response.data);
+      } catch (err) {
+        console.error('Error fetching offers:', err);
+        setError('فشل في تحميل العروض. يرجى المحاولة مرة أخرى.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
+  const filteredOffers = offers
+    .filter((o: Offer) => 
+      (filter === 'all' || o.category === filter) &&
+      (o.title.toLowerCase().includes(search.toLowerCase()) || 
+       o.shop.toLowerCase().includes(search.toLowerCase()))
+    )
+    .map((offer: Offer) => ({
+      id: offer._id || offer.id || '',
+      title: offer.title,
+      shop: offer.shop,
+      image: offer.image,
+      price: offer.price,
+      oldPrice: offer.oldPrice || 0,
+      rating: offer.rating,
+      tag: offer.tag,
+      category: offer.category,
+      merchant: offer.shop,
+      type: offer.category,
+      discount: offer.tag || ''
+    } as Offer));
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4">
@@ -84,27 +134,44 @@ const OffersView: React.FC<Props> = ({ onNavigate, onProductClick }) => {
          </div>
       </div>
 
-      {/* Offers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-         {filteredOffers.map((offer) => (
+      {/* Loading and Error States */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+          <span className="mr-2">جاري تحميل العروض...</span>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+          <AlertCircle className="w-5 h-5" />
+          <span>{error}</span>
+        </div>
+      ) : filteredOffers.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد عروض متاحة حالياً</p>
+          <p className="text-gray-400 text-sm mt-2">يرجى المحاولة لاحقاً أو تغيير فلتر البحث</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredOffers.map((offer) => (
             <div key={offer.id} className="h-full">
-                <ProductCard 
-                    onClick={onProductClick}
-                    product={{
-                        id: offer.id,
-                        name: offer.title,
-                        price: offer.price,
-                        oldPrice: offer.oldPrice,
-                        image: offer.image,
-                        rating: offer.rating,
-                        merchant: offer.merchant,
-                        discount: offer.discount,
-                        category: offer.type
-                    }}
-                />
+              <ProductCard 
+                onClick={onProductClick}
+                product={{
+                  id: offer.id,
+                  name: offer.title,
+                  price: offer.price,
+                  oldPrice: offer.oldPrice,
+                  image: offer.image,
+                  rating: offer.rating,
+                  merchant: offer.merchant,
+                  discount: offer.discount,
+                  category: offer.type
+                }}
+              />
             </div>
-         ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

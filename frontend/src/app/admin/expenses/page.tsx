@@ -1,18 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
-import { TrendingDown, DollarSign, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { TrendingDown, DollarSign, Download, Loader } from 'lucide-react';
 import Link from 'next/link';
 
+interface ExpenseCategory {
+  category: string;
+  amount: number;
+  percentage: number;
+  trend: number;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function AdminExpenses() {
-  const expensesData = [
-    { category: 'الرواتب والأجور', amount: 450000, percentage: 40, trend: 2.5 },
-    { category: 'البنية التحتية', amount: 225000, percentage: 20, trend: -1.2 },
-    { category: 'التسويق والإعلانات', amount: 180000, percentage: 16, trend: 8.3 },
-    { category: 'العمليات والصيانة', amount: 135000, percentage: 12, trend: 3.1 },
-    { category: 'البحث والتطوير', amount: 90000, percentage: 8, trend: 5.7 },
-    { category: 'أخرى', amount: 45000, percentage: 4, trend: 0 }
-  ];
+  const [expensesData, setExpensesData] = useState<ExpenseCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/admin/expenses`);
+        if (response.ok) {
+          const data = await response.json();
+          setExpensesData(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب بيانات المصروفات:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExpenses();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, Package, Search, Filter, Calendar, MapPin, CreditCard, Star, ChevronLeft, DollarSign } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Package, Search, Filter, Calendar, MapPin, CreditCard, Star, ChevronLeft, DollarSign, Loader } from 'lucide-react';
 import Link from 'next/link';
 
 interface Order {
@@ -15,38 +15,7 @@ interface Order {
   merchantId: string;
 }
 
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    orderNumber: '#ORD-2024-001',
-    date: '2024-12-01',
-    status: 'delivered',
-    total: '250 ج.م',
-    items: 3,
-    merchant: 'سوبر ماركت الخير',
-    merchantId: 'supermarket-khair-zaman'
-  },
-  {
-    id: '2',
-    orderNumber: '#ORD-2024-002',
-    date: '2024-12-03',
-    status: 'processing',
-    total: '180 ج.م',
-    items: 2,
-    merchant: 'مطعم المزة',
-    merchantId: 'restaurant-almaza'
-  },
-  {
-    id: '3',
-    orderNumber: '#ORD-2024-003',
-    date: '2024-12-05',
-    status: 'shipped',
-    total: '450 ج.م',
-    items: 5,
-    merchant: 'محلات الملابس العصرية',
-    merchantId: 'clothing-store'
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -71,11 +40,32 @@ const getStatusLabel = (status: string) => {
 };
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const filteredOrders = mockOrders.filter(order => {
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/profile/orders`);
+        if (response.ok) {
+          const data = await response.json();
+          setOrders(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب الطلبات:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const filteredOrders = orders.filter(order => {
     const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order.merchant.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;

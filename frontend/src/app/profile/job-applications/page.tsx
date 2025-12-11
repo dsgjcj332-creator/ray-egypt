@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, Briefcase, Search, Filter, Calendar, MapPin, Clock, ExternalLink, ChevronLeft, Building, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Briefcase, Search, Filter, Calendar, MapPin, Clock, ExternalLink, ChevronLeft, Building, AlertCircle, Loader } from 'lucide-react';
 import Link from 'next/link';
 
 interface JobApplication {
@@ -18,47 +18,11 @@ interface JobApplication {
   department: string;
 }
 
-const mockApplications: JobApplication[] = [
-  {
-    id: '1',
-    applicationNumber: '#APP-2024-001',
-    jobTitle: 'محاسب متخصص',
-    company: 'مطعم المزة',
-    location: 'القاهرة، المعادي',
-    type: 'دوام كامل',
-    salary: '8,000 - 12,000 ج.م',
-    appliedDate: '2024-12-01',
-    status: 'reviewing',
-    jobId: '1',
-    department: 'المالية'
-  },
-  {
-    id: '2',
-    applicationNumber: '#APP-2024-002',
-    jobTitle: 'مدير تسويق',
-    company: 'صالون التجميل الأنيق',
-    location: 'القاهرة، مصر الجديدة',
-    type: 'دوام كامل',
-    salary: '10,000 - 15,000 ج.م',
-    appliedDate: '2024-12-03',
-    status: 'applied',
-    jobId: '2',
-    department: 'التسويق'
-  },
-  {
-    id: '3',
-    applicationNumber: '#APP-2024-003',
-    jobTitle: 'مدرب شخصي',
-    company: 'الجيم المثالي',
-    location: 'القاهرة، الشيخ زايد',
-    type: 'دوام جزئي',
-    salary: '150 - 300 ج.م/ساعة',
-    appliedDate: '2024-11-28',
-    status: 'shortlisted',
-    jobId: '3',
-    department: 'الرياضة'
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+export default function JobApplicationsPage() {
+  const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -84,14 +48,32 @@ const getStatusLabel = (status: string) => {
   }
 };
 
-export default function JobApplicationsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawReason, setWithdrawReason] = useState('');
 
-  const filteredApplications = mockApplications.filter(application => {
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/profile/job-applications`);
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب طلبات التوظيف:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
+  const filteredApplications = applications.filter(application => {
     const matchesSearch = application.applicationNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          application.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          application.company.toLowerCase().includes(searchTerm.toLowerCase());

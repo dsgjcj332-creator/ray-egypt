@@ -1,46 +1,101 @@
 
-import React, { useState } from 'react';
-import { ChevronRight, MapPin, Phone, MessageSquare, CheckCircle, Clock, ChefHat, Bike, Home, Package, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, MapPin, Phone, MessageSquare, CheckCircle, Clock, ChefHat, Bike, Home, Package, Star, Loader } from 'lucide-react';
 import FeedbackModal from '../common/FeedbackModal';
 
 interface OrderTrackingViewProps {
   onBack: () => void;
+  orderId?: string;
 }
 
-const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ onBack }) => {
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-
-  // Mock Data
-  const order = {
-    id: '#ORD-9921',
-    restaurant: 'مطعم النور للمأكولات',
-    items: [
-      { name: 'برجر كلاسيك', qty: 2, price: 160 },
-      { name: 'بطاطس مقلية', qty: 1, price: 40 },
-      { name: 'بيبسي', qty: 2, price: 30 },
-    ],
-    total: 280,
-    deliveryFee: 20,
-    status: 'delivering',
-    driver: {
-      name: 'كابتن محمد',
-      rating: 4.9,
-      phone: '010xxxxxxx',
-      image: 'https://ui-avatars.com/api/?name=Mohamed+Ali&background=0D8ABC&color=fff'
-    }
+interface Order {
+  id: string;
+  restaurant: string;
+  items: Array<{ name: string; qty: number; price: number }>;
+  total: number;
+  deliveryFee: number;
+  status: string;
+  driver: {
+    name: string;
+    rating: number;
+    phone: string;
+    image: string;
   };
+}
 
-  const steps = [
-    { id: 'confirmed', label: 'تم التأكيد', time: '2:30 م', icon: CheckCircle, active: true },
-    { id: 'preparing', label: 'جاري التحضير', time: '2:35 م', icon: ChefHat, active: true },
-    { id: 'delivering', label: 'في الطريق', time: '2:50 م', icon: Bike, active: true },
-    { id: 'delivered', label: 'تم التوصيل', time: '...', icon: Home, active: false },
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ onBack, orderId }) => {
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/orders/${orderId || 'current'}`);
+        if (response.ok) {
+          const data = await response.json();
+          setOrder(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب بيانات الطلب:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [orderId]);
+
+  const getSteps = (status: string) => {
+  const baseSteps = [
+    { id: 'confirmed', label: 'تم التأكيد', time: '', icon: CheckCircle, active: false },
+    { id: 'preparing', label: 'جاري التحضير', time: '', icon: ChefHat, active: false },
+    { id: 'delivering', label: 'في الطريق', time: '', icon: Bike, active: false },
+    { id: 'delivered', label: 'تم التوصيل', time: '', icon: Home, active: false },
   ];
+
+  // Update steps based on order status
+  const statusIndex = baseSteps.findIndex(step => step.id === status);
+  for (let i = 0; i <= statusIndex && i < baseSteps.length; i++) {
+    baseSteps[i].active = true;
+  }
+
+  return baseSteps;
+};
 
   const handleFeedbackSubmit = (rating: number, comment: string) => {
     console.log('Feedback:', rating, comment);
     // Handle feedback submission logic here
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="flex items-center gap-3">
+            <Loader className="w-6 h-6 animate-spin text-blue-600" />
+            <span className="text-gray-600">جاري تحميل بيانات الطلب...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="text-center py-12">
+          <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">لم يتم العثور على الطلب</p>
+        </div>
+      </div>
+    );
+  }
+
+  const steps = getSteps(order.status);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 animate-in fade-in slide-in-from-bottom-4 pb-24">

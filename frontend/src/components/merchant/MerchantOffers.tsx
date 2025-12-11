@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Tag, Clock, Percent, Star, Plus, Edit2, Trash2, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Tag, Clock, Percent, Star, Plus, Edit2, Trash2, Calendar, Loader, AlertCircle } from 'lucide-react';
+import axios from 'axios';
 
 interface Offer {
   id: number;
@@ -20,41 +21,32 @@ interface MerchantOffersProps {
 }
 
 const MerchantOffers: React.FC<MerchantOffersProps> = ({ merchantId, isOwner = false }) => {
-  const [offers, setOffers] = useState<Offer[]>([
-    {
-      id: 1,
-      title: 'خصم 20% على الطلبات فوق 200 جنيه',
-      description: 'احصل على خصم 20% عند طلب أي منتج بقيمة 200 جنيه أو أكثر',
-      discount: '20%',
-      validUntil: '2024-12-31',
-      type: 'percentage',
-      status: 'active',
-      minOrder: 200,
-      maxDiscount: 100
-    },
-    {
-      id: 2,
-      title: 'وجبة مجانية عند شراء 3',
-      description: 'اشتر 3 وجبات واحصل على الرابعة مجاناً',
-      discount: 'BOGO',
-      validUntil: '2024-12-25',
-      type: 'buy1get1',
-      status: 'active'
-    },
-    {
-      id: 3,
-      title: 'خصم 50 جنيه على أول طلب',
-      description: 'خصم خاص للعملاء الجدد على أول طلب',
-      discount: '50 جنيه',
-      validUntil: '2024-12-20',
-      type: 'fixed',
-      status: 'active',
-      maxDiscount: 50
-    }
-  ]);
-
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isAddingOffer, setIsAddingOffer] = useState(false);
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get<Offer[]>(`/api/merchants/${merchantId}/offers`);
+        setOffers(response.data);
+      } catch (err) {
+        console.error('Error fetching offers:', err);
+        setError('فشل في تحميل العروض');
+        setOffers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (merchantId) {
+      fetchOffers();
+    }
+  }, [merchantId]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -83,22 +75,18 @@ const MerchantOffers: React.FC<MerchantOffersProps> = ({ merchantId, isOwner = f
     }
   };
 
-  const handleDeleteOffer = (offerId: number) => {
-    setOffers(offers.filter(offer => offer.id !== offerId));
+  const handleDeleteOffer = async (offerId: number) => {
+    try {
+      await axios.delete(`/api/merchants/${merchantId}/offers/${offerId}`);
+      setOffers(offers.filter(offer => offer.id !== offerId));
+    } catch (err) {
+      console.error('Error deleting offer:', err);
+    }
   };
 
-  const handleAddOffer = () => {
-    // Mock implementation - في الواقع ستفتح فورم لإضافة عرض
-    const newOffer: Offer = {
-      id: Date.now(),
-      title: 'عرض جديد',
-      description: 'وصف العرض الجديد',
-      discount: '10%',
-      validUntil: '2024-12-31',
-      type: 'percentage',
-      status: 'active'
-    };
-    setOffers([...offers, newOffer]);
+  const handleAddOffer = async () => {
+    // This would open a form in a real implementation
+    // For now, we just close the modal
     setIsAddingOffer(false);
   };
 
@@ -122,6 +110,19 @@ const MerchantOffers: React.FC<MerchantOffersProps> = ({ merchantId, isOwner = f
         )}
       </div>
 
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+          <span className="mr-2">جاري تحميل العروض...</span>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+          <AlertCircle className="w-5 h-5" />
+          <span>{error}</span>
+        </div>
+      ) : (
+      <>
       {/* Offers Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {offers.map((offer) => (
@@ -201,6 +202,8 @@ const MerchantOffers: React.FC<MerchantOffersProps> = ({ merchantId, isOwner = f
             </button>
           )}
         </div>
+      )}
+      </>
       )}
 
       {/* Add Offer Modal (placeholder) */}

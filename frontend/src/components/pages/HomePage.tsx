@@ -1,24 +1,57 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Sparkles } from 'lucide-react';
+import { ShoppingBag, Sparkles, Loader } from 'lucide-react';
 import Image from 'next/image';
-import { featuredOffers } from '../data';
 import ProductCard from '../cards/ProductCard';
+
+interface Offer {
+  id: string;
+  title: string;
+  shop: string;
+  image: string;
+  price: string;
+  oldPrice?: string;
+  rating: number;
+  tag?: string;
+}
 
 interface HomePageProps {
   onProductClick?: (id: string) => void;
   onNavigate?: (view: string, params?: any) => void;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 const HomePage: React.FC<HomePageProps> = ({ onProductClick, onNavigate }) => {
   const [greeting, setGreeting] = useState('أهلاً بك');
+  const [featuredOffers, setFeaturedOffers] = useState<Offer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('صباح الخير ☀️');
     else if (hour < 18) setGreeting('مساء الخير 🌤️');
     else setGreeting('مساء السعادة 🌙');
+  }, []);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/offers/featured`);
+        if (response.ok) {
+          const data = await response.json();
+          setFeaturedOffers(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب العروض:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOffers();
   }, []);
 
   return (
@@ -101,25 +134,37 @@ const HomePage: React.FC<HomePageProps> = ({ onProductClick, onNavigate }) => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredOffers.map((offer) => (
-              <div key={offer.id} className="h-full">
-                <ProductCard 
-                  onClick={onProductClick}
-                  product={{
-                    ...offer,
-                    // Normalizing data structure for ProductCard
-                    name: offer.title,
-                    price: parseInt(offer.price.replace(/\D/g, '')),
-                    oldPrice: offer.oldPrice ? parseInt(offer.oldPrice.replace(/\D/g, '')) : undefined,
-                    merchant: offer.shop,
-                    rating: offer.rating,
-                    discount: offer.tag
-                  }} 
-                />
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <Loader className="w-12 h-12 text-ray-blue animate-spin mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">جاري تحميل العروض...</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : featuredOffers.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-gray-600 dark:text-gray-400">لا توجد عروض متاحة حالياً</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredOffers.map((offer) => (
+                <div key={offer.id} className="h-full">
+                  <ProductCard 
+                    onClick={onProductClick}
+                    product={{
+                      ...offer,
+                      name: offer.title,
+                      price: parseInt(offer.price.replace(/\D/g, '')),
+                      oldPrice: offer.oldPrice ? parseInt(offer.oldPrice.replace(/\D/g, '')) : undefined,
+                      merchant: offer.shop,
+                      rating: offer.rating,
+                      discount: offer.tag
+                    }} 
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>

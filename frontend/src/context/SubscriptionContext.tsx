@@ -19,36 +19,21 @@ interface SubscriptionContextType {
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
-// بيانات تجريبية للاشتراك
-const MOCK_USER_SUBSCRIPTION: UserSubscription = {
-  id: 'sub-user-001',
-  userId: 'user-001',
-  planId: 'plan-standard',
-  startDate: '2024-11-01',
-  endDate: '2025-02-01',
-  status: 'active',
-  autoRenew: true,
-  paymentMethod: 'credit_card',
-  totalSpent: 897,
-  renewalDate: '2025-02-01'
-};
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // محاكاة جلب بيانات الاشتراك من الخادم
     const loadSubscription = async () => {
       try {
         setIsLoading(true);
-        // في الواقع، سيتم جلب البيانات من API
-        // const response = await fetch('/api/subscriptions/current');
-        // const data = await response.json();
-        // setUserSubscription(data);
-        
-        // للآن، نستخدم البيانات التجريبية
-        setUserSubscription(MOCK_USER_SUBSCRIPTION);
+        const response = await fetch(`${API_URL}/api/subscriptions/current`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserSubscription(data);
+        }
       } catch (error) {
         console.error('خطأ في جلب بيانات الاشتراك:', error);
       } finally {

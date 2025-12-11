@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, Calendar, Search, Filter, MapPin, Clock, Star, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Calendar, Search, Filter, MapPin, Clock, Star, ChevronLeft, Loader } from 'lucide-react';
 import Link from 'next/link';
 
 interface Booking {
@@ -19,50 +19,7 @@ interface Booking {
   paid: string;
 }
 
-const mockBookings: Booking[] = [
-  {
-    id: '1',
-    bookingNumber: '#BK-2024-001',
-    date: '2024-12-10',
-    time: '14:00',
-    status: 'confirmed',
-    service: 'حجز طاولة',
-    merchant: 'مطعم المزة',
-    merchantId: 'restaurant-almaza',
-    location: 'القاهرة، المعادي',
-    price: 'مجاني',
-    duration: '2 ساعة',
-    paid: '0 ج.م'
-  },
-  {
-    id: '2',
-    bookingNumber: '#BK-2024-002',
-    date: '2024-12-12',
-    time: '10:00',
-    status: 'pending',
-    service: 'جلسة تجميل',
-    merchant: 'صالون التجميل الأنيق',
-    merchantId: 'salon-elegant',
-    location: 'القاهرة، مصر الجديدة',
-    price: '300 ج.م',
-    duration: '1.5 ساعة',
-    paid: '150 ج.م'
-  },
-  {
-    id: '3',
-    bookingNumber: '#BK-2024-003',
-    date: '2024-12-08',
-    time: '16:00',
-    status: 'completed',
-    service: 'جلسة علاج طبيعي',
-    merchant: 'مركز العلاج الطبيعي المتقدم',
-    merchantId: 'physio-center',
-    location: 'الإسكندرية',
-    price: '250 ج.م',
-    duration: '1 ساعة',
-    paid: '250 ج.م'
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -85,13 +42,34 @@ const getStatusLabel = (status: string) => {
 };
 
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedBooking, setEditedBooking] = useState<Booking | null>(null);
 
-  const filteredBookings = mockBookings.filter(booking => {
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/profile/bookings`);
+        if (response.ok) {
+          const data = await response.json();
+          setBookings(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب الحجوزات:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  const filteredBookings = bookings.filter(booking => {
     const matchesSearch = booking.bookingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          booking.merchant.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          booking.service.toLowerCase().includes(searchTerm.toLowerCase());

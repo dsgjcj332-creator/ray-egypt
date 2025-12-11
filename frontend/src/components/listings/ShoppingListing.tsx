@@ -1,24 +1,8 @@
 
-import React from 'react';
-import { ShoppingBag, MapPin, Star, Tag, Filter, Search, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, MapPin, Star, Tag, Filter, Search, Heart, Loader } from 'lucide-react';
 import { useMarketplace } from '@/context/MarketplaceContext';
 import ProductCard from '../cards/ProductCard';
-
-const shops = [
-  { id: 1, name: 'سوبر ماركت خير زمان', rating: 4.6, reviews: 850, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500', type: 'سوبر ماركت', location: 'المعادي', status: 'open', price: 0 },
-  { id: 2, name: 'H&M', rating: 4.8, reviews: 1200, image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500', type: 'أزياء وموضة', location: 'كايرو فيستيفال', status: 'open', price: 0 },
-  { id: 3, name: 'بي تك (B.TECH)', rating: 4.5, reviews: 550, image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=500', type: 'إلكترونيات', location: 'مدينة نصر', status: 'open', price: 0 },
-  { id: 4, name: 'ZARA', rating: 4.7, reviews: 2100, image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500', type: 'ملابس', location: 'مول العرب', status: 'open', price: 0 },
-  { id: 5, name: 'مكتبة سمير وعلي', rating: 4.4, reviews: 320, image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=500', type: 'مكتبات', location: 'الدقي', status: 'closed', price: 0 },
-  { id: 6, name: 'زهور الربيع', rating: 4.9, reviews: 150, image: 'https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=500', type: 'هدايا وزهور', location: 'الزمالك', status: 'open', price: 0 },
-];
-
-// Mock products for demonstration
-const mockStoreProducts = [
-    { id: 101, name: 'تيشيرت قطن', price: 250, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', merchant: 'H&M', rating: 4.5 },
-    { id: 102, name: 'بنطلون جينز', price: 550, image: 'https://images.unsplash.com/photo-1542272617-08f086302542?w=400', merchant: 'H&M', rating: 4.7 },
-    { id: 103, name: 'جاكيت شتوي', price: 1200, image: 'https://images.unsplash.com/photo-1551028919-33f54764fa5d?w=400', merchant: 'H&M', rating: 4.8, model3d: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb' },
-];
 
 interface Props {
   onMerchantSelect: (merchant: any) => void;
@@ -27,6 +11,41 @@ interface Props {
 
 const ShoppingListing: React.FC<Props> = ({ onMerchantSelect, onProductClick }) => {
   const { toggleFavorite, isFavorite } = useMarketplace();
+  const [shops, setShops] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('الكل');
+
+  const categories = ['الكل', 'سوبر ماركت', 'ملابس', 'إلكترونيات', 'مكتبات', 'هدايا', 'أثاث'];
+
+  // Fetch shops from API
+  useEffect(() => {
+    const fetchShops = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/merchants/shops?category=shopping');
+        if (!response.ok) {
+          throw new Error('Failed to fetch shops');
+        }
+        const data = await response.json();
+        setShops(data);
+      } catch (error) {
+        console.error('Error fetching shops:', error);
+        setShops([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShops();
+  }, []);
+
+  // Filter shops based on search and category
+  const filteredShops = shops.filter(shop => {
+    const matchesSearch = shop.name.includes(searchTerm) || shop.type.includes(searchTerm);
+    const matchesCategory = selectedCategory === 'الكل' || shop.type === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-4">
@@ -40,7 +59,13 @@ const ShoppingListing: React.FC<Props> = ({ onMerchantSelect, onProductClick }) 
         <div className="flex gap-3 w-full md:w-auto">
            <div className="relative flex-1 md:w-64">
              <Search className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
-             <input type="text" placeholder="بحث عن محل أو منتج..." className="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-ray-blue" />
+             <input 
+               type="text" 
+               placeholder="بحث عن محل أو منتج..." 
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-ray-blue" 
+             />
            </div>
            <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50">
              <Filter className="w-4 h-4" />
@@ -51,17 +76,35 @@ const ShoppingListing: React.FC<Props> = ({ onMerchantSelect, onProductClick }) 
 
       {/* Categories Pills */}
       <div className="flex gap-3 overflow-x-auto pb-6 mb-2 no-scrollbar">
-        {['الكل', 'سوبر ماركت', 'ملابس', 'إلكترونيات', 'مكتبات', 'هدايا', 'أثاث'].map((cat, idx) => (
-          <button key={idx} className={`px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition ${idx === 0 ? 'bg-ray-black text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+        {categories.map((cat) => (
+          <button 
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition ${selectedCategory === cat ? 'bg-ray-black text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+          >
             {cat}
           </button>
         ))}
       </div>
 
       <h3 className="text-xl font-bold mb-4 text-gray-800">المتاجر</h3>
-      {/* Shops Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {shops.map((item) => (
+      
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader className="w-8 h-8 text-ray-blue animate-spin" />
+        </div>
+      ) : shops.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد متاجر متاحة حالياً</p>
+          <p className="text-gray-400 text-sm mt-2">يرجى المحاولة لاحقاً</p>
+        </div>
+      ) : filteredShops.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد متاجر متطابقة مع البحث</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredShops.map((item) => (
           <div 
             key={item.id} 
             className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col relative"
@@ -116,10 +159,10 @@ const ShoppingListing: React.FC<Props> = ({ onMerchantSelect, onProductClick }) 
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default ShoppingListing;
- 

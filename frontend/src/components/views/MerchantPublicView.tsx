@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Phone, MessageSquare, ShoppingBag, ChevronRight, Info, MapPin, Clock,
-  Facebook, Instagram, Twitter, Linkedin, Mail, MapPin as MapPinIcon, Award, TrendingUp
+  Facebook, Instagram, Twitter, Linkedin, Mail, MapPin as MapPinIcon, Award, TrendingUp,
+  Loader, AlertCircle
 } from 'lucide-react';
+import axios from 'axios';
 import MerchantHero from '../merchant/MerchantHero';
 import MerchantOrdering from '../merchant/MerchantOrdering';
 import MerchantCart from '../merchant/MerchantCart';
@@ -16,6 +18,18 @@ import MerchantDiscountProducts from '../merchant/MerchantDiscountProducts';
 import RestaurantMenu from '../merchant/RestaurantMenu';
 import TableBooking from '../merchant/TableBooking';
 import ProductDetailView from './ProductDetailView'; // استخدام الملف الجديد بدون Context
+
+interface MerchantData {
+  id: string;
+  name: string;
+  category: string;
+  cover?: string;
+  gallery?: string[];
+  staff?: any[];
+  services?: any[];
+  menuItems?: any[];
+  [key: string]: any;
+}
 
 interface MerchantProps {
   merchant: any;
@@ -43,52 +57,72 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
   const [isOrderSuccess, setIsOrderSuccess] = useState(false);
   
   // Gallery State
-  const [galleryImages, setGalleryImages] = useState([
-    "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=80",
-    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80",
-    "https://images.unsplash.com/photo-1559329007-406870008023?w=1200&q=80"
-  ]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [staffList, setStaffList] = useState<any[]>([]);
+  const [servicesList, setServicesList] = useState<any[]>([]);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
   
   // Mock owner check - في الواقع ستأتي من auth context
   const isOwner = false;
 
-  // Mock Data
-  const staffList = [
-    { id: 1, name: 'د. أحمد علي', role: 'استشاري', image: 'https://ui-avatars.com/api/?name=Ahmed+Ali&background=0D8ABC&color=fff' },
-    { id: 2, name: 'د. سارة حسن', role: 'أخصائي', image: 'https://ui-avatars.com/api/?name=Sara+Hassan&background=F472B6&color=fff' },
-    { id: 3, name: 'د. محمد كريم', role: 'أخصائي', image: 'https://ui-avatars.com/api/?name=Mohamed+Karim&background=10B981&color=fff' },
-  ];
+  // Fetch merchant data (staff, services, menu items, gallery)
+  useEffect(() => {
+    const fetchMerchantData = async () => {
+      try {
+        setLoadingData(true);
+        setDataError(null);
+        
+        // Fetch merchant details
+        const merchantResponse = await axios.get<MerchantData>(`/api/merchants/${merchant.id}`);
+        const merchantData = merchantResponse.data as MerchantData;
+        
+        // Set gallery images
+        setGalleryImages(merchantData.gallery || [
+          merchant.cover || "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=80",
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80",
+          "https://images.unsplash.com/photo-1559329007-406870008023?w=1200&q=80"
+        ]);
+        
+        // Set staff list if available
+        if (merchantData.staff) {
+          setStaffList(merchantData.staff);
+        }
+        
+        // Set services if available
+        if (merchantData.services) {
+          setServicesList(merchantData.services);
+        }
+        
+        // Set menu items if available
+        if (merchantData.menuItems) {
+          setMenuItems(merchantData.menuItems);
+          const categorySet = new Set(merchantData.menuItems.map((item: any) => item.category));
+          const uniqueCategories = ['الكل', ...Array.from(categorySet)];
+          setCategories(uniqueCategories);
+        } else {
+          // Fallback categories
+          setCategories(isRestaurant ? ['الكل', 'مشويات', 'مقبلات', 'أطباق رئيسية', 'سلطات'] : ['الكل', 'ملابس', 'أحذية', 'إكسسوارات', 'عروض']);
+        }
+      } catch (err) {
+        console.error('Error fetching merchant data:', err);
+        setDataError('فشل في تحميل بيانات المتجر');
+        // Set default empty arrays
+        setStaffList([]);
+        setServicesList([]);
+        setMenuItems([]);
+        setCategories(isRestaurant ? ['الكل', 'مشويات', 'مقبلات', 'أطباق رئيسية', 'سلطات'] : ['الكل', 'ملابس', 'أحذية', 'إكسسوارات', 'عروض']);
+      } finally {
+        setLoadingData(false);
+      }
+    };
 
-  const servicesList = [
-    { id: 1, name: 'كشف استشاري', price: 450, duration: '30 دقيقة', desc: 'فحص شامل مع استشاري متخصص' },
-    { id: 2, name: 'كشف مستعجل', price: 600, duration: '15 دقيقة', desc: 'أولوية الدخول بدون انتظار' },
-    { id: 3, name: 'استشارة متابعة', price: 200, duration: '20 دقيقة', desc: 'للمراجعة خلال أسبوعين' },
-    { id: 4, name: 'جلسة علاجية', price: 350, duration: '45 دقيقة', desc: 'جلسة علاج طبيعي أو تأهيل' },
-  ];
-
-  // Restaurant menu items with all required properties
-  const restaurantMenuItems = [
-    { id: 1, name: 'مشاوي مشكلة', price: 180, image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683be?w=400', category: 'مشويات', description: 'تشكيلة من أفضل المشاوي اللذيذة', rating: 4.8, reviews: 45, prepTime: '25-30 دقيقة', popular: true },
-    { id: 2, name: 'فاهيتا دجاج', price: 120, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'مقبلات', description: 'دجاج مقرمش مع الخضروات الطازجة', rating: 4.6, reviews: 32, prepTime: '15-20 دقيقة', spicy: true },
-    { id: 3, name: 'كباب لحم', price: 220, image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400', category: 'مشويات', description: 'كباب لحم ضأن طازج مع التوابل الأصلية', rating: 4.9, reviews: 67, prepTime: '30-35 دقيقة', popular: true },
-    { id: 4, name: 'سلطة فواكه', price: 45, image: 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400', category: 'سلطات', description: 'تشكيلة فواكه موسمية طازجة', rating: 4.5, reviews: 23, prepTime: '5-10 دقائق', vegetarian: true },
-    { id: 5, name: 'منسف دجاج', price: 250, image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400', category: 'أطباق رئيسية', description: 'منسف دجاج مع الأرز البسمتي والمكسرات', rating: 4.7, reviews: 51, prepTime: '35-40 دقيقة' },
-    { id: 6, name: 'مكرونة بالباشميل', price: 85, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'أطباق رئيسية', description: 'مكرونة بالباشميل الفرنسية الأصلية', rating: 4.6, reviews: 38, prepTime: '20-25 دقيقة', vegetarian: true }
-  ];
-
-  // Store menu items for regular stores
-  const storeMenuItems = [
-    { id: 1, name: 'تيشيرت قطن أبيض', price: 120, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', category: 'ملابس', desc: 'تيشيرت قطن 100% مريح وناعم', popular: true },
-    { id: 2, name: 'بنطلون جينز أزرق', price: 280, img: 'https://images.unsplash.com/photo-1542272617-08f086302542?w=400', category: 'ملابس', desc: 'جينز أصلي مريح وعملي' },
-    { id: 3, name: 'حذاء رياضي أسود', price: 450, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', category: 'أحذية', desc: 'حذاء رياضي مريح وعالي الجودة' },
-    { id: 4, name: 'شنطة يد جلدية', price: 350, img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400', category: 'إكسسوارات', desc: 'شنطة جلدية أصلية فاخرة' },
-    { id: 5, name: 'ساعة يد ذهبية', price: 650, img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400', category: 'إكسسوارات', desc: 'ساعة يد فاخرة بتصميم عصري' },
-    { id: 6, name: 'نظارة شمسية', price: 280, img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400', category: 'إكسسوارات', desc: 'نظارة شمسية عالية الجودة' }
-  ];
-
-  const menuItems = isRestaurant ? restaurantMenuItems : storeMenuItems;
-
-  const categories = isRestaurant ? ['الكل', 'مشويات', 'مقبلات', 'أطباق رئيسية', 'سلطات'] : ['الكل', 'ملابس', 'أحذية', 'إكسسوارات', 'عروض'];
+    if (merchant?.id) {
+      fetchMerchantData();
+    }
+  }, [merchant?.id, isRestaurant]);
 
   const handleShare = () => {
     setShowShareToast(true);
@@ -230,7 +264,7 @@ const MerchantPublicView: React.FC<MerchantProps> = ({ merchant, onBack }) => {
         {activeTab === 'menu' && isRestaurant && (
            <RestaurantMenu 
              categories={categories} 
-             menuItems={restaurantMenuItems} 
+             menuItems={menuItems} 
              addToCart={addToCart} 
              onProductClick={setSelectedProduct} 
            />

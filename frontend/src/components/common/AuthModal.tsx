@@ -1,17 +1,19 @@
 
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Phone, Store, ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { X, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: 'login' | 'signup';
-  initialType?: 'customer' | 'merchant';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'login', initialType = 'customer' }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'login' }) => {
+  const router = useRouter();
+  const { loginWithGoogle } = useAuth();
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
-  const [userType, setUserType] = useState<'customer' | 'merchant'>(initialType);
   const [isLoading, setIsLoading] = useState(false);
   const [adminClicks, setAdminClicks] = useState(0);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
@@ -49,7 +51,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
     setTimeout(() => {
       setIsLoading(false);
       onClose();
+      router.push('/dashboard');
     }, 1500);
+  };
+
+  const handleGoogleLogin = () => {
+    loginWithGoogle();
+    onClose();
   };
 
   return (
@@ -87,34 +95,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
             </p>
           </div>
 
-          {/* Type Toggle */}
-          <div className="px-8 mb-6">
-            <div className="bg-gray-100 p-1 rounded-xl flex">
-              <button 
-                onClick={() => setUserType('customer')}
-                className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 ${
-                  userType === 'customer' 
-                    ? 'bg-white text-ray-blue shadow-sm' 
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <User className="w-4 h-4" />
-                عميل
-              </button>
-              <button 
-                onClick={() => setUserType('merchant')}
-                className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 ${
-                  userType === 'merchant' 
-                    ? 'bg-white text-ray-blue shadow-sm' 
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <Store className="w-4 h-4" />
-                تاجر
-              </button>
-            </div>
-          </div>
-
+          
           {/* Admin Login Form */}
           {showAdminLogin && (
             <form onSubmit={handleAdminLogin} className="px-8 pb-8 space-y-4 border-t border-gray-200 pt-6">
@@ -189,7 +170,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
 
             {mode === 'login' && (
               <div className="flex justify-end">
-                <button type="button" className="text-xs font-bold text-ray-blue hover:underline">
+                <button 
+                  type="button" 
+                  onClick={() => router.push('/auth/forgot-password')}
+                  className="text-xs font-bold text-ray-blue hover:underline"
+                >
                   نسيت كلمة المرور؟
                 </button>
               </div>
@@ -215,7 +200,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
               <div className="relative flex justify-center"><span className="bg-white px-2 text-xs text-gray-400">أو</span></div>
             </div>
 
-            <button type="button" className="w-full bg-white border border-gray-200 text-gray-700 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2">
+            <button 
+              type="button" 
+              onClick={handleGoogleLogin}
+              className="w-full bg-white border border-gray-200 text-gray-700 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
               المتابعة باستخدام Google
             </button>

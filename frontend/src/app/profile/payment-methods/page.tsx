@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, CreditCard, Plus, Edit, Trash2, Shield, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, CreditCard, Plus, Edit, Trash2, Shield, Check, Loader } from 'lucide-react';
 import Link from 'next/link';
 
 interface PaymentMethod {
@@ -14,29 +14,7 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
-const mockPaymentMethods: PaymentMethod[] = [
-  {
-    id: '1',
-    type: 'card',
-    title: 'بطاقة الائتمان',
-    last4: '1234',
-    expiryDate: '12/25',
-    isDefault: true
-  },
-  {
-    id: '2',
-    type: 'bank',
-    title: 'الحساب البنكي',
-    bankName: 'البنك الأهلي',
-    isDefault: false
-  },
-  {
-    id: '3',
-    type: 'wallet',
-    title: 'محفظة راي',
-    isDefault: false
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -48,8 +26,28 @@ const getIcon = (type: string) => {
 };
 
 export default function PaymentMethodsPage() {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(mockPaymentMethods);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/profile/payment-methods`);
+        if (response.ok) {
+          const data = await response.json();
+          setPaymentMethods(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب طرق الدفع:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPaymentMethods();
+  }, []);
 
   const handleDelete = (id: string) => {
     setPaymentMethods(prev => prev.filter(method => method.id !== id));

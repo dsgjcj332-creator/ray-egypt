@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Star, Calendar, Building, Filter, Search, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,47 +16,29 @@ interface Review {
   helpful: number;
 }
 
-const mockReviews: Review[] = [
-  {
-    id: '1',
-    rating: 5,
-    title: 'خدمة ممتازة وأطعمة رائعة',
-    content: 'تجربة رائعة جداً في مطعم المزة، الطعام كان لذيذ والخدمة سريعة وممتازة. أنصح بالزيارة.',
-    date: '2024-12-01',
-    merchant: 'مطعم المزة',
-    merchantId: 'restaurant-almaza',
-    category: 'مطاعم',
-    helpful: 12
-  },
-  {
-    id: '2',
-    rating: 4,
-    title: 'جلسة تجميل مرضية',
-    content: 'صالون نظيف وأنيق، الخبيرة محترفة والنتيجة كانت جيدة. الأسعار معقولة مقارنة بالجودة.',
-    date: '2024-11-28',
-    merchant: 'صالون التجميل الأنيق',
-    merchantId: 'salon-elegant',
-    category: 'صالونات',
-    helpful: 8
-  },
-  {
-    id: '3',
-    rating: 5,
-    title: 'مركز رياضي ممتاز',
-    content: 'الجيم مجهز بأحدث الأجهزة والمدربين محترفين. الأجواء محفزة والأسعار مناسبة.',
-    date: '2024-11-25',
-    merchant: 'الجيم المثالي',
-    merchantId: 'gym-perfect',
-    category: 'أندية رياضية',
-    helpful: 15
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function ReviewsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [ratingFilter, setRatingFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredReviews = mockReviews.filter(review => {
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`${API_URL}/reviews`);
+        const data = await response.json();
+        setReviews(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchReviews();
+  }, []);
+
+  const filteredReviews = reviews.filter(review => {
     const matchesSearch = review.merchant.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          review.content.toLowerCase().includes(searchTerm.toLowerCase());

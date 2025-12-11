@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, Check, Phone, Mail } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, Users, MapPin, Check, Phone, Mail, Loader, AlertCircle } from 'lucide-react';
+import axios from 'axios';
 
 interface Table {
   id: number;
@@ -28,6 +29,9 @@ interface TableBookingProps {
 
 const TableBooking: React.FC<TableBookingProps> = ({ merchantId, merchantName }) => {
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
+  const [tables, setTables] = useState<Table[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [bookingForm, setBookingForm] = useState<BookingForm>({
     date: '',
     time: '',
@@ -41,17 +45,26 @@ const TableBooking: React.FC<TableBookingProps> = ({ merchantId, merchantName })
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Mock tables data - في الواقع ستأتي من API
-  const tables: Table[] = [
-    { id: 1, number: 'T1', capacity: 2, type: 'indoor', available: true },
-    { id: 2, number: 'T2', capacity: 4, type: 'indoor', available: true },
-    { id: 3, number: 'T3', capacity: 4, type: 'outdoor', available: false },
-    { id: 4, number: 'T4', capacity: 6, type: 'indoor', available: true },
-    { id: 5, number: 'T5', capacity: 8, type: 'vip', available: true, minPrice: 500 },
-    { id: 6, number: 'T6', capacity: 2, type: 'outdoor', available: true },
-    { id: 7, number: 'T7', capacity: 4, type: 'indoor', available: false },
-    { id: 8, number: 'T8', capacity: 6, type: 'outdoor', available: true }
-  ];
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get<Table[]>(`/api/merchants/${merchantId}/tables`);
+        setTables(response.data);
+      } catch (err) {
+        console.error('Error fetching tables:', err);
+        setError('فشل في تحميل الطاولات');
+        setTables([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (merchantId) {
+      fetchTables();
+    }
+  }, [merchantId]);
 
   const timeSlots = [
     '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
@@ -203,6 +216,22 @@ const TableBooking: React.FC<TableBookingProps> = ({ merchantId, merchantName })
             <MapPin className="w-4 h-4 inline ml-2" />
             اختر الطاولة
           </label>
+          
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+              <span className="mr-2">جاري تحميل الطاولات...</span>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+              <AlertCircle className="w-5 h-5" />
+              <span>{error}</span>
+            </div>
+          ) : tables.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">لا توجد طاولات متاحة حالياً</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {tables.map((table) => (
               <button
@@ -233,6 +262,7 @@ const TableBooking: React.FC<TableBookingProps> = ({ merchantId, merchantName })
               </button>
             ))}
           </div>
+          )}
         </div>
 
         {/* Contact Information */}

@@ -1,42 +1,108 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Calendar, Users, DollarSign, ShoppingBag, Plus, Scissors, 
-  Sparkles, Clock, Settings2
+  Sparkles, Clock, Settings2, Loader, AlertCircle
 } from 'lucide-react';
+import axios from 'axios';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import StatusBadge from '../../../common/StatusBadge';
-import DashboardCustomizer from '../DashboardCustomizer';
-import LoyaltyWidget from '../widgets/LoyaltyWidget';
+import DashboardCustomizer from '../../DashboardCustomizer';
+import LoyaltyWidget from '../../shared/widgets/LoyaltyWidget';
 
 interface SalonOverviewProps {
   setActiveTab: (tab: string) => void;
 }
 
+interface DashboardStats {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any;
+  color: 'pink' | 'purple' | 'teal' | 'blue';
+  trend?: string;
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any;
+  color: string;
+  onClick: () => void;
+}
+
 const SalonOverview: React.FC<SalonOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStats[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const defaultStats = [
-    { id: 'stat_appts', title: "مواعيد اليوم", value: "18", sub: "حجز مؤكد", icon: Calendar, color: "pink" as const },
-    { id: 'stat_sales', title: "مبيعات الخدمات", value: "3,200", sub: "جنيه", icon: Scissors, color: "purple" as const },
-    { id: 'stat_new_clients', title: "عميلات جدد", value: "4", sub: "هذا الأسبوع", icon: Users, color: "teal" as const },
-    { id: 'stat_products', title: "منتجات مباعة", value: "12", sub: "قطعة", icon: ShoppingBag, color: "blue" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const statsResponse = await axios.get<DashboardStats[]>('/api/dashboard/salon/stats');
+        const fetchedStats = (statsResponse.data as DashboardStats[]).map((stat: any) => ({
+          ...stat,
+          icon: getIconForStat(stat.id)
+        }));
+        setStats(fetchedStats);
 
-  const defaultActions = [
-    { id: 'act_book', label: "حجز موعد", icon: Plus, color: "bg-pink-600 text-white", onClick: () => setActiveTab('appointments') },
-    { id: 'act_pos', label: "فاتورة خدمة", icon: DollarSign, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('pos') },
-    { id: 'act_new_client', label: "عميلة جديدة", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('customers') },
-    { id: 'act_sell_prod', label: "بيع منتج", icon: ShoppingBag, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('pos') },
-    { id: 'act_add_service', label: "إضافة خدمة", icon: Sparkles, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('pos') },
-    { id: 'act_attendance', label: "سجل الحضور", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('staff') },
-  ];
+        const actionsResponse = await axios.get<DashboardAction[]>('/api/dashboard/salon/actions');
+        const fetchedActions = (actionsResponse.data as DashboardAction[]).map((action: any) => ({
+          ...action,
+          icon: getIconForAction(action.id),
+          onClick: () => setActiveTab(action.tabId)
+        }));
+        setActions(fetchedActions);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('فشل في تحميل بيانات لوحة التحكم');
+        setStats([]);
+        setActions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
-  ]);
+    fetchDashboardData();
+  }, [setActiveTab]);
+
+  const getIconForStat = (statId: string) => {
+    const iconMap: Record<string, any> = {
+      'stat_appts': Calendar,
+      'stat_sales': Scissors,
+      'stat_new_clients': Users,
+      'stat_products': ShoppingBag,
+    };
+    return iconMap[statId] || Calendar;
+  };
+
+  const getIconForAction = (actionId: string) => {
+    const iconMap: Record<string, any> = {
+      'act_book': Plus,
+      'act_pos': DollarSign,
+      'act_new_client': Users,
+      'act_sell_prod': ShoppingBag,
+      'act_add_service': Sparkles,
+      'act_attendance': Clock,
+    };
+    return iconMap[actionId] || Plus;
+  };
+
+  const [visibleIds, setVisibleIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setVisibleIds([
+      ...stats.map(s => s.id),
+      ...actions.map(a => a.id)
+    ]);
+  }, [stats, actions]);
 
   const handleToggle = (id: string) => {
     setVisibleIds(prev => 
@@ -45,9 +111,27 @@ const SalonOverview: React.FC<SalonOverviewProps> = ({ setActiveTab }) => {
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map((s: DashboardStats) => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map((a: DashboardAction) => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader className="w-8 h-8 text-pink-500 animate-spin" />
+        <span className="mr-2 text-gray-600">جاري تحميل لوحة التحكم...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 p-4 rounded-lg text-red-700 flex items-center justify-center gap-2">
+        <AlertCircle className="w-5 h-5" />
+        <span>{error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 relative">
@@ -64,7 +148,7 @@ const SalonOverview: React.FC<SalonOverviewProps> = ({ setActiveTab }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter((s: DashboardStats) => visibleIds.includes(s.id)).map((stat: DashboardStats) => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -78,7 +162,7 @@ const SalonOverview: React.FC<SalonOverviewProps> = ({ setActiveTab }) => {
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter((a: DashboardAction) => visibleIds.includes(a.id)).map((action: DashboardAction) => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

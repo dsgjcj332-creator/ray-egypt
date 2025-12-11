@@ -2,10 +2,12 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const LoginPage = () => {
+  const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,9 +16,15 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    await login(email, 'customer');
-    setIsLoading(false);
-    // Navigate to profile or home
+    
+    try {
+      await login(email, password);
+      router.push('/profile');
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

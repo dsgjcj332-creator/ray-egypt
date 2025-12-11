@@ -20,48 +20,7 @@ interface NavigationContextType {
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
-// بيانات تجريبية
-const MOCK_USER_PROFILE: UserProfile = {
-  id: 'user-001',
-  name: 'أحمد محمد',
-  email: 'ahmed@example.com',
-  phone: '+201001234567',
-  role: 'merchant',
-  activities: [
-    {
-      id: 'activity-001',
-      activityType: 'restaurant',
-      name: 'مطعم الذوق الشرقي',
-      description: 'مطعم متخصص في الأكلات الشرقية',
-      status: 'active',
-      subscriptionId: 'sub-user-001',
-      createdAt: '2024-01-15',
-      role: 'owner'
-    },
-    {
-      id: 'activity-002',
-      activityType: 'retail',
-      name: 'متجر الملابس الحديثة',
-      description: 'متجر ملابس عصري',
-      status: 'active',
-      subscriptionId: 'sub-user-001',
-      createdAt: '2024-03-20',
-      role: 'owner'
-    },
-    {
-      id: 'activity-003',
-      activityType: 'clinic',
-      name: 'عيادة الدكتور أحمد',
-      description: 'عيادة طب عام',
-      status: 'pending',
-      subscriptionId: 'sub-user-001',
-      createdAt: '2024-11-01',
-      role: 'owner'
-    }
-  ],
-  createdAt: '2024-01-01',
-  updatedAt: '2024-11-01'
-};
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -69,19 +28,16 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // محاكاة جلب بيانات المستخدم والأنشطة
     const loadUserProfile = async () => {
       try {
         setIsLoading(true);
-        // في الواقع، سيتم جلب البيانات من API
-        // const response = await fetch('/api/users/profile');
-        // const data = await response.json();
-        // setUserProfile(data);
-
-        // للآن، نستخدم البيانات التجريبية
-        setUserProfile(MOCK_USER_PROFILE);
-        if (MOCK_USER_PROFILE.activities.length > 0) {
-          setCurrentActivityState(MOCK_USER_PROFILE.activities[0]);
+        const response = await fetch(`${API_URL}/api/users/profile`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile(data);
+          if (data.activities && data.activities.length > 0) {
+            setCurrentActivityState(data.activities[0]);
+          }
         }
       } catch (error) {
         console.error('خطأ في جلب بيانات المستخدم:', error);

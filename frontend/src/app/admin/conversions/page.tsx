@@ -1,17 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Target, TrendingUp, Users, BarChart3 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Target, TrendingUp, Users, BarChart3, Loader } from 'lucide-react';
 import Link from 'next/link';
 
+interface ConversionData {
+  source: string;
+  visitors: number;
+  conversions: number;
+  rate: number;
+  trend: 'up' | 'down';
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function AdminConversions() {
-  const conversionData = [
-    { source: 'الموقع الرئيسي', visitors: 5234, conversions: 523, rate: 9.98, trend: 'up' },
-    { source: 'تطبيق الموبايل', visitors: 3456, conversions: 412, rate: 11.92, trend: 'up' },
-    { source: 'البريد الإلكتروني', visitors: 2123, conversions: 298, rate: 14.05, trend: 'up' },
-    { source: 'وسائل التواصل', visitors: 4567, conversions: 456, rate: 9.98, trend: 'down' },
-    { source: 'الإعلانات المدفوعة', visitors: 3234, conversions: 567, rate: 17.53, trend: 'up' }
-  ];
+  const [conversionData, setConversionData] = useState<ConversionData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchConversions = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/admin/conversions`);
+        if (response.ok) {
+          const data = await response.json();
+          setConversionData(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب بيانات التحويلات:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchConversions();
+  }, []);
 
   const totalVisitors = conversionData.reduce((sum, item) => sum + item.visitors, 0);
   const totalConversions = conversionData.reduce((sum, item) => sum + item.conversions, 0);

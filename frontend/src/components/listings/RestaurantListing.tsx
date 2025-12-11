@@ -1,16 +1,7 @@
 
-import React from 'react';
-import { Star, Clock, MapPin, Bike, Filter, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, Clock, MapPin, Bike, Filter, Search, Loader } from 'lucide-react';
 import Image from 'next/image';
-
-const restaurants = [
-  { id: 1, name: 'مطعم النور', rating: 4.8, reviews: 340, image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80', type: 'مشويات • شرقي', time: '30-45 دقيقة', delivery: 15, minOrder: 50, category: 'food' },
-  { id: 2, name: 'بيتزا كينج', rating: 4.5, reviews: 120, image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500&q=80', type: 'بيتزا • إيطالي', time: '40-55 دقيقة', delivery: 20, minOrder: 80, category: 'food' },
-  { id: 3, name: 'برجر ستيشن', rating: 4.9, reviews: 550, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80', type: 'برجر • وجبات سريعة', time: '25-35 دقيقة', delivery: 10, minOrder: 60, category: 'food' },
-  { id: 4, name: 'سوشي هاوس', rating: 4.2, reviews: 85, image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80', type: 'سوشي • آسيوي', time: '50-60 دقيقة', delivery: 25, minOrder: 150, category: 'food' },
-  { id: 5, name: 'شاورما الريم', rating: 4.7, reviews: 210, image: 'https://images.unsplash.com/photo-1663234362390-2c34404b2931?w=500&q=80', type: 'شاورما • سوري', time: '20-30 دقيقة', delivery: 15, minOrder: 40, category: 'food' },
-  { id: 6, name: 'وافل آند كريب', rating: 4.6, reviews: 180, image: 'https://images.unsplash.com/photo-1562515002-7c238ccfb847?w=500&q=80', type: 'حلويات', time: '35-45 دقيقة', delivery: 12, minOrder: 50, category: 'food' },
-];
 
 interface Props {
   onMerchantSelect: (merchant: any) => void;
@@ -18,6 +9,37 @@ interface Props {
 }
 
 const RestaurantListing: React.FC<Props> = ({ onMerchantSelect, title = "المطاعم والكافيهات" }) => {
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch restaurants from API
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/merchants?category=restaurant');
+        if (!response.ok) {
+          throw new Error('Failed to fetch restaurants');
+        }
+        const data = await response.json();
+        const filteredRestaurants = data.filter((merchant: any) => merchant.category === 'restaurant');
+        setRestaurants(filteredRestaurants);
+      } catch (error) {
+        console.error('Error fetching restaurants:', error);
+        setRestaurants([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
+
+  // Filter restaurants based on search
+  const filteredRestaurants = restaurants.filter(restaurant =>
+    restaurant.name.includes(searchTerm) || restaurant.type.includes(searchTerm)
+  );
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-4">
       {/* Header & Filter */}
@@ -30,7 +52,13 @@ const RestaurantListing: React.FC<Props> = ({ onMerchantSelect, title = "الم�
         <div className="flex gap-3 w-full md:w-auto">
            <div className="relative flex-1 md:w-64">
              <Search className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
-             <input type="text" placeholder="بحث باسم المطعم..." className="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-ray-blue" />
+             <input 
+               type="text" 
+               placeholder="بحث باسم المطعم..." 
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-ray-blue" 
+             />
            </div>
            <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50">
              <Filter className="w-4 h-4" />
@@ -39,9 +67,23 @@ const RestaurantListing: React.FC<Props> = ({ onMerchantSelect, title = "الم�
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {restaurants.map((item) => (
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader className="w-8 h-8 text-ray-blue animate-spin" />
+        </div>
+      ) : restaurants.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد مطاعم متاحة حالياً</p>
+          <p className="text-gray-400 text-sm mt-2">يرجى المحاولة لاحقاً</p>
+        </div>
+      ) : filteredRestaurants.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد مطاعم متطابقة مع البحث</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRestaurants.map((item) => (
           <div 
             key={item.id} 
             onClick={() => onMerchantSelect(item)}
@@ -93,7 +135,8 @@ const RestaurantListing: React.FC<Props> = ({ onMerchantSelect, title = "الم�
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

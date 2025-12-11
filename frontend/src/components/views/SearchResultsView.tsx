@@ -6,15 +6,19 @@ import { Search, Filter, Star, ArrowRight, SlidersHorizontal, Map, List, X, Arro
 import SearchFilterModal from '../modals/SearchFilterModal';
 import SmartMapSearch from '../widgets/SmartMapSearch';
 
-// Mock Data for Search with more details for filtering
-const mockResults = [
-  { id: 1, type: 'restaurant', name: 'مطعم النور', rating: 4.8, image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', subtitle: 'مشويات • المعادي', price: '$$', priceValue: 200, features: ['open_now', 'free_delivery'] },
-  { id: 2, type: 'product', name: 'ساعة Apple Watch', rating: 4.9, image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400', subtitle: 'إلكترونيات • بي تك', price: '15,000 ج', priceValue: 15000, features: ['offers', 'free_return'] },
-  { id: 3, type: 'car', name: 'Kia Sportage 2024', rating: 5.0, image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400', subtitle: 'أوتو ستار • التجمع', price: '1.8M ج', priceValue: 1800000, features: ['open_now'] },
-  { id: 4, type: 'realestate', name: 'شقة 180م للبيع', rating: 4.5, image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400', subtitle: 'حي اللوتس • التجمع الخامس', price: '3.5M ج', priceValue: 3500000, features: [] },
-  { id: 5, type: 'restaurant', name: 'بيتزا كينج', rating: 4.5, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400', subtitle: 'إيطالي • مدينة نصر', price: '$$', priceValue: 150, features: ['free_delivery', 'offers'] },
-  { id: 6, type: 'product', name: 'حذاء Nike Air', rating: 4.7, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', subtitle: 'أزياء • Nike Store', price: '4,500 ج', priceValue: 4500, features: ['free_return', 'offers'] },
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+interface SearchResult {
+  id: string;
+  type: string;
+  name: string;
+  rating: number;
+  image: string;
+  subtitle: string;
+  price: string;
+  priceValue: number;
+  features: string[];
+}
 
 interface Props {
   query?: string;
@@ -25,11 +29,12 @@ const SearchResultsView: React.FC<Props> = ({ query = '' }) => {
   const [searchQuery, setSearchQuery] = useState(query);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [sortBy, setSortBy] = useState('recommended'); // recommended, price_asc, price_desc, rating
+  const [sortBy, setSortBy] = useState('recommended');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Filter State
   const [advancedFilters, setAdvancedFilters] = useState({
-    priceRange: 5000000, // Default max high enough
+    priceRange: 5000000,
     minRating: 0,
     features: [] as string[]
   });
@@ -42,9 +47,36 @@ const SearchResultsView: React.FC<Props> = ({ query = '' }) => {
     { id: 'car', label: 'سيارات' },
   ];
 
+  // جلب النتائج من API
+  React.useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        setIsLoading(true);
+        const params = new URLSearchParams({
+          q: searchQuery,
+          category: activeFilter,
+          sort: sortBy
+        });
+        const response = await fetch(`${API_URL}/api/search?${params}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data);
+        }
+      } catch (error) {
+        console.error('خطأ في البحث:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (searchQuery.trim()) {
+      fetchResults();
+    }
+  }, [searchQuery, activeFilter, sortBy]);
+
   // Compute filtered results based on all criteria
   const filteredResults = useMemo(() => {
-    let results = mockResults.filter(item => {
+    let results = searchResults.filter(item => {
       // 1. Text Match
       const matchesText = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
       
@@ -210,7 +242,7 @@ const SearchResultsView: React.FC<Props> = ({ query = '' }) => {
 
         {filteredResults.length > 0 ? (
           viewMode === 'map' ? (
-            <SmartMapSearch results={filteredResults} onSelect={(item) => console.log(item)} />
+            <SmartMapSearch results={filteredResults as any} onSelect={(item) => console.log(item)} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in slide-in-from-bottom-4">
               {filteredResults.map((item) => (

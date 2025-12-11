@@ -1,18 +1,6 @@
 
-import React from 'react';
-import { Stethoscope, Scissors, MapPin, Star, Calendar, Search, HeartPulse, Dumbbell } from 'lucide-react';
-
-const healthItems = [
-  { id: 1, name: 'عيادات الشفاء التخصصية', rating: 4.9, reviews: 450, image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500', type: 'عيادات', specialty: 'باطنة، أطفال، أسنان', location: 'مدينة نصر' },
-  { id: 2, name: 'صيدليات العزبي', rating: 4.7, reviews: 1200, image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=500', type: 'صيدلية', specialty: 'أدوية ومستحضرات تجميل', location: 'كل الفروع' },
-  { id: 3, name: 'معامل المختبر', rating: 4.6, reviews: 800, image: 'https://images.unsplash.com/photo-1579165466741-7f35a4755657?w=500', type: 'معمل تحاليل', specialty: 'تحاليل طبية شاملة', location: 'المهندسين' },
-];
-
-const beautyItems = [
-  { id: 4, name: 'صالون محمد الصغير', rating: 4.8, reviews: 600, image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500', type: 'صالون تجميل', specialty: 'شعر وميكب', location: 'الزمالك' },
-  { id: 5, name: 'Gold\'s Gym', rating: 4.7, reviews: 950, image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500', type: 'جيم', specialty: 'لياقة بدنية وسبا', location: 'المعادي' },
-  { id: 6, name: 'The Spa', rating: 4.9, reviews: 150, image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=500', type: 'سبا', specialty: 'مساج وعناية بالبشرة', location: 'التجمع الخامس' },
-];
+import React, { useState, useEffect } from 'react';
+import { Stethoscope, Scissors, MapPin, Star, Calendar, Search, HeartPulse, Dumbbell, Loader } from 'lucide-react';
 
 interface Props {
   onMerchantSelect: (merchant: any) => void;
@@ -20,12 +8,44 @@ interface Props {
 }
 
 const HealthBeautyListing: React.FC<Props> = ({ onMerchantSelect, category = 'health' }) => {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const isHealth = category === 'health';
-  const items = isHealth ? healthItems : beautyItems;
   const title = isHealth ? 'الصحة والطب' : 'الجمال والعناية';
   const subTitle = isHealth ? 'أفضل الأطباء والمراكز الطبية' : 'تألقي مع أفضل الصالونات ومراكز التجميل';
   const themeColor = isHealth ? 'text-teal-600' : 'text-pink-600';
   const btnColor = isHealth ? 'bg-teal-600 hover:bg-teal-700' : 'bg-pink-600 hover:bg-pink-700';
+
+  // Fetch items from API
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        const categoryParam = isHealth ? 'clinic' : 'gym';
+        const response = await fetch(`/api/merchants?category=${categoryParam}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch items');
+        }
+        const data = await response.json();
+        const filteredItems = data.filter((merchant: any) => merchant.category === categoryParam);
+        setItems(filteredItems);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, [isHealth]);
+
+  // Filter items based on search
+  const filteredItems = items.filter(item =>
+    item.name.includes(searchTerm) || item.type.includes(searchTerm)
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-4">
@@ -41,13 +61,33 @@ const HealthBeautyListing: React.FC<Props> = ({ onMerchantSelect, category = 'he
         
         <div className="relative w-full md:w-72">
            <Search className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
-           <input type="text" placeholder={isHealth ? "ابحث عن طبيب أو تخصص..." : "ابحث عن صالون أو خدمة..."} className="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-ray-blue" />
+           <input 
+             type="text" 
+             placeholder={isHealth ? "ابحث عن طبيب أو تخصص..." : "ابحث عن صالون أو خدمة..."} 
+             value={searchTerm}
+             onChange={(e) => setSearchTerm(e.target.value)}
+             className="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-ray-blue" 
+           />
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((item) => (
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader className="w-8 h-8 text-ray-blue animate-spin" />
+        </div>
+      ) : items.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد {isHealth ? 'عيادات' : 'صالونات'} متاحة حالياً</p>
+          <p className="text-gray-400 text-sm mt-2">يرجى المحاولة لاحقاً</p>
+        </div>
+      ) : filteredItems.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">لا توجد نتائج متطابقة مع البحث</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredItems.map((item) => (
           <div 
             key={item.id} 
             onClick={() => onMerchantSelect({ ...item, category: isHealth ? 'clinic' : 'gym' })}
@@ -90,7 +130,8 @@ const HealthBeautyListing: React.FC<Props> = ({ onMerchantSelect, category = 'he
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

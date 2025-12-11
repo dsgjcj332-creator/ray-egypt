@@ -1,18 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
-import { TrendingUp, DollarSign, Calendar, Filter, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { TrendingUp, DollarSign, Calendar, Filter, Download, Loader } from 'lucide-react';
 import Link from 'next/link';
+
+interface RevenueSource {
+  source: string;
+  amount: number;
+  percentage: number;
+  trend: number;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function AdminRevenue() {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [revenueData, setRevenueData] = useState<RevenueSource[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const revenueData = [
-    { source: 'المتجر الإلكتروني', amount: 1234567, percentage: 45, trend: 12.5 },
-    { source: 'الخدمات', amount: 890123, percentage: 32, trend: 8.3 },
-    { source: 'الاشتراكات', amount: 567890, percentage: 20, trend: 23.7 },
-    { source: 'الإعلانات', amount: 123456, percentage: 3, trend: -5.2 }
-  ];
+  useEffect(() => {
+    const fetchRevenue = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_URL}/api/admin/revenue?period=${selectedPeriod}`);
+        if (response.ok) {
+          const data = await response.json();
+          setRevenueData(data);
+        }
+      } catch (error) {
+        console.error('خطأ في جلب بيانات الإيرادات:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRevenue();
+  }, [selectedPeriod]);
 
   return (
     <div className="min-h-screen bg-gray-50">
