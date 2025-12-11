@@ -16,12 +16,16 @@
       "dest": "/backend/src/index.js"
     },
     {
+      "src": "/_next/(.*)",
+      "dest": "/frontend/_next/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
   ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://ray-egypt-8-7ob024fw8-dsgjcj332-creators-projects.vercel.app/api",
+    "NEXT_PUBLIC_API_URL": "https://ray-egypt-8.vercel.app/api",
     "NEXT_PUBLIC_GOOGLE_CLIENT_ID": "9208033058-ehke6jjtd58kqshj1nnkph176iovfc6d.apps.googleusercontent.com",
     "MONGODB_URI": "mongodb+srv://vdhndn0_db_user:ombX3FiwHoJ0dj4z@cluster0.lxsowe9.mongodb.net/ray_db?retryWrites=true&w=majority",
     "GOOGLE_CLIENT_ID": "9208033058-ehke6jjtd58kqshj1nnkph176iovfc6d.apps.googleusercontent.com",
