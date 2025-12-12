@@ -62,6 +62,7 @@ app.get('/', (req, res) => {
   res.send('RAY API Server is running...');
 });
 
-app.listen(PORT, () => {
-  console.log(` Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`📡 API available at http://0.0.0.0:${PORT}`);
 });
