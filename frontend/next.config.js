@@ -103,7 +103,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://ray-egypt.vercel.app'}/api/:path*`,
+        destination: `https://ray-egypt-backend.vercel.app/api/:path*`,
       },
     ];
   },
