@@ -125,13 +125,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await axios.post('/api/auth/login', { email, password });
       const responseData = response.data as any;
-      const { data } = responseData;
       
-      setUser(data.user);
-      setTokens(data.tokens);
-      
-      localStorage.setItem('authUser', JSON.stringify(data.user));
-      localStorage.setItem('authTokens', JSON.stringify(data.tokens));
+      // Handle simple token response from our new backend
+      if (responseData.token) {
+        const token = responseData.token;
+        setTokens({ accessToken: token, refreshToken: '', expiresIn: '1h', tokenType: 'Bearer' });
+        setUser({ id: '1', name: 'User', email, role: 'user', isEmailVerified: true });
+        localStorage.setItem('authTokens', JSON.stringify({ accessToken: token, refreshToken: '', expiresIn: '1h', tokenType: 'Bearer' }));
+        localStorage.setItem('authUser', JSON.stringify({ id: '1', name: 'User', email, role: 'user', isEmailVerified: true }));
+      } else {
+        // Handle complex response with user and tokens
+        const { data } = responseData;
+        setUser(data.user);
+        setTokens(data.tokens);
+        localStorage.setItem('authUser', JSON.stringify(data.user));
+        localStorage.setItem('authTokens', JSON.stringify(data.tokens));
+      }
     } catch (error: any) {
       const message = error.response?.data?.message || 'Login failed';
       throw new Error(message);
@@ -145,13 +154,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await axios.post('/api/auth/register', userData);
       const responseData = response.data as any;
-      const { data } = responseData;
       
-      setUser(data.user);
-      setTokens(data.tokens);
-      
-      localStorage.setItem('authUser', JSON.stringify(data.user));
-      localStorage.setItem('authTokens', JSON.stringify(data.tokens));
+      // Handle simple token response from our new backend
+      if (responseData.token) {
+        const token = responseData.token;
+        setTokens({ accessToken: token, refreshToken: '', expiresIn: '1h', tokenType: 'Bearer' });
+        setUser({ id: '1', name: userData.name, email: userData.email, role: 'user', isEmailVerified: true });
+        localStorage.setItem('authTokens', JSON.stringify({ accessToken: token, refreshToken: '', expiresIn: '1h', tokenType: 'Bearer' }));
+        localStorage.setItem('authUser', JSON.stringify({ id: '1', name: userData.name, email: userData.email, role: 'user', isEmailVerified: true }));
+      } else {
+        // Handle complex response with user and tokens
+        const { data } = responseData;
+        setUser(data.user);
+        setTokens(data.tokens);
+        localStorage.setItem('authUser', JSON.stringify(data.user));
+        localStorage.setItem('authTokens', JSON.stringify(data.tokens));
+      }
     } catch (error: any) {
       const message = error.response?.data?.message || 'Registration failed';
       throw new Error(message);

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Dashboard from '@/components/Dashboard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BusinessType } from '@/components/dashboard/config';
+import RouteGuard from '@/components/auth/RouteGuard';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -25,9 +26,11 @@ export default function DashboardPage() {
   if (!isMounted) return null;
 
   return (
-    <Dashboard 
-      initialType={businessType} 
-      onLogout={() => router.push('/')} 
-    />
+    <RouteGuard>
+      <Dashboard 
+        initialType={businessType} 
+        onLogout={() => router.push('/')} 
+      />
+    </RouteGuard>
   );
 }
