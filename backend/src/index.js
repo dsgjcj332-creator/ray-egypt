@@ -27,7 +27,7 @@ import authRoutes from './api/routes/auth.js';
 import dashboardRoutes from './api/routes/dashboard.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || process.env.RAILWAY_PORT || 5000;
 
 // Middleware
 app.use(cors({
