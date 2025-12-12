@@ -52,24 +52,6 @@ const CarWashOverview: React.FC<CarWashOverviewProps> = ({ setActiveTab }) => {
       } catch (err) {
         setError('فشل في تحميل بيانات غسيل السيارات');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_fleet', title: "الأسطول النشط", value: "5/6", sub: "سيارات", icon: Truck, color: "blue" as const },
-          { id: 'stat_water', title: "مخزون المياه", value: "450L", sub: "الإجمالي", icon: Droplets, color: "cyan" as const },
-          { id: 'stat_jobs', title: "طلبات اليوم", value: "24", sub: "8 جاري التنفيذ", icon: Calendar, color: "green" as const },
-          { id: 'stat_rev', title: "الإيرادات", value: "6,200", sub: "جنيه", icon: Gauge, color: "yellow" as const },
-        ]);
-        setActions([
-          { id: 'act_book', label: "حجز جديد", icon: Plus, color: "bg-cyan-600 text-white", onClick: () => setActiveTab('schedule') },
-          { id: 'act_dispatch', label: "توجيه وحدة", icon: Navigation, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('fleet') },
-          { id: 'act_stock', label: "جرد المواد", icon: Layers, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('inventory') },
-          { id: 'act_client', label: "عميل جديد", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('customers') },
-        ]);
-        setFleet([
-          { id: 'V01', driver: 'كابتن أحمد', status: 'active', location: 'التجمع الخامس', fuel: 75, water: 60, battery: 90, jobs: 4 },
-          { id: 'V02', driver: 'كابتن سامح', status: 'busy', location: 'المعادي', fuel: 40, water: 20, battery: 85, jobs: 2 },
-          { id: 'V03', driver: 'كابتن هيثم', status: 'maintenance', location: 'الورشة', fuel: 10, water: 0, battery: 0, jobs: 0 },
-        ]);
       }
     };
     fetchDashboardData();

@@ -50,21 +50,6 @@ const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab 
       } catch (err) {
         setError('فشل في تحميل بيانات المقاولات');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_projects', title: "مشاريع نشطة", value: "5", sub: "2 تسليم قريب", icon: HardHat, color: "orange" as const },
-          { id: 'stat_progress', title: "نسبة الإنجاز", value: "68%", sub: "متوسط عام", icon: Activity, color: "blue" as const },
-          { id: 'stat_billing', title: "مستخلصات", value: "2.4M", sub: "تحت التحصيل", icon: DollarSign, color: "green" as const },
-          { id: 'stat_stock', title: "مواد بالموقع", value: "450k", sub: "مواسير وأسمنت", icon: Package, color: "purple" as const },
-        ]);
-        setActions([
-          { id: 'act_project', label: "مشروع جديد", icon: Plus, color: "bg-orange-600 text-white", onClick: () => setActiveTab('projects') },
-          { id: 'act_supply', label: "طلب توريد", icon: Truck, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('suppliers') },
-          { id: 'act_stock', label: "صرف خامات", icon: Warehouse, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('warehouse') },
-          { id: 'act_invoice', label: "إضافة مستخلص", icon: FileText, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('finance') },
-          { id: 'act_labor', label: "تسجيل عمالة", icon: Users, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('labor') },
-          { id: 'act_tender', label: "مناقصة جديدة", icon: FileText, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('tenders') },
-        ]);
       }
     };
     fetchDashboardData();

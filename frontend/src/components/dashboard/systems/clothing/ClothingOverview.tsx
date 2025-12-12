@@ -54,26 +54,7 @@ const ClothingOverview: React.FC<ClothingOverviewProps> = ({ setActiveTab }) => 
       } catch (err) {
         setError('فشل في تحميل بيانات الملابس');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_sales', title: "مبيعات اليوم", value: "12,400 ج", sub: "45 قطعة", icon: TrendingUp, color: "pink" as const },
-          { id: 'stat_items', title: "قطع مباعة", value: "45", sub: "+10 عن أمس", icon: Shirt, color: "blue" as const },
-          { id: 'stat_collections', title: "الكولكشن النشط", value: "3", sub: "مجموعات", icon: Grid, color: "purple" as const },
-          { id: 'stat_returns', title: "المرتجعات", value: "3", sub: "قطع", icon: RotateCcw, color: "orange" as const },
-        ]);
-        setActions([
-          { id: 'act_sale', label: "بيع جديد", icon: ShoppingBag, color: "bg-pink-600 text-white", onClick: () => setActiveTab('shop') },
-          { id: 'act_add', label: "إضافة موديل", icon: Shirt, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('products') },
-          { id: 'act_collection', label: "كولكشن جديد", icon: Grid, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('collections') },
-          { id: 'act_stock', label: "جرد سريع", icon: Search, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('inventory') },
-          { id: 'act_barcode', label: "طباعة باركود", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('products') },
-          { id: 'act_return', label: "مرتجع", icon: RotateCcw, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('reports') },
-        ]);
         setChartData([
-          { name: 'السبت', sales: 4000 },
-          { name: 'الأحد', sales: 3000 },
-          { name: 'الاثنين', sales: 2000 },
-          { name: 'الثلاثاء', sales: 2780 },
           { name: 'الأربعاء', sales: 1890 },
           { name: 'الخميس', sales: 2390 },
           { name: 'الجمعة', sales: 3490 },

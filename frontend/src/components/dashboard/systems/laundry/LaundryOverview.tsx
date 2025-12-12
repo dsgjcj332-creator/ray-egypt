@@ -50,21 +50,6 @@ const LaundryOverview: React.FC<LaundryOverviewProps> = ({ setActiveTab }) => {
       } catch (err) {
         setError('فشل في تحميل بيانات المغسلة');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_received', title: "قطع مستلمة", value: "150", sub: "اليوم", icon: Shirt, color: "blue" as const },
-          { id: 'stat_processing', title: "في التشغيل", value: "45", sub: "غسيل وكي", icon: Waves, color: "cyan" as const },
-          { id: 'stat_ready', title: "جاهز للتسليم", value: "32", sub: "انتظار عميل", icon: CheckCircle, color: "green" as const },
-          { id: 'stat_urgent', title: "طلبات مستعجلة", value: "5", sub: "أولوية قصوى", icon: Clock, color: "red" as const },
-        ]);
-        setActions([
-          { id: 'act_receive', label: "استلام ملابس", icon: Plus, color: "bg-cyan-600 text-white", onClick: () => setActiveTab('received') },
-          { id: 'act_deliver', label: "تسليم عميل", icon: CheckCircle, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('ready') },
-          { id: 'act_urgent', label: "طلب مستعجل", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('received') },
-          { id: 'act_tag', label: "طباعة تاج", icon: Tag, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('received') },
-          { id: 'act_sub', label: "اشتراك جديد", icon: Ticket, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('subscriptions') },
-          { id: 'act_delivery', label: "طلب توصيل", icon: Truck, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('delivery') },
-        ]);
       }
     };
     fetchDashboardData();

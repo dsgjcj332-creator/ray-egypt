@@ -50,21 +50,6 @@ const BookingsOverview: React.FC<BookingsOverviewProps> = ({ setActiveTab, busin
       } catch (err) {
         setError('فشل في تحميل بيانات الحجوزات');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_today', title: "حجوزات اليوم", value: "18", sub: "حجز مؤكد", icon: Calendar, color: "blue" as const },
-          { id: 'stat_pending', title: "حجوزات معلقة", value: "5", sub: "بانتظار التأكيد", icon: Clock, color: "orange" as const },
-          { id: 'stat_completed', title: "مكتملة", value: "42", sub: "هذا الأسبوع", icon: CheckCircle, color: "green" as const },
-          { id: 'stat_revenue', title: "الإيرادات", value: "12,500 ج", sub: "من الحجوزات", icon: DollarSign, color: "teal" as const },
-        ]);
-        setActions([
-          { id: 'act_new', label: "حجز جديد", icon: Calendar, color: "bg-blue-600 text-white", onClick: () => setActiveTab('overview') },
-          { id: 'act_today', label: "حجوزات اليوم", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('overview') },
-          { id: 'act_pending', label: "المعلقة", icon: AlertCircle, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('overview') },
-          { id: 'act_clients', label: "العملاء", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('customers') },
-          { id: 'act_messages', label: "الرسائل", icon: MessageSquare, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('messages') },
-          { id: 'act_reports', label: "التقارير", icon: Zap, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('reports') },
-        ]);
       }
     };
     fetchDashboardData();

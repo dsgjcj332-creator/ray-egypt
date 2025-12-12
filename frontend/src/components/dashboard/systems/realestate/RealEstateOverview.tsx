@@ -49,21 +49,6 @@ const RealEstateOverview: React.FC<RealEstateOverviewProps> = ({ setActiveTab })
       } catch (err) {
         setError('فشل في تحميل بيانات العقارات');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_sales', title: "إجمالي المبيعات (YTD)", value: "12.5M", sub: "+2.3M هذا الشهر", icon: BadgeDollarSign, color: "green" as const },
-          { id: 'stat_units', title: "وحدات متاحة", value: "45", sub: "12 بيع | 33 إيجار", icon: Home, color: "blue" as const },
-          { id: 'stat_leads', title: "عملاء جدد (Leads)", value: "28", sub: "هذا الأسبوع", icon: Users, color: "purple" as const },
-          { id: 'stat_showings', title: "معاينات قادمة", value: "8", sub: "اليوم وغداً", icon: Calendar, color: "orange" as const },
-        ]);
-        setActions([
-          { id: 'act_add_unit', label: "إضافة وحدة", icon: Plus, color: "bg-green-700 text-white", onClick: () => setActiveTab('properties') },
-          { id: 'act_new_lead', label: "عميل جديد", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('leads') },
-          { id: 'act_showing', label: "حجز معاينة", icon: Calendar, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('showings') },
-          { id: 'act_calc', label: "حاسبة التمويل", icon: Calculator, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('installments') },
-          { id: 'act_contract', label: "إنشاء عقد", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('contracts') },
-          { id: 'act_tour', label: "جولة افتراضية", icon: Camera, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('properties') },
-        ]);
       }
     };
     fetchDashboardData();

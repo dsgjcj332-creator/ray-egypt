@@ -53,21 +53,6 @@ const NurseryOverview: React.FC<NurseryOverviewProps> = ({ setActiveTab }) => {
       } catch (err) {
         setError('فشل في تحميل بيانات الحضانة');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_children', title: "الأطفال الحاليين", value: "24", sub: "طفل", icon: Baby, color: "blue" as const },
-          { id: 'stat_staff', title: "الموظفين", value: "8", sub: "معلمين وموظفين", icon: Users, color: "green" as const },
-          { id: 'stat_revenue', title: "الإيرادات الشهرية", value: "45,000 ج", sub: "هذا الشهر", icon: DollarSign, color: "purple" as const },
-          { id: 'stat_attendance', title: "معدل الحضور", value: "92%", sub: "هذا الأسبوع", icon: Activity, color: "orange" as const },
-        ]);
-        setActions([
-          { id: 'act_enroll', label: "تسجيل طفل", icon: Plus, color: "bg-blue-600 text-white", onClick: () => setActiveTab('children') },
-          { id: 'act_schedule', label: "الجدول الزمني", icon: Calendar, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('schedule') },
-          { id: 'act_staff', label: "إدارة الموظفين", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('staff') },
-          { id: 'act_activities', label: "الأنشطة", icon: Activity, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('activities') },
-          { id: 'act_meals', label: "الوجبات", icon: Heart, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('meals') },
-          { id: 'act_reports', label: "التقارير", icon: TrendingUp, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('reports') },
-        ]);
       }
     };
     fetchDashboardData();

@@ -50,21 +50,6 @@ const CarsOverview: React.FC<CarsOverviewProps> = ({ setActiveTab }) => {
       } catch (err) {
         setError('فشل في تحميل بيانات السيارات');
         setLoading(false);
-        // Use fallback data
-        setStats([
-          { id: 'stat_sales', title: "سيارات مباعة", value: "12", sub: "+2 هذا الشهر", icon: Car, color: "red" as const },
-          { id: 'stat_inventory', title: "متاح في المعرض", value: "58", sub: "سيارة", icon: Key, color: "blue" as const },
-          { id: 'stat_drives', title: "طلبات تجربة", value: "6", sub: "اليوم", icon: UserCheck, color: "yellow" as const },
-          { id: 'stat_finance', title: "أقساط مستحقة", value: "150k", sub: "خلال 7 أيام", icon: DollarSign, color: "green" as const },
-        ]);
-        setActions([
-          { id: 'act_add_car', label: "إضافة سيارة", icon: Plus, color: "bg-red-700 text-white", onClick: () => setActiveTab('inventory') },
-          { id: 'act_test_drive', label: "حجز تجربة", icon: Key, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('test_drives') },
-          { id: 'act_calc', label: "حاسبة أقساط", icon: Calculator, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('installments') },
-          { id: 'act_contract', label: "عقد بيع", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('sales') },
-          { id: 'act_service', label: "أمر صيانة", icon: Wrench, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('maintenance') },
-          { id: 'act_report', label: "تقرير المخزون", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('inventory') },
-        ]);
       }
     };
     fetchDashboardData();
