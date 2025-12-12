@@ -1,40 +1,37 @@
-# Dependencies
+# Dependency directories
 node_modules/
 */node_modules/
 
-# Build outputs
+# Build output
 .next/
 out/
 build/
 dist/
 
-# Environment variables
+# Environment variables - DO NOT COMMIT THESE
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Logs
+# Logs and debug files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# TypeScript cache
+# Caches
 *.tsbuildinfo
-
-# Optional npm cache directory
 .npm
-
-# Optional eslint cache
 .eslintcache
 
-# Temporary folders
+# Temporary files and folders
 tmp/
 temp/
 
-# Editor directories and files
+# Editor-specific files
 .vscode/*
+.DS_Store
 .idea
 *.suo
 *.ntvs*
@@ -42,14 +39,11 @@ temp/
 *.sln
 *.swp
 .vercel
-
-# Coverage
+ 
+# Testing
 coverage/
 *.lcov
-
-# Testing
 .nyc_output
 
-# Misc
-.DS_Store
+# Security
 *.pem
