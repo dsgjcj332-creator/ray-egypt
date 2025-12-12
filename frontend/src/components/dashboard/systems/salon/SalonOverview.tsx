@@ -192,10 +192,7 @@ const SalonOverview: React.FC<SalonOverviewProps> = ({ setActiveTab }) => {
                 </div>
             </div>
             <div className="space-y-3">
-                <AppointmentRow client="سارة أحمد" service="قص وسيشوار" staff="م. نادين" time="10:00 ص" status="confirmed" />
-                <AppointmentRow client="هبة محمود" service="صبغة شعر" staff="م. ريهام" time="11:30 ص" status="in_progress" />
-                <AppointmentRow client="منى زكي" service="مانيكير وباديكير" staff="م. سها" time="12:00 م" status="waiting" />
-                <AppointmentRow client="رانيا يوسف" service="مكياج كامل" staff="م. دينا" time="01:00 م" status="confirmed" />
+                {/* Appointments will be loaded from API */}
             </div>
          </div>
 
@@ -221,10 +218,7 @@ const SalonOverview: React.FC<SalonOverviewProps> = ({ setActiveTab }) => {
                   </button>
                </div>
                <div className="space-y-4">
-                  <StaffCard name="م. نادين" role="تصفيف شعر" status="busy" />
-                  <StaffCard name="م. ريهام" role="صبغات" status="busy" />
-                  <StaffCard name="م. سها" role="عناية أظافر" status="available" />
-                  <StaffCard name="م. دينا" role="مكياج" status="offline" />
+                  {/* Staff will be loaded from API */}
                </div>
             </div>
          </div>

@@ -208,30 +208,7 @@ const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab })
                 </tr>
               </thead>
               <tbody className="text-sm">
-                <tr className="border-b border-gray-50">
-                  <td className="p-3 font-bold">#1054</td>
-                  <td className="p-3"><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">صالة</span></td>
-                  <td className="p-3">T-05</td>
-                  <td className="p-3 text-gray-500">منذ 12 د</td>
-                  <td className="p-3"><StatusBadge status="preparing" /></td>
-                  <td className="p-3 font-bold">450 ج</td>
-                </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="p-3 font-bold">#1055</td>
-                  <td className="p-3"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">توصيل</span></td>
-                  <td className="p-3">أحمد محمد</td>
-                  <td className="p-3 text-gray-500">منذ 5 د</td>
-                  <td className="p-3"><StatusBadge status="pending" /></td>
-                  <td className="p-3 font-bold">120 ج</td>
-                </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="p-3 font-bold">#1056</td>
-                  <td className="p-3"><span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">تيك أواي</span></td>
-                  <td className="p-3">كابتن علي</td>
-                  <td className="p-3 text-gray-500">منذ 2 د</td>
-                  <td className="p-3"><StatusBadge status="pending" /></td>
-                  <td className="p-3 font-bold">85 ج</td>
-                </tr>
+                {/* Orders will be loaded from API */}
               </tbody>
             </table>
           </div>
@@ -253,14 +230,7 @@ const RestaurantOverview: React.FC<RestaurantOverviewProps> = ({ setActiveTab })
                 </button>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100">
-                  <span className="text-sm font-medium text-red-800">برجر لحم</span>
-                  <span className="text-xs bg-white px-2 py-1 rounded text-red-600 font-bold">باقي 3 قطع</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-xl border border-yellow-100">
-                  <span className="text-sm font-medium text-yellow-800">صوص جبنة</span>
-                  <span className="text-xs bg-white px-2 py-1 rounded text-yellow-600 font-bold">ينفد قريباً</span>
-                </div>
+                {/* Alerts will be loaded from API */}
               </div>
            </div>
 

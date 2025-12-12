@@ -149,9 +149,7 @@ const RealEstateOverview: React.FC<RealEstateOverviewProps> = ({ setActiveTab })
          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 className="font-bold text-lg text-gray-800 mb-4">أحدث الاستفسارات</h3>
             <div className="space-y-4">
-               <InquiryCard name="أحمد محمود" type="شراء - شقة" time="منذ ساعة" />
-               <InquiryCard name="شركة الأمل" type="إيجار - مقر إداري" time="منذ 3 ساعات" />
-               <InquiryCard name="د. سارة" type="شراء - فيلا" time="منذ يوم" />
+               {/* Inquiries will be loaded from API */}
             </div>
             <button 
               onClick={() => setActiveTab('leads')}

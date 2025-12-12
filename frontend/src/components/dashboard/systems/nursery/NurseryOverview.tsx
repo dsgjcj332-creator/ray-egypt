@@ -140,18 +140,7 @@ const NurseryOverview: React.FC<NurseryOverviewProps> = ({ setActiveTab }) => {
             أنشطة اليوم
           </h3>
           <div className="space-y-3">
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="font-semibold text-sm text-gray-800">الرياضة الصباحية</p>
-              <p className="text-xs text-gray-600">9:00 - 9:30 صباحاً</p>
-            </div>
-            <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-              <p className="font-semibold text-sm text-gray-800">وقت الوجبة</p>
-              <p className="text-xs text-gray-600">12:00 - 1:00 ظهراً</p>
-            </div>
-            <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-              <p className="font-semibold text-sm text-gray-800">القراءة والحكايات</p>
-              <p className="text-xs text-gray-600">2:00 - 2:45 مساءً</p>
-            </div>
+            {/* Activities will be loaded from API */}
           </div>
         </div>
 
@@ -162,18 +151,7 @@ const NurseryOverview: React.FC<NurseryOverviewProps> = ({ setActiveTab }) => {
             الأحداث القادمة
           </h3>
           <div className="space-y-3">
-            <div className="p-3 bg-pink-50 rounded-lg border border-pink-200">
-              <p className="font-semibold text-sm text-gray-800">حفلة عيد الميلاد</p>
-              <p className="text-xs text-gray-600">غداً - 3:00 مساءً</p>
-            </div>
-            <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-              <p className="font-semibold text-sm text-gray-800">رحلة حديقة الحيوان</p>
-              <p className="text-xs text-gray-600">الأحد - 10:00 صباحاً</p>
-            </div>
-            <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-200">
-              <p className="font-semibold text-sm text-gray-800">اجتماع أولياء الأمور</p>
-              <p className="text-xs text-gray-600">الأربعاء - 4:00 مساءً</p>
-            </div>
+            {/* Events will be loaded from API */}
           </div>
         </div>
       </div>

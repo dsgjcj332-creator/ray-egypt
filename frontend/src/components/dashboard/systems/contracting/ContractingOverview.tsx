@@ -142,9 +142,7 @@ const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab 
                 </button>
             </div>
             <div className="space-y-4">
-               <ProjectStatusRow name="أبراج العاصمة" stage="التشطيبات" progress={75} status="active" />
-               <ProjectStatusRow name="فيلا د. خالد" stage="تأسيس السباكة" progress={40} status="active" />
-               <ProjectStatusRow name="مول الشروق" stage="الخرسانات" progress={15} status="delayed" />
+               {/* Projects will be loaded from API */}
             </div>
          </div>
 
@@ -155,36 +153,7 @@ const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab 
                نواقص المخزن والمواقع
             </h3>
             <div className="space-y-4">
-               <div className="flex gap-3 items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-300">
-                    <Package className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1">
-                     <h4 className="font-bold text-sm text-gray-800 dark:text-white">مواسير 4 بوصة</h4>
-                     <p className="text-xs text-red-500 font-bold">موقع 1: نفذت الكمية</p>
-                  </div>
-                  <button 
-                    onClick={() => setActiveTab('suppliers')}
-                    className="text-xs bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 px-3 py-1.5 rounded-lg font-bold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition"
-                  >
-                    طلب توريد
-                  </button>
-               </div>
-               <div className="flex gap-3 items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-300">
-                    <Package className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1">
-                     <h4 className="font-bold text-sm text-gray-800 dark:text-white">أسمنت مقاوم</h4>
-                     <p className="text-xs text-yellow-600 dark:text-yellow-500 font-bold">المخزن الرئيسي: منخفض</p>
-                  </div>
-                  <button 
-                    onClick={() => setActiveTab('warehouse')}
-                    className="text-xs bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 px-3 py-1.5 rounded-lg font-bold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition"
-                  >
-                    نقل
-                  </button>
-               </div>
+               {/* Alerts will be loaded from API */}
             </div>
          </div>
       </div>

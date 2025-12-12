@@ -140,27 +140,7 @@ const BookingsOverview: React.FC<BookingsOverviewProps> = ({ setActiveTab, busin
                 <span className="text-xs bg-blue-50 text-blue-800 px-2 py-1 rounded font-bold">18 حجز</span>
             </div>
             <div className="space-y-3">
-                <BookingRow 
-                  time="10:00 ص" 
-                  client="أحمد محمد" 
-                  service="كشف عام" 
-                  status="confirmed"
-                  phone="01012345678"
-                />
-                <BookingRow 
-                  time="10:30 ص" 
-                  client="سارة علي" 
-                  service="استشارة أسنان" 
-                  status="pending"
-                  phone="01098765432"
-                />
-                <BookingRow 
-                  time="11:00 ص" 
-                  client="محمود حسن" 
-                  service="كشف متابعة" 
-                  status="completed"
-                  phone="01055555555"
-                />
+                {/* Bookings will be loaded from API */}
             </div>
          </div>
 

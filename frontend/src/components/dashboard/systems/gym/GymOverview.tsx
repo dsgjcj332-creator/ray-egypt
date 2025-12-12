@@ -191,10 +191,7 @@ const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
                 </div>
             </div>
             <div className="space-y-3">
-                <AccessRow name="عمرو دياب" plan="VIP سنوي" time="منذ دقيقة" status="valid" />
-                <AccessRow name="تامر حسني" plan="شهري" time="منذ 5 دقائق" status="valid" />
-                <AccessRow name="محمد رمضان" plan="3 شهور" time="منذ 12 دقيقة" status="expired" />
-                <AccessRow name="شيرين" plan="حصص خاصة" time="منذ 20 دقيقة" status="valid" />
+                {/* Access log will be loaded from API */}
             </div>
          </div>
 
@@ -210,9 +207,7 @@ const GymOverview: React.FC<GymOverviewProps> = ({ setActiveTab }) => {
                </button>
             </div>
             <div className="space-y-4">
-               <ClassCard title="Zumba" time="05:00 م" trainer="كابتن سارة" capacity={20} filled={15} />
-               <ClassCard title="CrossFit" time="07:00 م" trainer="كابتن علي" capacity={12} filled={12} />
-               <ClassCard title="Yoga" time="09:00 م" trainer="كابتن نورا" capacity={15} filled={8} />
+               {/* Classes will be loaded from API */}
             </div>
          </div>
       </div>
