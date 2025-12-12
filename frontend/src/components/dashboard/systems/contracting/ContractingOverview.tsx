@@ -1,13 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   HardHat, Activity, DollarSign, Package, Plus, Truck, 
   Warehouse, FileText, Users, Settings2, AlertTriangle, 
-  CheckCircle, Clock
+  CheckCircle, Clock, Loader
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface ContractingOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -15,26 +33,49 @@ interface ContractingOverviewProps {
 
 const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const defaultStats = [
-    { id: 'stat_projects', title: "مشاريع نشطة", value: "5", sub: "2 تسليم قريب", icon: HardHat, color: "orange" as const },
-    { id: 'stat_progress', title: "نسبة الإنجاز", value: "68%", sub: "متوسط عام", icon: Activity, color: "blue" as const },
-    { id: 'stat_billing', title: "مستخلصات", value: "2.4M", sub: "تحت التحصيل", icon: DollarSign, color: "green" as const },
-    { id: 'stat_stock', title: "مواد بالموقع", value: "450k", sub: "مواسير وأسمنت", icon: Package, color: "purple" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get('/api/dashboard/contracting/stats');
+        const actionsResponse = await axios.get('/api/dashboard/contracting/actions');
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات المقاولات');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_projects', title: "مشاريع نشطة", value: "5", sub: "2 تسليم قريب", icon: HardHat, color: "orange" as const },
+          { id: 'stat_progress', title: "نسبة الإنجاز", value: "68%", sub: "متوسط عام", icon: Activity, color: "blue" as const },
+          { id: 'stat_billing', title: "مستخلصات", value: "2.4M", sub: "تحت التحصيل", icon: DollarSign, color: "green" as const },
+          { id: 'stat_stock', title: "مواد بالموقع", value: "450k", sub: "مواسير وأسمنت", icon: Package, color: "purple" as const },
+        ]);
+        setActions([
+          { id: 'act_project', label: "مشروع جديد", icon: Plus, color: "bg-orange-600 text-white", onClick: () => setActiveTab('projects') },
+          { id: 'act_supply', label: "طلب توريد", icon: Truck, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('suppliers') },
+          { id: 'act_stock', label: "صرف خامات", icon: Warehouse, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('warehouse') },
+          { id: 'act_invoice', label: "إضافة مستخلص", icon: FileText, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('finance') },
+          { id: 'act_labor', label: "تسجيل عمالة", icon: Users, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('labor') },
+          { id: 'act_tender', label: "مناقصة جديدة", icon: FileText, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('tenders') },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
-  const defaultActions = [
-    { id: 'act_project', label: "مشروع جديد", icon: Plus, color: "bg-orange-600 text-white", onClick: () => setActiveTab('projects') },
-    { id: 'act_supply', label: "طلب توريد", icon: Truck, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('suppliers') },
-    { id: 'act_stock', label: "صرف خامات", icon: Warehouse, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('warehouse') },
-    { id: 'act_invoice', label: "إضافة مستخلص", icon: FileText, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('finance') },
-    { id: 'act_labor', label: "تسجيل عمالة", icon: Users, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('labor') },
-    { id: 'act_tender', label: "مناقصة جديدة", icon: FileText, color: "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-orange-500", onClick: () => setActiveTab('tenders') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   const handleToggle = (id: string) => {
@@ -44,8 +85,8 @@ const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab 
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -63,7 +104,7 @@ const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab 
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -77,7 +118,7 @@ const ContractingOverview: React.FC<ContractingOverviewProps> = ({ setActiveTab 
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

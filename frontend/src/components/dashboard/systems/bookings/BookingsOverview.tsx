@@ -1,12 +1,30 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Calendar, Users, Clock, CheckCircle, DollarSign, AlertCircle,
-  Phone, MapPin, Settings2, User, MessageSquare, Zap
+  Phone, MapPin, Settings2, User, MessageSquare, Zap, Loader
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface BookingsOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -15,26 +33,49 @@ interface BookingsOverviewProps {
 
 const BookingsOverview: React.FC<BookingsOverviewProps> = ({ setActiveTab, businessType }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const defaultStats = [
-    { id: 'stat_today', title: "حجوزات اليوم", value: "18", sub: "حجز مؤكد", icon: Calendar, color: "blue" as const },
-    { id: 'stat_pending', title: "حجوزات معلقة", value: "5", sub: "بانتظار التأكيد", icon: Clock, color: "orange" as const },
-    { id: 'stat_completed', title: "مكتملة", value: "42", sub: "هذا الأسبوع", icon: CheckCircle, color: "green" as const },
-    { id: 'stat_revenue', title: "الإيرادات", value: "12,500 ج", sub: "من الحجوزات", icon: DollarSign, color: "teal" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get(`/api/dashboard/bookings/stats?businessType=${businessType}`);
+        const actionsResponse = await axios.get(`/api/dashboard/bookings/actions?businessType=${businessType}`);
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات الحجوزات');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_today', title: "حجوزات اليوم", value: "18", sub: "حجز مؤكد", icon: Calendar, color: "blue" as const },
+          { id: 'stat_pending', title: "حجوزات معلقة", value: "5", sub: "بانتظار التأكيد", icon: Clock, color: "orange" as const },
+          { id: 'stat_completed', title: "مكتملة", value: "42", sub: "هذا الأسبوع", icon: CheckCircle, color: "green" as const },
+          { id: 'stat_revenue', title: "الإيرادات", value: "12,500 ج", sub: "من الحجوزات", icon: DollarSign, color: "teal" as const },
+        ]);
+        setActions([
+          { id: 'act_new', label: "حجز جديد", icon: Calendar, color: "bg-blue-600 text-white", onClick: () => setActiveTab('overview') },
+          { id: 'act_today', label: "حجوزات اليوم", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('overview') },
+          { id: 'act_pending', label: "المعلقة", icon: AlertCircle, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('overview') },
+          { id: 'act_clients', label: "العملاء", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('customers') },
+          { id: 'act_messages', label: "الرسائل", icon: MessageSquare, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('messages') },
+          { id: 'act_reports', label: "التقارير", icon: Zap, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('reports') },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, [businessType]);
 
-  const defaultActions = [
-    { id: 'act_new', label: "حجز جديد", icon: Calendar, color: "bg-blue-600 text-white", onClick: () => setActiveTab('overview') },
-    { id: 'act_today', label: "حجوزات اليوم", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('overview') },
-    { id: 'act_pending', label: "المعلقة", icon: AlertCircle, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('overview') },
-    { id: 'act_clients', label: "العملاء", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('customers') },
-    { id: 'act_messages', label: "الرسائل", icon: MessageSquare, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('messages') },
-    { id: 'act_reports', label: "التقارير", icon: Zap, color: "bg-white text-gray-700 border border-gray-200 hover:border-blue-600", onClick: () => setActiveTab('reports') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   const handleToggle = (id: string) => {
@@ -44,8 +85,8 @@ const BookingsOverview: React.FC<BookingsOverviewProps> = ({ setActiveTab, busin
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -63,7 +104,7 @@ const BookingsOverview: React.FC<BookingsOverviewProps> = ({ setActiveTab, busin
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -77,7 +118,7 @@ const BookingsOverview: React.FC<BookingsOverviewProps> = ({ setActiveTab, busin
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

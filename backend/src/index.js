@@ -24,6 +24,7 @@ import merchantsRoutes from './api/routes/merchants.js';
 import ordersRoutes from './api/routes/orders.js';
 import cartRoutes from './api/routes/cart.js';
 import authRoutes from './api/routes/auth.js';
+import dashboardRoutes from './api/routes/dashboard.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -54,6 +55,7 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/merchants', merchantsRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Health Check
 app.get('/', (req, res) => {

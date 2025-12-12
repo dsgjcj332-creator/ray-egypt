@@ -1,13 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Shirt, Waves, CheckCircle, Clock, Plus, Tag, 
-  Ticket, Truck, ShoppingBag, Wind, Settings2 
+  Ticket, Truck, ShoppingBag, Wind, Settings2, Loader
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
 import LoyaltyWidget from '../../shared/widgets/LoyaltyWidget';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface LaundryOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -15,26 +33,49 @@ interface LaundryOverviewProps {
 
 const LaundryOverview: React.FC<LaundryOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const defaultStats = [
-    { id: 'stat_received', title: "قطع مستلمة", value: "150", sub: "اليوم", icon: Shirt, color: "blue" as const },
-    { id: 'stat_processing', title: "في التشغيل", value: "45", sub: "غسيل وكي", icon: Waves, color: "cyan" as const },
-    { id: 'stat_ready', title: "جاهز للتسليم", value: "32", sub: "انتظار عميل", icon: CheckCircle, color: "green" as const },
-    { id: 'stat_urgent', title: "طلبات مستعجلة", value: "5", sub: "أولوية قصوى", icon: Clock, color: "red" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get('/api/dashboard/laundry/stats');
+        const actionsResponse = await axios.get('/api/dashboard/laundry/actions');
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات المغسلة');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_received', title: "قطع مستلمة", value: "150", sub: "اليوم", icon: Shirt, color: "blue" as const },
+          { id: 'stat_processing', title: "في التشغيل", value: "45", sub: "غسيل وكي", icon: Waves, color: "cyan" as const },
+          { id: 'stat_ready', title: "جاهز للتسليم", value: "32", sub: "انتظار عميل", icon: CheckCircle, color: "green" as const },
+          { id: 'stat_urgent', title: "طلبات مستعجلة", value: "5", sub: "أولوية قصوى", icon: Clock, color: "red" as const },
+        ]);
+        setActions([
+          { id: 'act_receive', label: "استلام ملابس", icon: Plus, color: "bg-cyan-600 text-white", onClick: () => setActiveTab('received') },
+          { id: 'act_deliver', label: "تسليم عميل", icon: CheckCircle, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('ready') },
+          { id: 'act_urgent', label: "طلب مستعجل", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('received') },
+          { id: 'act_tag', label: "طباعة تاج", icon: Tag, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('received') },
+          { id: 'act_sub', label: "اشتراك جديد", icon: Ticket, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('subscriptions') },
+          { id: 'act_delivery', label: "طلب توصيل", icon: Truck, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('delivery') },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
-  const defaultActions = [
-    { id: 'act_receive', label: "استلام ملابس", icon: Plus, color: "bg-cyan-600 text-white", onClick: () => setActiveTab('received') },
-    { id: 'act_deliver', label: "تسليم عميل", icon: CheckCircle, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('ready') },
-    { id: 'act_urgent', label: "طلب مستعجل", icon: Clock, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('received') },
-    { id: 'act_tag', label: "طباعة تاج", icon: Tag, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('received') },
-    { id: 'act_sub', label: "اشتراك جديد", icon: Ticket, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('subscriptions') },
-    { id: 'act_delivery', label: "طلب توصيل", icon: Truck, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-600", onClick: () => setActiveTab('delivery') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   const handleToggle = (id: string) => {
@@ -44,8 +85,8 @@ const LaundryOverview: React.FC<LaundryOverviewProps> = ({ setActiveTab }) => {
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -63,7 +104,7 @@ const LaundryOverview: React.FC<LaundryOverviewProps> = ({ setActiveTab }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -77,7 +118,7 @@ const LaundryOverview: React.FC<LaundryOverviewProps> = ({ setActiveTab }) => {
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

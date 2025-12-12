@@ -1,13 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Car, Key, UserCheck, DollarSign, Plus, Calculator, 
-  FileText, Wrench, Printer, Settings2
+  FileText, Wrench, Printer, Settings2, Loader
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import StatusBadge from '../../../common/StatusBadge';
 import DashboardCustomizer from '../../DashboardCustomizer';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface CarsOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -15,26 +33,49 @@ interface CarsOverviewProps {
 
 const CarsOverview: React.FC<CarsOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const defaultStats = [
-    { id: 'stat_sales', title: "سيارات مباعة", value: "12", sub: "+2 هذا الشهر", icon: Car, color: "red" as const },
-    { id: 'stat_inventory', title: "متاح في المعرض", value: "58", sub: "سيارة", icon: Key, color: "blue" as const },
-    { id: 'stat_drives', title: "طلبات تجربة", value: "6", sub: "اليوم", icon: UserCheck, color: "yellow" as const },
-    { id: 'stat_finance', title: "أقساط مستحقة", value: "150k", sub: "خلال 7 أيام", icon: DollarSign, color: "green" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get('/api/dashboard/cars/stats');
+        const actionsResponse = await axios.get('/api/dashboard/cars/actions');
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات السيارات');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_sales', title: "سيارات مباعة", value: "12", sub: "+2 هذا الشهر", icon: Car, color: "red" as const },
+          { id: 'stat_inventory', title: "متاح في المعرض", value: "58", sub: "سيارة", icon: Key, color: "blue" as const },
+          { id: 'stat_drives', title: "طلبات تجربة", value: "6", sub: "اليوم", icon: UserCheck, color: "yellow" as const },
+          { id: 'stat_finance', title: "أقساط مستحقة", value: "150k", sub: "خلال 7 أيام", icon: DollarSign, color: "green" as const },
+        ]);
+        setActions([
+          { id: 'act_add_car', label: "إضافة سيارة", icon: Plus, color: "bg-red-700 text-white", onClick: () => setActiveTab('inventory') },
+          { id: 'act_test_drive', label: "حجز تجربة", icon: Key, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('test_drives') },
+          { id: 'act_calc', label: "حاسبة أقساط", icon: Calculator, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('installments') },
+          { id: 'act_contract', label: "عقد بيع", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('sales') },
+          { id: 'act_service', label: "أمر صيانة", icon: Wrench, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('maintenance') },
+          { id: 'act_report', label: "تقرير المخزون", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('inventory') },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
-  const defaultActions = [
-    { id: 'act_add_car', label: "إضافة سيارة", icon: Plus, color: "bg-red-700 text-white", onClick: () => setActiveTab('inventory') },
-    { id: 'act_test_drive', label: "حجز تجربة", icon: Key, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('test_drives') },
-    { id: 'act_calc', label: "حاسبة أقساط", icon: Calculator, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('installments') },
-    { id: 'act_contract', label: "عقد بيع", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('sales') },
-    { id: 'act_service', label: "أمر صيانة", icon: Wrench, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('maintenance') },
-    { id: 'act_report', label: "تقرير المخزون", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-red-600", onClick: () => setActiveTab('inventory') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   const handleToggle = (id: string) => {
@@ -44,8 +85,8 @@ const CarsOverview: React.FC<CarsOverviewProps> = ({ setActiveTab }) => {
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -63,7 +104,7 @@ const CarsOverview: React.FC<CarsOverviewProps> = ({ setActiveTab }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -77,7 +118,7 @@ const CarsOverview: React.FC<CarsOverviewProps> = ({ setActiveTab }) => {
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

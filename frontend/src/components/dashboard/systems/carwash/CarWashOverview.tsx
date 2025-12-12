@@ -2,11 +2,29 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Truck, MapPin, Droplets, Battery, Calendar, Users, 
-  Settings2, AlertTriangle, CheckCircle, Navigation, Fuel, Gauge, Plus, Layers
+  Settings2, AlertTriangle, CheckCircle, Navigation, Fuel, Gauge, Plus, Layers, Loader
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface CarWashOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -14,31 +32,55 @@ interface CarWashOverviewProps {
 
 const CarWashOverview: React.FC<CarWashOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [fleet, setFleet] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Fleet Data
-  const fleet = [
-    { id: 'V01', driver: 'كابتن أحمد', status: 'active', location: 'التجمع الخامس', fuel: 75, water: 60, battery: 90, jobs: 4 },
-    { id: 'V02', driver: 'كابتن سامح', status: 'busy', location: 'المعادي', fuel: 40, water: 20, battery: 85, jobs: 2 },
-    { id: 'V03', driver: 'كابتن هيثم', status: 'maintenance', location: 'الورشة', fuel: 10, water: 0, battery: 0, jobs: 0 },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get('/api/dashboard/carwash/stats');
+        const actionsResponse = await axios.get('/api/dashboard/carwash/actions');
+        const fleetResponse = await axios.get('/api/dashboard/carwash/fleet');
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setFleet(fleetResponse.data as any[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات غسيل السيارات');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_fleet', title: "الأسطول النشط", value: "5/6", sub: "سيارات", icon: Truck, color: "blue" as const },
+          { id: 'stat_water', title: "مخزون المياه", value: "450L", sub: "الإجمالي", icon: Droplets, color: "cyan" as const },
+          { id: 'stat_jobs', title: "طلبات اليوم", value: "24", sub: "8 جاري التنفيذ", icon: Calendar, color: "green" as const },
+          { id: 'stat_rev', title: "الإيرادات", value: "6,200", sub: "جنيه", icon: Gauge, color: "yellow" as const },
+        ]);
+        setActions([
+          { id: 'act_book', label: "حجز جديد", icon: Plus, color: "bg-cyan-600 text-white", onClick: () => setActiveTab('schedule') },
+          { id: 'act_dispatch', label: "توجيه وحدة", icon: Navigation, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('fleet') },
+          { id: 'act_stock', label: "جرد المواد", icon: Layers, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('inventory') },
+          { id: 'act_client', label: "عميل جديد", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('customers') },
+        ]);
+        setFleet([
+          { id: 'V01', driver: 'كابتن أحمد', status: 'active', location: 'التجمع الخامس', fuel: 75, water: 60, battery: 90, jobs: 4 },
+          { id: 'V02', driver: 'كابتن سامح', status: 'busy', location: 'المعادي', fuel: 40, water: 20, battery: 85, jobs: 2 },
+          { id: 'V03', driver: 'كابتن هيثم', status: 'maintenance', location: 'الورشة', fuel: 10, water: 0, battery: 0, jobs: 0 },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
-  const defaultStats = [
-    { id: 'stat_fleet', title: "الأسطول النشط", value: "5/6", sub: "سيارات", icon: Truck, color: "blue" as const },
-    { id: 'stat_water', title: "مخزون المياه", value: "450L", sub: "الإجمالي", icon: Droplets, color: "cyan" as const },
-    { id: 'stat_jobs', title: "طلبات اليوم", value: "24", sub: "8 جاري التنفيذ", icon: Calendar, color: "green" as const },
-    { id: 'stat_rev', title: "الإيرادات", value: "6,200", sub: "جنيه", icon: Gauge, color: "yellow" as const },
-  ];
-
-  const defaultActions = [
-    { id: 'act_book', label: "حجز جديد", icon: Plus, color: "bg-cyan-600 text-white", onClick: () => setActiveTab('schedule') },
-    { id: 'act_dispatch', label: "توجيه وحدة", icon: Navigation, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('fleet') },
-    { id: 'act_stock', label: "جرد المواد", icon: Layers, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('inventory') },
-    { id: 'act_client', label: "عميل جديد", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-cyan-500", onClick: () => setActiveTab('customers') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   // Load saved config
@@ -62,8 +104,8 @@ const CarWashOverview: React.FC<CarWashOverviewProps> = ({ setActiveTab }) => {
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -81,7 +123,7 @@ const CarWashOverview: React.FC<CarWashOverviewProps> = ({ setActiveTab }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -95,7 +137,7 @@ const CarWashOverview: React.FC<CarWashOverviewProps> = ({ setActiveTab }) => {
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 

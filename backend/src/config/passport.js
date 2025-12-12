@@ -35,16 +35,17 @@ passport.use(
   )
 );
 
-// Google OAuth Strategy
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
-      scope: ['profile', 'email'],
-      passReqToCallback: true
-    },
+// Google OAuth Strategy - Only initialize if credentials are provided
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+        scope: ['profile', 'email'],
+        passReqToCallback: true
+      },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
         // Check if user already exists
@@ -83,8 +84,9 @@ passport.use(
         return done(error, null);
       }
     }
-  )
-);
+    )
+  );
+}
 
 // Serialize user for session
 passport.serializeUser((user, done) => {
@@ -197,4 +199,4 @@ export const optionalAuth = (req, res, next) => {
   })(req, res, next);
 };
 
-export default passport;
+export { passport as default };

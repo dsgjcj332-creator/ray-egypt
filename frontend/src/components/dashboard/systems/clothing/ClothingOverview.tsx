@@ -1,51 +1,94 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Shirt, Scissors, TrendingUp, Users, ShoppingBag, 
   Tag, RotateCcw, Printer, Search, AlertTriangle, Settings2,
-  Grid, Plus, ArrowRight, DollarSign, Calendar
+  Grid, Plus, ArrowRight, DollarSign, Calendar, Loader
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface ClothingOverviewProps {
   setActiveTab: (tab: string) => void;
 }
 
-const data = [
-  { name: 'السبت', sales: 4000 },
-  { name: 'الأحد', sales: 3000 },
-  { name: 'الاثنين', sales: 2000 },
-  { name: 'الثلاثاء', sales: 2780 },
-  { name: 'الأربعاء', sales: 1890 },
-  { name: 'الخميس', sales: 2390 },
-  { name: 'الجمعة', sales: 3490 },
-];
-
 const ClothingOverview: React.FC<ClothingOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const defaultStats = [
-    { id: 'stat_sales', title: "مبيعات اليوم", value: "12,400 ج", sub: "45 قطعة", icon: TrendingUp, color: "pink" as const },
-    { id: 'stat_items', title: "قطع مباعة", value: "45", sub: "+10 عن أمس", icon: Shirt, color: "blue" as const },
-    { id: 'stat_collections', title: "الكولكشن النشط", value: "3", sub: "مجموعات", icon: Grid, color: "purple" as const },
-    { id: 'stat_returns', title: "المرتجعات", value: "3", sub: "قطع", icon: RotateCcw, color: "orange" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get('/api/dashboard/clothing/stats');
+        const actionsResponse = await axios.get('/api/dashboard/clothing/actions');
+        const chartResponse = await axios.get('/api/dashboard/clothing/chart');
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setChartData(chartResponse.data as any[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات الملابس');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_sales', title: "مبيعات اليوم", value: "12,400 ج", sub: "45 قطعة", icon: TrendingUp, color: "pink" as const },
+          { id: 'stat_items', title: "قطع مباعة", value: "45", sub: "+10 عن أمس", icon: Shirt, color: "blue" as const },
+          { id: 'stat_collections', title: "الكولكشن النشط", value: "3", sub: "مجموعات", icon: Grid, color: "purple" as const },
+          { id: 'stat_returns', title: "المرتجعات", value: "3", sub: "قطع", icon: RotateCcw, color: "orange" as const },
+        ]);
+        setActions([
+          { id: 'act_sale', label: "بيع جديد", icon: ShoppingBag, color: "bg-pink-600 text-white", onClick: () => setActiveTab('shop') },
+          { id: 'act_add', label: "إضافة موديل", icon: Shirt, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('products') },
+          { id: 'act_collection', label: "كولكشن جديد", icon: Grid, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('collections') },
+          { id: 'act_stock', label: "جرد سريع", icon: Search, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('inventory') },
+          { id: 'act_barcode', label: "طباعة باركود", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('products') },
+          { id: 'act_return', label: "مرتجع", icon: RotateCcw, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('reports') },
+        ]);
+        setChartData([
+          { name: 'السبت', sales: 4000 },
+          { name: 'الأحد', sales: 3000 },
+          { name: 'الاثنين', sales: 2000 },
+          { name: 'الثلاثاء', sales: 2780 },
+          { name: 'الأربعاء', sales: 1890 },
+          { name: 'الخميس', sales: 2390 },
+          { name: 'الجمعة', sales: 3490 },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
-  const defaultActions = [
-    { id: 'act_sale', label: "بيع جديد", icon: ShoppingBag, color: "bg-pink-600 text-white", onClick: () => setActiveTab('shop') },
-    { id: 'act_add', label: "إضافة موديل", icon: Shirt, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('products') },
-    { id: 'act_collection', label: "كولكشن جديد", icon: Grid, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('collections') },
-    { id: 'act_stock', label: "جرد سريع", icon: Search, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('inventory') },
-    { id: 'act_barcode', label: "طباعة باركود", icon: Printer, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('products') },
-    { id: 'act_return', label: "مرتجع", icon: RotateCcw, color: "bg-white text-gray-700 border border-gray-200 hover:border-pink-500", onClick: () => setActiveTab('reports') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   const handleToggle = (id: string) => {
@@ -55,8 +98,8 @@ const ClothingOverview: React.FC<ClothingOverviewProps> = ({ setActiveTab }) => 
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -74,7 +117,7 @@ const ClothingOverview: React.FC<ClothingOverviewProps> = ({ setActiveTab }) => 
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -88,7 +131,7 @@ const ClothingOverview: React.FC<ClothingOverviewProps> = ({ setActiveTab }) => 
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 
@@ -114,7 +157,7 @@ const ClothingOverview: React.FC<ClothingOverviewProps> = ({ setActiveTab }) => 
             </div>
             <div className="h-64 w-full" dir="ltr">
                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data}>
+                  <AreaChart data={chartData}>
                      <defs>
                         <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
                            <stop offset="5%" stopColor="#EC4899" stopOpacity={0.2}/>

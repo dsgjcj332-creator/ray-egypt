@@ -1,12 +1,30 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BadgeDollarSign, Home, Users, Calendar, Plus, 
-  Calculator, FileText, Camera, Settings2 
+  Calculator, FileText, Camera, Settings2, Loader
 } from 'lucide-react';
 import ActionButton from '../../../common/buttons/ActionButton';
 import StatCard from '../../../common/cards/StatCard';
 import DashboardCustomizer from '../../DashboardCustomizer';
+import axios from 'axios';
+
+interface DashboardStat {
+  id: string;
+  title: string;
+  value: string;
+  sub: string;
+  icon: any; // LucideIcon
+  color: any; // StatColor
+}
+
+interface DashboardAction {
+  id: string;
+  label: string;
+  icon: any; // LucideIcon
+  color: string;
+  onClick: () => void;
+}
 
 interface RealEstateOverviewProps {
   setActiveTab: (tab: string) => void;
@@ -14,26 +32,49 @@ interface RealEstateOverviewProps {
 
 const RealEstateOverview: React.FC<RealEstateOverviewProps> = ({ setActiveTab }) => {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const defaultStats = [
-    { id: 'stat_sales', title: "إجمالي المبيعات (YTD)", value: "12.5M", sub: "+2.3M هذا الشهر", icon: BadgeDollarSign, color: "green" as const },
-    { id: 'stat_units', title: "وحدات متاحة", value: "45", sub: "12 بيع | 33 إيجار", icon: Home, color: "blue" as const },
-    { id: 'stat_leads', title: "عملاء جدد (Leads)", value: "28", sub: "هذا الأسبوع", icon: Users, color: "purple" as const },
-    { id: 'stat_showings', title: "معاينات قادمة", value: "8", sub: "اليوم وغداً", icon: Calendar, color: "orange" as const },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const statsResponse = await axios.get('/api/dashboard/realestate/stats');
+        const actionsResponse = await axios.get('/api/dashboard/realestate/actions');
+        setStats(statsResponse.data as DashboardStat[]);
+        setActions(actionsResponse.data as DashboardAction[]);
+        setLoading(false);
+      } catch (err) {
+        setError('فشل في تحميل بيانات العقارات');
+        setLoading(false);
+        // Use fallback data
+        setStats([
+          { id: 'stat_sales', title: "إجمالي المبيعات (YTD)", value: "12.5M", sub: "+2.3M هذا الشهر", icon: BadgeDollarSign, color: "green" as const },
+          { id: 'stat_units', title: "وحدات متاحة", value: "45", sub: "12 بيع | 33 إيجار", icon: Home, color: "blue" as const },
+          { id: 'stat_leads', title: "عملاء جدد (Leads)", value: "28", sub: "هذا الأسبوع", icon: Users, color: "purple" as const },
+          { id: 'stat_showings', title: "معاينات قادمة", value: "8", sub: "اليوم وغداً", icon: Calendar, color: "orange" as const },
+        ]);
+        setActions([
+          { id: 'act_add_unit', label: "إضافة وحدة", icon: Plus, color: "bg-green-700 text-white", onClick: () => setActiveTab('properties') },
+          { id: 'act_new_lead', label: "عميل جديد", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('leads') },
+          { id: 'act_showing', label: "حجز معاينة", icon: Calendar, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('showings') },
+          { id: 'act_calc', label: "حاسبة التمويل", icon: Calculator, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('installments') },
+          { id: 'act_contract', label: "إنشاء عقد", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('contracts') },
+          { id: 'act_tour', label: "جولة افتراضية", icon: Camera, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('properties') },
+        ]);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
-  const defaultActions = [
-    { id: 'act_add_unit', label: "إضافة وحدة", icon: Plus, color: "bg-green-700 text-white", onClick: () => setActiveTab('properties') },
-    { id: 'act_new_lead', label: "عميل جديد", icon: Users, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('leads') },
-    { id: 'act_showing', label: "حجز معاينة", icon: Calendar, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('showings') },
-    { id: 'act_calc', label: "حاسبة التمويل", icon: Calculator, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('installments') },
-    { id: 'act_contract', label: "إنشاء عقد", icon: FileText, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('contracts') },
-    { id: 'act_tour', label: "جولة افتراضية", icon: Camera, color: "bg-white text-gray-700 border border-gray-200 hover:border-green-600", onClick: () => setActiveTab('properties') },
-  ];
+  if (loading) return <div className="flex items-center justify-center p-8"><Loader className="animate-spin" /></div>;
+  if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
 
   const [visibleIds, setVisibleIds] = useState<string[]>([
-    ...defaultStats.map(s => s.id),
-    ...defaultActions.map(a => a.id)
+    ...stats.map(s => s.id),
+    ...actions.map(a => a.id)
   ]);
 
   const handleToggle = (id: string) => {
@@ -43,8 +84,8 @@ const RealEstateOverview: React.FC<RealEstateOverviewProps> = ({ setActiveTab })
   };
 
   const customizerItems = [
-    ...defaultStats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
-    ...defaultActions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
+    ...stats.map(s => ({ id: s.id, label: s.title, category: 'stats' as const })),
+    ...actions.map(a => ({ id: a.id, label: a.label, category: 'actions' as const }))
   ];
 
   return (
@@ -62,7 +103,7 @@ const RealEstateOverview: React.FC<RealEstateOverviewProps> = ({ setActiveTab })
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {defaultStats.filter(s => visibleIds.includes(s.id)).map(stat => (
+         {stats.filter(s => visibleIds.includes(s.id)).map(stat => (
            <StatCard 
              key={stat.id}
              title={stat.title} 
@@ -76,7 +117,7 @@ const RealEstateOverview: React.FC<RealEstateOverviewProps> = ({ setActiveTab })
 
       {/* Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {defaultActions.filter(a => visibleIds.includes(a.id)).map(action => (
+        {actions.filter(a => visibleIds.includes(a.id)).map(action => (
           <ActionButton 
             key={action.id}
             icon={action.icon} 
