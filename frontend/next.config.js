@@ -103,7 +103,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://ray-egypt-backend-production.up.railway.app'}/api/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://ray-egypt-production.up.railway.app'}/api/:path*`,
       },
     ];
   },
