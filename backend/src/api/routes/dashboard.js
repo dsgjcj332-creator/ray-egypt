@@ -5,6 +5,86 @@ const router = express.Router();
 // Helper function to get mock dashboard data
 const getDashboardData = (system, businessType = null) => {
   const dashboards = {
+    pharmacy: {
+      stats: [
+        { id: 'stat_pending', title: "وصفات معلقة", value: "12", sub: "بانتظار التحضير", icon: 'Clock', color: "orange" },
+        { id: 'stat_completed', title: "وصفات مكتملة", value: "156", sub: "اليوم", icon: 'CheckCircle', color: "green" },
+        { id: 'stat_earnings', title: "الإيرادات", value: "8,500 ج", sub: "اليوم", icon: 'DollarSign', color: "teal" },
+        { id: 'stat_rating', title: "التقييم", value: "4.8", sub: "من 5 نجوم", icon: 'Pill', color: "blue" }
+      ],
+      actions: [
+        { id: 'act_new_order', label: "وصفة جديدة", icon: 'Plus', color: "bg-orange-600 text-white" },
+        { id: 'act_inventory', label: "المخزون", icon: 'ShoppingBag', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_suppliers', label: "الموردين", icon: 'Truck', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_search', label: "بحث", icon: 'Search', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_offers', label: "العروض", icon: 'Tag', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_reports', label: "التقارير", icon: 'FileText', color: "bg-white text-gray-700 border border-gray-200" }
+      ]
+    },
+    gym: {
+      stats: [
+        { id: 'stat_attendance', title: "الحضور اليوم", value: "45", sub: "عضو", icon: 'Users', color: "yellow" },
+        { id: 'stat_new', title: "أعضاء جدد", value: "3", sub: "هذا الأسبوع", icon: 'CreditCard', color: "green" },
+        { id: 'stat_expiring', title: "اشتراكات تنتهي", value: "8", sub: "قريباً", icon: 'Clock', color: "red" },
+        { id: 'stat_sales', title: "مبيعات", value: "2,400 ج", sub: "اليوم", icon: 'ShoppingBag', color: "blue" }
+      ],
+      actions: [
+        { id: 'act_new_member', label: "عضو جديد", icon: 'Plus', color: "bg-yellow-600 text-white" },
+        { id: 'act_renew', label: "تجديد", icon: 'CreditCard', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_checkin', label: "تسجيل دخول", icon: 'QrCode', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_sell', label: "بيع منتج", icon: 'ShoppingBag', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_inbody', label: "قياس", icon: 'Activity', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_class', label: "حصة", icon: 'Dumbbell', color: "bg-white text-gray-700 border border-gray-200" }
+      ]
+    },
+    salon: {
+      stats: [
+        { id: 'stat_appts', title: "المواعيد اليوم", value: "18", sub: "موعد", icon: 'Calendar', color: "pink" },
+        { id: 'stat_sales', title: "المبيعات", value: "3,200 ج", sub: "اليوم", icon: 'Scissors', color: "purple" },
+        { id: 'stat_new_clients', title: "عملاء جدد", value: "5", sub: "هذا الأسبوع", icon: 'Users', color: "teal" },
+        { id: 'stat_products', title: "المنتجات", value: "45", sub: "متوفرة", icon: 'ShoppingBag', color: "blue" }
+      ],
+      actions: [
+        { id: 'act_book', label: "حجز موعد", icon: 'Plus', color: "bg-pink-600 text-white" },
+        { id: 'act_pos', label: "دفع", icon: 'DollarSign', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_new_client', label: "عميل جديد", icon: 'Users', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_sell_prod', label: "بيع منتج", icon: 'ShoppingBag', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_add_service', label: "خدمة جديدة", icon: 'Sparkles', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_attendance', label: "الموظفين", icon: 'Clock', color: "bg-white text-gray-700 border border-gray-200" }
+      ]
+    },
+    restaurant: {
+      stats: [
+        { id: 'stat_sales', title: "المبيعات", value: "12,500 ج", sub: "اليوم", icon: 'DollarSign', color: "orange" },
+        { id: 'stat_kitchen', title: "الطلبات النشطة", value: "8", sub: "في المطبخ", icon: 'ChefHat', color: "yellow" },
+        { id: 'stat_tables', title: "الطاولات المشغولة", value: "12", sub: "من 20", icon: 'Utensils', color: "blue" },
+        { id: 'stat_delivery', title: "طلبات التوصيل", value: "5", sub: "قيد التنفيذ", icon: 'Truck', color: "green" }
+      ],
+      actions: [
+        { id: 'act_new_order', label: "طلب جديد", icon: 'Plus', color: "bg-orange-600 text-white" },
+        { id: 'act_book_table', label: "حجز طاولة", icon: 'Calendar', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_shift', label: "الموظفين", icon: 'Clock', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_expense', label: "مصروف", icon: 'DollarSign', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_stock', label: "المخزون", icon: 'Package', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_report', label: "تقرير", icon: 'Printer', color: "bg-white text-gray-700 border border-gray-200" }
+      ]
+    },
+    retail: {
+      stats: [
+        { id: 'stat_sales', title: "المبيعات", value: "8,900 ج", sub: "اليوم", icon: 'DollarSign', color: "green" },
+        { id: 'stat_orders', title: "الطلبات", value: "24", sub: "اليوم", icon: 'ShoppingCart', color: "orange" },
+        { id: 'stat_customers', title: "العملاء", value: "156", sub: "هذا الشهر", icon: 'Users', color: "blue" },
+        { id: 'stat_stock', title: "المخزون", value: "450", sub: "منتج", icon: 'Package', color: "yellow" }
+      ],
+      actions: [
+        { id: 'act_new_sale', label: "بيع جديد", icon: 'Plus', color: "bg-green-700 text-white" },
+        { id: 'act_inventory', label: "المخزون", icon: 'Package', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_customers', label: "العملاء", icon: 'Users', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_orders', label: "الطلبات", icon: 'ShoppingCart', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_suppliers', label: "الموردين", icon: 'Store', color: "bg-white text-gray-700 border border-gray-200" },
+        { id: 'act_reports', label: "التقارير", icon: 'TrendingUp', color: "bg-white text-gray-700 border border-gray-200" }
+      ]
+    },
     bookings: {
       stats: [
         { id: 'stat_today', title: "حجوزات اليوم", value: "18", sub: "حجز مؤكد", icon: 'Calendar', color: "blue" },
