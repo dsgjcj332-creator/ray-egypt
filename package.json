@@ -1,1 +1,1 @@
-﻿{"name":"ray-egypt-saas-platform","version":"3.0.0","private":true,"scripts":{"dev":"cd frontend && npm run dev","build":"cd frontend && npm run build","start":"cd frontend && npm start","lint":"cd frontend && npm run lint"},"engines":{"node":">=16.0.0","npm":">=8.0.0"}}
+{"name":"ray-egypt-saas-platform","version":"3.0.0","private":true,"scripts":{"dev":"cd frontend && npm run dev","build":"cd frontend && npm run build","start":"cd frontend && npm start","lint":"cd frontend && npm run lint"},"engines":{"node":">=16.0.0","npm":">=8.0.0"}}
