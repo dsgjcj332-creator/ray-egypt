@@ -6,8 +6,6 @@ import { Search, Filter, Star, ArrowRight, SlidersHorizontal, Map, List, X, Arro
 import SearchFilterModal from '../modals/SearchFilterModal';
 import SmartMapSearch from '../widgets/SmartMapSearch';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
 interface SearchResult {
   id: string;
   type: string;
@@ -57,7 +55,7 @@ const SearchResultsView: React.FC<Props> = ({ query = '' }) => {
           category: activeFilter,
           sort: sortBy
         });
-        const response = await fetch(`${API_URL}/api/search?${params}`);
+        const response = await fetch(`/api/search?${params}`); // Use relative path for API call
         if (response.ok) {
           const data = await response.json();
           setSearchResults(data);
