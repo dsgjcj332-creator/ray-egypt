@@ -1,0 +1,33 @@
+// مثال على كيفية استخدام Error Boundary في Layout
+
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AsyncErrorBoundary } from '@/components/AsyncErrorBoundary';
+import './globals.css';
+
+export const metadata = {
+  title: 'RAY Egypt',
+  description: 'منصة متعددة الأنظمة'
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ar" dir="rtl">
+      <body>
+        <ErrorBoundary>
+          <AsyncErrorBoundary
+            onError={(error) => {
+              console.error('Async error:', error);
+              // يمكنك إرسال الخطأ إلى خدمة تتبع الأخطاء هنا
+            }}
+          >
+            {children}
+          </AsyncErrorBoundary>
+        </ErrorBoundary>
+      </body>
+    </html>
+  );
+}

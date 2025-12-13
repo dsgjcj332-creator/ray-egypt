@@ -42,8 +42,8 @@ const ProductManager: React.FC = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await fetchProducts();
-        setProducts(data);
+        const result = await fetchProducts();
+        setProducts(result.data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -95,7 +95,7 @@ const ProductManager: React.FC = () => {
       }
       
       // Persist via service
-      await updateProduct(updatedProduct);
+      await updateProduct(updatedProduct.id, updatedProduct);
       
       // Update local state
       if (editingProduct) {
@@ -129,7 +129,7 @@ const ProductManager: React.FC = () => {
       try {
         // Create array of promises to update all modified products
         const updates = products.filter(p => stockAdjustments[p.id] !== undefined && stockAdjustments[p.id] !== p.stock)
-          .map(p => updateProduct({ ...p, stock: stockAdjustments[p.id] }));
+          .map(p => updateProduct(p.id, { ...p, stock: stockAdjustments[p.id] }));
         
         await Promise.all(updates);
 

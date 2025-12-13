@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Cairo, Dancing_Script } from "next/font/google";
 import "../../globals.css";
@@ -8,7 +7,9 @@ import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
 import { MerchantProvider } from '@/context/MerchantContext';
-import GeminiAssistant from '@/components/common/GeminiAssistant';
+import dynamic from 'next/dynamic';
+
+const GeminiAssistant = dynamic(() => import('@/components/common/GeminiAssistant'), { ssr: false });
 
 const cairo = Cairo({ subsets: ["arabic", "latin"], variable: '--font-cairo' });
 const dancing = Dancing_Script({ subsets: ["latin"], variable: '--font-dancing' });
